@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Codenotch Settings</title>
+<link rel="stylesheet" href="accounts-taskbar.css">
 <style>
   /* The Mac's Settings (Sources/Settings/SettingsView.swift) over Windows 11's Mica: a sidebar card
      darker than the pane, grouped sections with captions as rows, and Windows' own control cues —
@@ -147,6 +148,14 @@
     <div id="body">
 
       <section class="pane" id="pane-accounts" role="tabpanel" aria-labelledby="tab-accounts" hidden>
+        <div class="sec" id="claude-profiles-title" data-dynamic>Claude accounts</div>
+        <div class="group" id="claude-profiles" data-dynamic></div>
+        <form class="group profile-add" id="claude-add-form">
+          <label for="claude-account-name" id="claude-name-label">New account name</label>
+          <div class="profile-add-line"><input id="claude-account-name" maxlength="40" required autocomplete="off" placeholder="Example: Work"><button class="btn" id="claude-add-button" type="submit">Add account</button></div>
+          <p id="claude-login-help">Each account uses the official Claude CLI sign-in in a separate folder.</p>
+        </form>
+        <p id="claude-profile-message" class="profile-message" role="status" aria-live="polite" data-dynamic></p>
         <div class="sec">Connected</div>
         <div class="group" id="acc-on" data-dynamic></div>
         <div id="acc-off-wrap" hidden>
@@ -156,6 +165,13 @@
       </section>
 
       <section class="pane" id="pane-appearance" role="tabpanel" aria-labelledby="tab-appearance" hidden>
+        <div class="sec" id="taskbar-title" data-dynamic>Taskbar</div>
+        <div class="group">
+          <div class="item"><label id="taskbar-position-label" for="taskbar-position">Display</label><select id="taskbar-position"><option value="off">Original notch</option><option value="left">Left side</option><option value="right">Before system tray</option></select></div>
+          <div class="item slider"><label id="taskbar-width-label" for="taskbar-width">Width</label><span class="value" id="taskbar-width-value" data-dynamic>280 px</span><input id="taskbar-width" class="range" type="range" min="144" max="520" step="8"></div>
+          <div class="item cap" id="taskbar-help" data-dynamic>Use free space on the primary taskbar. Hover for account limits; click to refresh that account.</div>
+          <div class="item cap" id="taskbar-status" role="status" data-dynamic hidden></div>
+        </div>
         <div class="sec">Notch</div>
         <div class="group">
           <div class="item"><span>Show</span><span class="seg" id="seg-show"><button data-v="show">Always show</button><button data-v="hover">Show on hover</button><button data-v="hide">Hide</button></span></div>
@@ -1825,5 +1841,6 @@ window.addEventListener('focus', () => {
 });
 boot();
 </script>
+<script src="accounts-taskbar.js"></script>
 </body>
 </html>

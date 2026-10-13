@@ -9,6 +9,34 @@ hover card with per-window bars), rebuilt for Windows in Rust + Tauri 2 / WebVie
 No code is copied from the Swift app; the providers are reimplemented from their
 documented behaviour and the wire formats.
 
+## Claude accounts
+
+Settings → Accounts can add, name, reconnect and pause Claude accounts. Each account
+uses the official Claude Code CLI sign-in in its own `~/.claude-<slug>` directory;
+the standalone CLI must be installed. Existing profiles in that layout are detected.
+Pausing monitoring retains the tool's sign-in. Authentication, cached readings and
+retry deadlines stay separate, including after rate limiting or reconnection.
+
+## Taskbar display
+
+Settings → Appearance → Taskbar can place compact usage indicators in free space
+on the left side of the primary taskbar or before the system tray. This is opt-in;
+Original notch restores the screen-edge display. Hover shows account limits and
+reset times, left-click requests a refresh of that account, and right-click opens
+Settings. The width control adjusts the space used by the indicators.
+
+Claude and Codex display the weekly percentage. Available 5-hour and weekly quotas
+have independent arcs; a weekly-only Codex plan has one outer arc, even when the
+provider calls that bucket `primary`. Activity is assigned only to an identified
+account; unknown ownership never animates a different account's indicator.
+
+The strip uses an owned native child window and DirectComposition. It does not
+inject code, subclass Explorer or alter its controls. UI Automation finds free
+space; full screen apps, hidden taskbars or missing space hide the strip. Separate
+WebView windows show the details without clipping them to the taskbar. The strip
+is recreated after Explorer restarts. This relies on Explorer's internal layout;
+custom shells, vertical taskbars and secondary taskbars are not supported.
+
 ## What it shows
 
 | Cell | Source | How it reads it |
