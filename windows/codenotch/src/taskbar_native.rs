@@ -163,7 +163,8 @@ pub fn update(frame: Frame, scale: f32) {
     if state.closed.get() || state.closing.get() { return; }
     let reset_hover = {
         let mut data = state.data.borrow_mut();
-        let changed_layout = data.scale != scale || data.frame.items.iter().map(|item| &item.id)
+        let changed_layout = data.scale != scale || data.frame.appearance.size != frame.appearance.size
+            || data.frame.items.iter().map(|item| &item.id)
             .ne(frame.items.iter().map(|item| &item.id));
         data.refreshing.retain(|id, until| *until > Instant::now() && frame.items.iter().any(|item| &item.id == id));
         data.frame = frame;
@@ -189,7 +190,7 @@ pub fn hwnd() -> Option<HWND> {
 
 fn target(data: &Data, x: f32, y: f32) -> Option<(usize, f32, f32)> {
     if y < 0.0 || y >= data.height as f32 || !x.is_finite() || !y.is_finite() { return None; }
-    taskbar_model::layout(data.frame.items.len(), data.width as f32, data.height as f32, data.scale)
+    taskbar_model::layout(data.frame.items.len(), data.width as f32, data.height as f32, data.scale, data.frame.appearance.size)
         .into_iter().find(|slot| slot.contains(x, y, data.height as f32))
         .map(|slot| (slot.index, slot.x, slot.width))
 }
@@ -513,9 +514,9 @@ mod tests {
     use crate::taskbar_model::Indicator;
 
     fn frame() -> Frame {
-        Frame { dark: true, watch: 0.5, critical: 0.7, items: ["claude@home", "claude@work"].into_iter().map(|id| Indicator {
+        Frame { dark: true, watch: 0.5, critical: 0.7, appearance:crate::taskbar_model::Appearance::from_config(&crate::config::Config::default()), items: ["claude@home", "claude@work"].into_iter().map(|id| Indicator {
             id: id.into(), provider: "claude".into(), inner: Some(0.12), outer: Some(0.28),
-            text: "28%".into(), work_state: "idle".into(), dimmed: false,
+            text: "28%".into(), work_state: "idle".into(), dimmed: false, inner_weekly:false, outer_weekly:true,
         }).collect() }
     }
 

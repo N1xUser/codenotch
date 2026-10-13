@@ -100,6 +100,7 @@
     finally{busy=false;await refresh();}
   });
   function drawTaskbar(){
+    if(typeof applyTaskbarAppearance==='function')applyTaskbarAppearance(taskbar.mode);
     el('taskbar-position').value=taskbar.mode;el('taskbar-position').disabled=!taskbar.supported||busy;
     if(document.activeElement!==el('taskbar-width'))el('taskbar-width').value=taskbar.width;
     el('taskbar-width-value').textContent=taskbar.width+' px';

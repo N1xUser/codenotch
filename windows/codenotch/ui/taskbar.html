@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Codenotch</title>
 <style>
-:root{color-scheme:dark;--bg:#131416;--fg:#f1f2f4;--muted:#a2a6af;--line:#ffffff0e;--track:#ffffff20;--good:#73d39b;--warn:#efbf6f;--bad:#ef8e89;--gauge:clamp(28px,calc(100vh - 2px),44px)}
+:root{color-scheme:dark;--bg:#131416;--fg:#f1f2f4;--muted:#a2a6af;--line:#ffffff0e;--track:#ffffff20;--good:#00ff88;--warn:#f2ff00;--bad:#ff3f00;--gauge:clamp(28px,calc(100vh - 2px),44px)}
 *{box-sizing:border-box}html,body{margin:0;background:transparent!important}body{color:var(--fg);font:12px 'Segoe UI',system-ui,sans-serif}button{font:inherit;color:inherit;cursor:pointer}button:focus-visible{outline:2px solid #86b7ff;outline-offset:-2px}button:disabled{cursor:wait}
 #strip{height:100vh;display:flex;align-items:center;gap:10px;padding:0 3px;overflow-x:auto;scrollbar-width:none;background:transparent;border:0;outline:0}#strip::-webkit-scrollbar{display:none}
 /* A nonzero alpha gives the native transparent child a hit surface across the button. */
@@ -14,8 +14,8 @@
 .gauge{position:relative;display:grid;place-items:center;width:var(--gauge);height:var(--gauge);flex-shrink:0}.gauge>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.quota-track{fill:none;stroke:var(--track);stroke-width:2.6}.quota-progress{fill:none;stroke-width:2.6;stroke-linecap:round;transform:rotate(-90deg);transform-origin:28px 28px;transition:stroke-dasharray .35s ease,stroke .25s ease}.inner-track{stroke-width:2.3;opacity:.7}.inner-progress{stroke-width:2.3}.provider-mark{display:block;width:42%;height:42%;object-fit:contain;opacity:.9;transition:opacity .2s}.provider-mark[src=""]{visibility:hidden}.chip:hover .provider-mark{opacity:1}.chip:hover .quota-track{stroke:var(--muted);opacity:.35}.pct{min-width:25px;font-size:12px;line-height:1;font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-.2px}.quota-dim{opacity:.5}.activity-arc{fill:none;stroke:var(--fg);stroke-width:1.8;stroke-linecap:round;stroke-dasharray:24 96;transform:rotate(-90deg);transform-origin:28px 28px;opacity:0}.chip[data-work=busy] .activity-arc{opacity:.95;animation:spin 1.25s steps(16) infinite}.chip[data-work=waiting] .activity-arc{opacity:1;stroke:var(--warn);stroke-dasharray:3 5;animation:breathe 1.7s steps(8) infinite}.chip[data-refreshing=true] .gauge{animation:refresh-pulse .7s ease-in-out infinite}
 @keyframes spin{to{transform:rotate(270deg)}}@keyframes breathe{50%{opacity:.3}}@keyframes refresh-pulse{50%{opacity:.5}}
 #details{display:none;height:100vh;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:14px;scrollbar-width:thin}body.details #strip{display:none}body.details #details{display:block}header{display:flex;align-items:center;gap:9px;padding:17px 17px 12px;position:sticky;top:0;background:var(--bg);z-index:1}.header-logo{width:20px;height:20px;object-fit:contain}.header-logo[src=""]{display:none}h1{margin:0;flex:1;font-size:13px;font-weight:650;letter-spacing:-.1px}header button{border:0;background:transparent;padding:3px 5px;border-radius:5px;color:var(--muted);font-size:18px;line-height:1}header button:hover{color:var(--fg);background:var(--line)}#hint{margin:0;padding:0 17px 10px;color:var(--muted);font-size:11px;line-height:1.5}body.hover #hint:empty{display:none}.card{padding:0 17px 14px;margin:0}.card+.card{border-top:1px solid var(--line);padding-top:13px}.card-title{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;font-weight:600;margin-bottom:12px}.badge{font-size:10px;color:var(--muted);font-weight:400}.limit+.limit{margin-top:15px}.limit-label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:600}.limit-label strong{font-variant-numeric:tabular-nums;font-size:12px}.bar{height:4px;margin-top:7px;border-radius:4px;background:var(--track);overflow:hidden}.bar span{display:block;height:100%;border-radius:4px}.limit-meta{margin-top:5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:3px 8px;font-size:10px;color:var(--muted);line-height:1.5}.reset{font-size:10px;color:var(--muted);font-weight:400}.note{font-size:10px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere;margin:12px 0 0}.read-at{font-size:10px;color:var(--muted);margin-top:12px}.empty{margin:0;padding:0 17px 16px;color:var(--muted);font-size:11px}#error{font-size:11px;color:var(--bad);padding:0 17px;margin:0;line-height:1.5}#error:empty{display:none}footer{padding:0 17px 13px}footer button{padding:0;border:0;background:transparent;color:var(--muted);font-size:10px}footer button:hover{color:var(--fg)}body.hover .card-title{display:none}body.hover .card+.card{border:0;padding-top:0}
-[data-theme=light]{color-scheme:light;--bg:#fafafa;--fg:#202124;--muted:#626773;--line:#00000010;--track:#0000001c;--good:#278653;--warn:#94661d;--bad:#b63d39}
-@media(prefers-color-scheme:light){:root:not([data-theme=dark]){color-scheme:light;--bg:#fafafa;--fg:#202124;--muted:#626773;--line:#00000010;--track:#0000001c;--good:#278653;--warn:#94661d;--bad:#b63d39}}
+[data-theme=light]{color-scheme:light;--bg:#fafafa;--fg:#202124;--muted:#626773;--line:#00000010;--track:#0000001c;--good:#00a356;--warn:#b08800;--bad:#ff3f00}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]){color-scheme:light;--bg:#fafafa;--fg:#202124;--muted:#626773;--line:#00000010;--track:#0000001c;--good:#00a356;--warn:#b08800;--bad:#ff3f00}}
 @media(prefers-reduced-motion:reduce){.chip[data-work] .activity-arc,.chip[data-refreshing] .gauge{animation:none}.quota-progress,.provider-mark{transition:none}}
 body.hover #details{height:auto;max-height:100vh}
 </style>
@@ -33,6 +33,7 @@ const isDetails=isHover||window.__CODENOTCH_TASKBAR_DETAILS__===true;
 let selectedId=window.__CODENOTCH_TASKBAR_ITEM_ID__||null;
 document.body.classList.toggle('details',isDetails);document.body.classList.toggle('hover',isHover);
 const invoke=(cmd,args)=>window.__TAURI__.core.invoke(cmd,args);
+let colorTransition='hard_step';
 let lang='en',items=[],glyphs={},claudeAuth={},watch=50,critical=70,hoverTimer=null,hoveredId=null,loadBusy=false,loadAgain=false,lastHoverSize='',blockedRefresh=null;
 const refreshing=new Set();
 const tr=(en,pt)=>lang==='pt-BR'?pt:en;
@@ -67,7 +68,15 @@ function weekly(item){
 function displayPercent(item){return percent(item.provider==='claude'||item.provider==='codex'?weekly(item):headline(item));}
 function activityState(item){return item.work_state==='busy'||item.work_state==='waiting'?item.work_state:'idle';}
 function isStale(snapshot){return snapshot.status!=='ok'||!snapshot.fetched_at||Date.now()-snapshot.fetched_at>10*60*1000;}
-function color(pct){return pct==null?'var(--muted)':pct>=critical?'var(--bad)':pct>=watch?'var(--warn)':'var(--good)';}
+function color(pct){
+ if(pct==null)return 'var(--muted)';
+ if(typeof colorTransition==='undefined'||colorTransition!=='ramp')return pct>=critical?'var(--bad)':pct>=watch?'var(--warn)':'var(--good)';
+ const light=typeof document!=='undefined'&&document.documentElement.dataset.theme==='light';
+ const ample=light?[0,163,86]:[0,255,136],yellow=light?[176,136,0]:[242,255,0],red=[255,63,0];
+ const used=Math.max(0,Math.min(100,pct)),threshold=Math.max(1,Math.min(99,watch));
+ const [a,b,t]=used<threshold?[ample,yellow,used/threshold]:[yellow,red,(used-threshold)/(100-threshold)];
+ return 'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')+')';
+}
 function retrySeconds(snapshot,now=Date.now()){return Number.isFinite(snapshot.backoff_until)&&snapshot.backoff_until>0?Math.max(0,Math.ceil((snapshot.backoff_until-now)/1000)):null;}
 function retryCountdown(seconds){return seconds<60?seconds+'s':Math.floor(seconds/60)+'m '+String(seconds%60).padStart(2,'0')+'s';}
 function retryTime(snapshot,now=Date.now()){
@@ -248,9 +257,10 @@ Promise.allSettled([
  invoke('get_theme_resolved').then(value=>document.documentElement.dataset.theme=value),
  invoke('get_watch_limit').then(value=>{if(Number.isFinite(value))watch=value*100;}),
  invoke('get_critical_limit').then(value=>{if(Number.isFinite(value))critical=value*100;}),
+ invoke('get_color_transition').then(value=>{colorTransition=value==='ramp'?'ramp':'hard_step';}),
  invoke('get_glyphs').then(value=>glyphs=value||{})
 ]).then(load).then(()=>invoke('taskbar_ready')).catch(()=>{});
-for(const [event,apply] of [['theme_resolved',value=>document.documentElement.dataset.theme=value],['watch_limit',value=>watch=value*100],['critical_limit',value=>critical=value*100],['glyphs',value=>glyphs=value||{}]]){try{window.__TAURI__.event.listen(event,message=>{apply(message.payload);render();});}catch(error){}}
+for(const [event,apply] of [['theme_resolved',value=>document.documentElement.dataset.theme=value],['watch_limit',value=>watch=value*100],['critical_limit',value=>critical=value*100],['glyphs',value=>glyphs=value||{}],['color_transition',value=>colorTransition=value==='ramp'?'ramp':'hard_step']]){try{window.__TAURI__.event.listen(event,message=>{apply(message.payload);render();});}catch(error){}}
 try{window.__TAURI__.event.listen('taskbar_hover_item',message=>{selectedId=message.payload;lastHoverSize='';blockedRefresh=null;document.getElementById('error').textContent='';render();load();});}catch(error){}
 for(const event of ['usage','codex','activity','state','claude_accounts_changed','taskbar_options']){try{window.__TAURI__.event.listen(event,load);}catch(error){}}
 setInterval(load,2500);

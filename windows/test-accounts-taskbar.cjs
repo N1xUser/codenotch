@@ -151,6 +151,19 @@ test('Independent window percentages choose warning colors at the configured bou
   assert.equal(ctx.color(69),'var(--warn)');
   assert.equal(ctx.color(70),'var(--bad)');
 });
+test('Detail colours follow the legacy ramp in both themes and retain hard-step behavior',()=>{
+  const ctx=panelFns();ctx.colorTransition='ramp';
+  assert.equal(ctx.color(0),'rgb(0,255,136)');
+  assert.equal(ctx.color(25),'rgb(121,255,68)');
+  assert.equal(ctx.color(50),'rgb(242,255,0)');
+  assert.equal(ctx.color(75),'rgb(249,159,0)');
+  assert.equal(ctx.color(100),'rgb(255,63,0)');
+  ctx.critical=90;assert.equal(ctx.color(75),'rgb(249,159,0)');
+  ctx.document={documentElement:{dataset:{theme:'light'}}};
+  assert.equal(ctx.color(0),'rgb(0,163,86)');
+  assert.equal(ctx.color(50),'rgb(176,136,0)');
+  ctx.colorTransition='hard_step';assert.equal(ctx.color(75),'var(--warn)');
+});
 test('Reset hints show a 5h time and a weekly weekday, date and time',()=>{
   const ctx=panelFns(),now=new Date(2026,9,13,12,0).getTime();
   const session=ctx.resetText({id:'session',resets_at:new Date(2026,9,13,16,29).getTime()},now);

@@ -15,7 +15,7 @@ use windows::{
                 D2D1CreateDevice, ID2D1Device, ID2D1DeviceContext, ID2D1DeviceContext5,
                 ID2D1Image, ID2D1SolidColorBrush, ID2D1StrokeStyle, ID2D1SvgDocument,
                 D2D1_ANTIALIAS_MODE_ALIASED, D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-                D2D1_BITMAP_OPTIONS_TARGET, D2D1_BITMAP_PROPERTIES1, D2D1_CAP_STYLE_ROUND,
+                D2D1_BITMAP_OPTIONS_TARGET, D2D1_BITMAP_PROPERTIES1, D2D1_CAP_STYLE_ROUND, D2D1_CAP_STYLE_FLAT,
                 D2D1_DASH_STYLE_SOLID, D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
                 D2D1_DRAW_TEXT_OPTIONS_CLIP, D2D1_ELLIPSE, D2D1_LINE_JOIN_ROUND,
                 D2D1_STROKE_STYLE_PROPERTIES, D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE,
@@ -56,6 +56,7 @@ pub struct Renderer {
     foreground: ID2D1SolidColorBrush,
     activity: ID2D1SolidColorBrush,
     stroke: ID2D1StrokeStyle,
+    weekly_stroke: ID2D1StrokeStyle,
     format: IDWriteTextFormat,
     font_scale: f32,
     surface: IDCompositionSurface,
@@ -109,6 +110,11 @@ impl Renderer {
                 dashCap: D2D1_CAP_STYLE_ROUND, lineJoin: D2D1_LINE_JOIN_ROUND,
                 miterLimit: 10.0, dashStyle: D2D1_DASH_STYLE_SOLID, dashOffset: 0.0,
             }, None)?;
+            let weekly_stroke = context.GetFactory()?.CreateStrokeStyle(&D2D1_STROKE_STYLE_PROPERTIES {
+                startCap:D2D1_CAP_STYLE_FLAT, endCap:D2D1_CAP_STYLE_FLAT,
+                dashCap:D2D1_CAP_STYLE_FLAT, lineJoin:D2D1_LINE_JOIN_ROUND,
+                miterLimit:10.0, dashStyle:D2D1_DASH_STYLE_SOLID, dashOffset:0.0,
+            },None)?;
             let write_factory: IDWriteFactory = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED)?;
             let format = text_format(&write_factory, 1.0)?;
             let composition: IDCompositionDevice = DCompositionCreateDevice(&dxgi_device)?;
@@ -119,7 +125,7 @@ impl Renderer {
             target.SetRoot(&visual)?;
             // Surface contents are initialized by the first draw before Commit.
             Ok(Self { context, svg_context, logos, track, progress, foreground, activity,
-                stroke, format, font_scale:1.0, surface, target, visual, composition,
+                stroke, weekly_stroke, format, font_scale:1.0, surface, target, visual, composition,
                 write_factory, _d2d_device:d2d_device, _dxgi_device:dxgi_device,
                 _d3d_device:d3d_device, width, height, driver, _thread_bound:PhantomData })
         }
@@ -143,12 +149,13 @@ impl Renderer {
 
     pub fn draw(&mut self, frame: &Frame, scale: f32, hovered: Option<usize>, pressed: Option<usize>, seconds: f32) -> Result<()> {
         let scale = if scale.is_finite() && scale > 0.0 { scale.clamp(0.5, 8.0) } else { 1.0 };
-        if (self.font_scale - scale).abs() > 0.001 {
-            self.format = unsafe { text_format(&self.write_factory, scale)? };
-            self.font_scale = scale;
+        let visual_scale = scale * frame.appearance.size;
+        if (self.font_scale - visual_scale).abs() > 0.001 {
+            self.format = unsafe { text_format(&self.write_factory, visual_scale)? };
+            self.font_scale = visual_scale;
         }
         let seconds = if seconds.is_finite() { seconds } else { 0.0 };
-        let slots = taskbar_model::layout(frame.items.len(), self.width as f32, self.height as f32, scale);
+        let slots = taskbar_model::layout(frame.items.len(), self.width as f32, self.height as f32, scale, frame.appearance.size);
         unsafe {
             let mut offset = POINT::default();
             let dxgi_surface: IDXGISurface = self.surface.BeginDraw(None, &mut offset)?;
@@ -171,7 +178,7 @@ impl Renderer {
                 self.context.Clear(Some(&rgba(0.0, 0.0, 0.0, 0.0)));
                 for slot in &slots {
                     if let Some(item) = frame.items.get(slot.index) {
-                        self.draw_indicator(item, slot, frame, scale, hovered == Some(slot.index),
+                        self.draw_indicator(item, slot, frame, visual_scale, hovered == Some(slot.index),
                             pressed == Some(slot.index), seconds, offset);
                     }
                 }
@@ -199,12 +206,20 @@ impl Renderer {
         self.progress.SetOpacity(dim);
         let center = D2D_POINT_2F { x:slot.center_x, y:slot.center_y };
         let stroke = (2.0 * scale + if pressed { 0.5 * scale } else { 0.0 }).min(slot.radius / 4.0);
-        for (fraction, radius, thickness) in [(item.outer, slot.radius, stroke), (item.inner, slot.radius * 0.82, stroke * 0.88)] {
+        for (fraction,radius,thickness,weekly) in [(item.outer,slot.radius,stroke,item.outer_weekly),
+            (item.inner,slot.radius * 0.82,stroke * 0.88,item.inner_weekly)] {
             if let Some(fraction) = fraction.filter(|v| v.is_finite()).map(|v| v.clamp(0.0, 1.0)) {
-                self.context.DrawEllipse(&D2D1_ELLIPSE { point:center, radiusX:radius, radiusY:radius },
-                    &self.track, thickness, None::<&ID2D1StrokeStyle>);
-                self.progress.SetColor(&quota_color(fraction, frame.dark, frame.watch, frame.critical));
-                self.draw_arc(center, radius, -std::f32::consts::FRAC_PI_2, fraction, &self.progress, thickness);
+                let [r,g,b] = taskbar_model::usage_color(fraction,frame);
+                self.progress.SetColor(&rgba(r as f32/255.0,g as f32/255.0,b as f32/255.0,1.0));
+                if weekly && frame.appearance.weekly_dashed {
+                    let unit = slot.radius / 25.0;
+                    self.draw_dashed_arc(center,radius,1.0,&self.track,thickness,unit);
+                    self.draw_dashed_arc(center,radius,fraction,&self.progress,thickness,unit);
+                } else {
+                    self.context.DrawEllipse(&D2D1_ELLIPSE { point:center, radiusX:radius, radiusY:radius },
+                        &self.track, thickness, None::<&ID2D1StrokeStyle>);
+                    self.draw_arc(center, radius, -std::f32::consts::FRAC_PI_2, fraction, &self.progress, thickness);
+                }
             }
         }
         let logo_index = (if frame.dark { 0 } else { 2 }) + usize::from(item.dimmed);
@@ -232,7 +247,7 @@ impl Renderer {
                     0.20, &self.activity, 1.2 * scale);
             }
             "waiting" => {
-                self.activity.SetColor(&if frame.dark { rgb(0xefbf6f) } else { rgb(0x94661d) });
+                self.activity.SetColor(&if frame.dark { rgb(0xf2ff00) } else { rgb(0xb08800) });
                 self.activity.SetOpacity(0.65 + 0.35 * (seconds * std::f32::consts::TAU / 1.7).cos());
                 for dash in 0..12 {
                     self.draw_arc(center, activity_radius, dash as f32 * std::f32::consts::TAU / 12.0,
@@ -255,6 +270,19 @@ impl Renderer {
 
     unsafe fn draw_arc(&self, center: D2D_POINT_2F, radius: f32, start: f32, fraction: f32,
         brush: &ID2D1SolidColorBrush, thickness: f32) {
+        self.draw_arc_with_stroke(center,radius,start,fraction,brush,thickness,&self.stroke);
+    }
+
+    unsafe fn draw_dashed_arc(&self, center:D2D_POINT_2F,radius:f32,fraction:f32,
+        brush:&ID2D1SolidColorBrush,thickness:f32,unit:f32) {
+        for (start,sweep) in dashed_sweep(radius,fraction,unit) {
+            self.draw_arc_with_stroke(center,radius,-std::f32::consts::FRAC_PI_2 + start,
+                sweep,brush,thickness,&self.weekly_stroke);
+        }
+    }
+
+    unsafe fn draw_arc_with_stroke(&self, center:D2D_POINT_2F,radius:f32,start:f32,fraction:f32,
+        brush:&ID2D1SolidColorBrush,thickness:f32,style:&ID2D1StrokeStyle) {
         if radius <= 0.0 || fraction <= 0.0 { return; }
         let segments = (fraction * 128.0).ceil().max(1.0) as usize;
         let point = |step: usize| {
@@ -262,7 +290,7 @@ impl Renderer {
             D2D_POINT_2F { x:center.x + radius * angle.cos(), y:center.y + radius * angle.sin() }
         };
         for step in 0..segments {
-            self.context.DrawLine(point(step), point(step + 1), brush, thickness, &self.stroke);
+            self.context.DrawLine(point(step), point(step + 1), brush, thickness, style);
         }
     }
 }
@@ -325,13 +353,21 @@ fn validate_size(width: u32, height: u32) -> Result<()> {
     } else { Ok(()) }
 }
 
-fn quota_color(value: f32, dark: bool, watch: f32, critical: f32) -> D2D1_COLOR_F {
-    let watch = if watch.is_finite() { watch.clamp(0.0, 1.0) } else { 0.5 };
-    let critical = if critical.is_finite() { critical.clamp(watch, 1.0) } else { 0.7_f32.max(watch) };
-    rgb(match (dark, value >= critical, value >= watch) {
-        (true, true, _) => 0xef8e89, (true, false, true) => 0xefbf6f, (true, false, false) => 0x73d39b,
-        (false, true, _) => 0xb63d39, (false, false, true) => 0x94661d, (false, false, false) => 0x278653,
-    })
+// Four design pixels on, two off, clipped at the actual quota. Flat caps
+// preserve gaps and keep 0% completely empty, matching the original notch.
+fn dashed_sweep(radius:f32,fraction:f32,unit:f32) -> Vec<(f32,f32)> {
+    if !radius.is_finite() || !fraction.is_finite() || !unit.is_finite()
+        || radius <= 0.0 || fraction <= 0.0 || unit <= 0.0 { return Vec::new(); }
+    let circumference = std::f32::consts::TAU * radius;
+    let length = circumference * fraction.min(1.0);
+    let mut arcs = Vec::new();
+    let mut position = 0.0;
+    while position < length {
+        let dash = (4.0*unit).min(length-position);
+        arcs.push((position/radius,dash/circumference));
+        position += 6.0*unit;
+    }
+    arcs
 }
 
 fn matrix(scale: f32, x: f32, y: f32) -> Matrix3x2 {
@@ -363,6 +399,22 @@ mod tests {
         DefWindowProcW(hwnd, message, wparam, lparam)
     }
 
+    #[test]
+    fn dashed_weekly_sweep_preserves_gaps_and_never_exceeds_the_quota() {
+        assert!(dashed_sweep(17.0,0.0,0.68).is_empty());
+        for fraction in [0.01,0.23,1.0] {
+            let arcs = dashed_sweep(17.0,fraction,0.68);
+            assert!(!arcs.is_empty());
+            let mut last_end = 0.0;
+            for (index,(start,sweep)) in arcs.into_iter().enumerate() {
+                assert!(sweep > 0.0);
+                if index > 0 { assert!(start > last_end,"weekly ticks must have a visible gap"); }
+                last_end = start+sweep*std::f32::consts::TAU;
+                assert!(last_end <= fraction*std::f32::consts::TAU+0.00001);
+            }
+        }
+    }
+
     // Exercise the actual Windows graphics APIs, rather than just parsing XML.
     // The hidden windows belong to this test thread; Explorer is never accessed.
     #[test]
@@ -389,18 +441,35 @@ mod tests {
             for (provider, _) in LOGOS { assert!(renderer.logos.contains_key(provider), "SVG failed: {provider}"); }
             let mut frame = Frame { items:vec![
                 Indicator { id:"left".into(), provider:"claude".into(), inner:Some(0.21), outer:Some(0.09),
-                    text:"9%".into(), work_state:"busy".into(), dimmed:false },
+                    text:"9%".into(), work_state:"busy".into(), dimmed:false, inner_weekly:false, outer_weekly:true },
                 Indicator { id:"right".into(), provider:"codex".into(), inner:None, outer:Some(0.09),
-                    text:"9%".into(), work_state:"waiting".into(), dimmed:true },
-            ], dark:true, watch:0.5, critical:0.7 };
+                    text:"9%".into(), work_state:"waiting".into(), dimmed:true, inner_weekly:false, outer_weekly:true },
+            ], dark:true, watch:0.5, critical:0.7, appearance:crate::taskbar_model::Appearance::from_config(&crate::config::Config::default()) };
             renderer.draw(&frame, 1.0, Some(0), Some(1), 0.75).unwrap();
             frame.dark = false;
             renderer.draw(&frame, 1.0, None, None, 1.5).unwrap();
+            for size in [0.8,1.0,1.25] {
+                frame.appearance.size = size;
+                for transition in ["hard_step","ramp"] {
+                    frame.appearance.color_transition = transition.into();
+                    for dashed in [false,true] {
+                        frame.appearance.weekly_dashed = dashed;
+                        renderer.draw(&frame,1.0,Some(0),None,1.6).unwrap();
+                        // A weekly arc moved inside keeps its dashed style.
+                        frame.items[0].inner_weekly = true;
+                        frame.items[0].outer_weekly = false;
+                        renderer.draw(&frame,1.0,None,None,1.7).unwrap();
+                        frame.items[0].inner_weekly = false;
+                        frame.items[0].outer_weekly = true;
+                    }
+                }
+            }
+            frame.appearance.size = 1.0;
             // Every built-in document is also submitted through DrawSvgDocument.
             frame.items = LOGOS.iter().enumerate().map(|(index, (provider, _))| Indicator {
                 id:format!("fixture-{index}"), provider:(*provider).into(), inner:None,
                 outer:Some(index as f32 / 6.0), text:format!("{}%", index * 16),
-                work_state:"idle".into(), dimmed:index % 2 != 0,
+                work_state:"idle".into(), dimmed:index % 2 != 0, inner_weekly:false, outer_weekly:false,
             }).collect();
             renderer.resize(1120, 84).unwrap();
             renderer.draw(&frame, 2.0, Some(4), Some(5), 2.0).unwrap();

@@ -81,12 +81,8 @@ fn strip_geometry(app: &AppHandle) -> Option<StripGeometry> {
 #[cfg(windows)]
 fn native_frame(app: &AppHandle) -> crate::taskbar_model::Frame {
     let items = get_taskbar_items(app.clone());
-    let (watch,critical) = {
-        let state = app.state::<AppState>();
-        let cfg = state.cfg.lock().unwrap();
-        (cfg.watch_limit as f32,cfg.critical_limit as f32)
-    };
-    crate::taskbar_model::from_items(&items,crate::resolved_theme(app) != "light",watch,critical)
+    let cfg = app.state::<AppState>().cfg.lock().unwrap().clone();
+    crate::taskbar_model::from_items(&items,crate::resolved_theme(app) != "light",&cfg)
 }
 
 /// Called only for our own native window. Defer WebView operations beyond WndProc.

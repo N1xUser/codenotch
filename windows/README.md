@@ -30,6 +30,13 @@ have independent arcs; a weekly-only Codex plan has one outer arc, even when the
 provider calls that bucket `primary`. Activity is assigned only to an identified
 account; unknown ownership never animates a different account's indicator.
 
+Size, theme, warning thresholds, colour transition and weekly-ring position/style
+reuse the existing appearance settings. The weekly option controls an additional
+ring; an account with only a weekly quota keeps its one primary ring. Floating-notch
+visibility, adaptive pill, edge and screen controls are disabled in taskbar mode.
+Changes apply while the app runs. Large indicators are bounded by the taskbar height
+and available width. Use Outside to keep the weekly arc around the 5-hour arc.
+
 The strip uses an owned native child window and DirectComposition. It does not
 inject code, subclass Explorer or alter its controls. UI Automation finds free
 space; full screen apps, hidden taskbars or missing space hide the strip. Separate
