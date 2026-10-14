@@ -1147,6 +1147,22 @@ mod tests {
     }
 
     #[test]
+    fn restarting_preserves_the_official_floor_after_a_failed_account_attempt() {
+        let order = vec![prof(None), prof(Some("work"))];
+        let persisted = UsageSnapshot { accounts: vec![ClaudeAccountUsage {
+            id: "work".into(), fetched_at: EXP - 600_000, last_attempt_at: EXP,
+            status: "ok".into(), ..Default::default()
+        }], ..Default::default() };
+        let restored = restore_accounts(&persisted, &order, Some(&HashMap::new()), EXP + 60_000);
+        let work = &restored[&key(&order[1])];
+        assert_eq!(work.last_fetch, EXP);
+        assert!(!should_fetch(work.last_fetch, EXP + 60_000, &work.windows));
+        assert!(should_fetch(work.last_fetch, EXP + 300_000, &work.windows));
+        assert!(should_fetch(restored[&key(&order[0])].last_fetch, EXP + 60_000, &[]));
+        assert_eq!(aggregate(&order, &restored).accounts[1].last_attempt_at, EXP);
+    }
+
+    #[test]
     fn one_account_reads_exactly_as_before() {
         let w = decorate(vec![win("session")], &prof(None), None);
         assert_eq!(w[0].id, "session", "the only account keeps its ids");

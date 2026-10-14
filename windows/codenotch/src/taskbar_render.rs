@@ -211,6 +211,7 @@ impl Renderer {
             if let Some(fraction) = fraction.filter(|v| v.is_finite()).map(|v| v.clamp(0.0, 1.0)) {
                 let [r,g,b] = taskbar_model::usage_color(fraction,frame);
                 self.progress.SetColor(&rgba(r as f32/255.0,g as f32/255.0,b as f32/255.0,1.0));
+                let fraction = taskbar_model::meter_fraction(fraction,frame.appearance.shows_remaining);
                 if weekly && frame.appearance.weekly_dashed {
                     let unit = slot.radius / 25.0;
                     self.draw_dashed_arc(center,radius,1.0,&self.track,thickness,unit);

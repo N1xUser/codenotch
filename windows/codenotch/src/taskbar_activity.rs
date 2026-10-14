@@ -96,7 +96,7 @@ fn refresh_allowed(auth_busy: bool, backoff_until: u64, now: u64) -> bool {
 }
 
 /// True means a refresh was queued. False means the account is signing in or
-/// waiting out its own rate limit; clicking never clears either protection.
+/// waiting out its own rate limit or minimum interval; clicking never clears these protections.
 #[tauri::command]
 pub fn refresh_taskbar_item(app: AppHandle, id: String) -> Result<bool, String> {
     if let Some(account_id) = id.strip_prefix("claude@") {
@@ -105,13 +105,16 @@ pub fn refresh_taskbar_item(app: AppHandle, id: String) -> Result<bool, String> 
         if !crate::claude_accounts::profiles(&cfg).iter().any(|p| p.id == account_id && p.enabled) {
             return Err("Unknown or paused Claude account".into());
         }
-        let backoff_until = {
-            let usage = st.usage.lock().unwrap();
-            usage.accounts.iter().find(|a| a.id == account_id).map(|a| a.backoff_until)
-                .unwrap_or(if account_id == "default" && usage.accounts.is_empty() { usage.backoff_until } else { 0 })
-        };
         let now = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_millis() as u64).unwrap_or(0);
-        if !refresh_allowed(crate::claude_auth::state().busy, backoff_until, now) { return Ok(false); }
+        let (backoff_until, due) = {
+            let usage = st.usage.lock().unwrap();
+            usage.accounts.iter().find(|a| a.id == account_id)
+                .map(|a| (a.backoff_until, crate::usage::should_fetch(a.last_attempt_at.max(a.fetched_at), now, &a.windows)))
+                .unwrap_or_else(|| if account_id == "default" && usage.accounts.is_empty() {
+                    (usage.backoff_until, crate::usage::should_fetch(usage.fetched_at, now, &usage.windows))
+                } else { (0, true) })
+        };
+        if !due || !refresh_allowed(crate::claude_auth::state().busy, backoff_until, now) { return Ok(false); }
         crate::usage::request_account_refresh(account_id);
         return Ok(true);
     }

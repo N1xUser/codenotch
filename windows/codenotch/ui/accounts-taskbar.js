@@ -31,7 +31,7 @@
     if(a.status==='backoff'||/^Rate limited\b/i.test(a.note||''))return t('Waiting for the next automatic usage check','Aguardando a próxima consulta automática');
     if(a.status==='needsAuth') return t('Sign in again','Entre novamente');
     if(a.status==='error') return t('Could not update usage','Não foi possível atualizar o uso');
-    if(a.fetched_at && (a.status==='stale'||now-a.fetched_at>10*60*1000)) return t('Saved reading · waiting for update','Leitura anterior · aguardando atualização');
+    if(a.fetched_at && (a.status==='stale'||now-a.fetched_at>15*60*1000)) return t('Saved reading · waiting for update','Leitura anterior · aguardando atualização');
     return a.fetched_at?t('Connected','Conectada'):t('Waiting for the first reading','Aguardando a primeira leitura');
   }
   function stateNote(a){

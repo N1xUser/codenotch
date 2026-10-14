@@ -35,7 +35,7 @@ pub struct ClaudeProfileConfig {
 pub struct Config {
     #[serde(default)]
     pub claude_profiles: Vec<ClaudeProfileConfig>,
-    /// off | left | right; an owned overlay on the primary Windows taskbar.
+    /// off | left | right; an owned child window on the primary Windows taskbar.
     #[serde(default = "default_taskbar_mode")]
     pub taskbar_mode: String,
     #[serde(default = "default_taskbar_width")]

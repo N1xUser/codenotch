@@ -121,7 +121,7 @@ test('Work animation follows actual per-account activity instead of quota change
   }
 });
 test('Old quota is visibly marked stale even while another account is fresh',()=>{
-  const ctx=panelFns();assert.equal(ctx.isStale({status:'ok',fetched_at:Date.now()-15*60*1000}),true);
+  const ctx=panelFns();assert.equal(ctx.isStale({status:'ok',fetched_at:Date.now()-16*60*1000}),true);
   assert.equal(ctx.isStale({status:'needsAuth',fetched_at:Date.now()}),true);
   assert.equal(ctx.isStale({status:'ok',fetched_at:Date.now()}),false);
 });
@@ -181,7 +181,7 @@ test('Reset hints show a 5h time and a weekly weekday, date and time',()=>{
 
 // Execute the actual page script against a small DOM and a controlled timer queue.
 // Only IPC is stubbed: rendering and event handlers remain the production code.
-async function taskbarView(fixtures,{hover=false,selectedId=null,refreshResult=true,contentHeight=180,authState={}}={}){
+async function taskbarView(fixtures,{hover=false,selectedId=null,refreshResult=true,contentHeight=180,authState={},showsRemaining=false}={}){
   class Element{
     constructor(tag='div'){
       this.tagName=tag.toUpperCase();this.dataset={};this.style={};this.attributes={};this.handlers={};
@@ -227,6 +227,7 @@ async function taskbarView(fixtures,{hover=false,selectedId=null,refreshResult=t
         if(command==='get_claude_auth')return Promise.resolve(authState);
         if(command==='get_lang_resolved')return Promise.resolve('pt-BR');
         if(command==='get_theme_resolved')return Promise.resolve('dark');
+        if(command==='get_notch_shows_remaining')return Promise.resolve(showsRemaining);
         if(command==='get_glyphs')return Promise.resolve({claude:{kind:'svg',svg:'<svg fill="currentColor"></svg>'}});
         if(command==='refresh_taskbar_item')return Promise.resolve(refreshResult);
         return Promise.resolve();
@@ -267,6 +268,54 @@ test('A weekly-only Codex account renders 9% on only its outer ring with no phan
   assert.equal(chip.querySelector('.outer-progress').style.opacity,'1');
   assert.equal(chip.querySelector('.inner-track').style.opacity,'0');
   assert.equal(chip.querySelector('.inner-progress').style.opacity,'0');
+});
+test('Remaining mode updates both arcs and the number while keeping consumption warning colours',async()=>{
+  const item=account('claude',[{id:'session',used:.71},{id:'weekly_all',used:0}]);
+  const view=await taskbarView([item],{showsRemaining:true}),chip=view.chip(item.id);
+  assert.equal(chip.querySelector('.pct').textContent,'100%');
+  const fraction=selector=>{const [arc,circle]=chip.querySelector(selector).style.strokeDasharray.split(' ').map(Number);return arc/circle;};
+  assert.equal(fraction('.outer-progress'),1);
+  assert.equal(chip.querySelector('.outer-progress').style.opacity,'1');
+  assert.ok(Math.abs(fraction('.inner-progress')-.29)<1e-10);
+  assert.equal(chip.querySelector('.inner-progress').style.stroke,'var(--bad)');
+  view.events.get('notch_shows_remaining')({payload:false});
+  assert.equal(chip.querySelector('.pct').textContent,'0%');
+  assert.equal(chip.querySelector('.outer-progress').style.opacity,'0');
+});
+test('Remaining mode also applies to detail values and bars while preserving the actual used amount',async()=>{
+  const item=account('codex',[{id:'primary',label:'Weekly limit',used:.09}]);
+  const view=await taskbarView([item],{hover:true,selectedId:item.id,showsRemaining:true});
+  const html=view.node('cards').innerHTML;
+  assert.match(html,/>91%<\/strong>/);assert.match(html,/width:91%/);
+  assert.match(html,/91% restante · 9% usado/);
+  assert.match(html,/Atualizado há menos de um minuto/);
+});
+test('Claude expired and stale quotas stay available as history without suggesting live arcs',async()=>{
+  const now=Date.now(),old=account('claude',[{id:'session',used:.71,resets_at:now-1000},{id:'weekly_all',used:.23,resets_at:now+3600000}],{id:'claude@old'});
+  const fresh=account('claude',[{id:'weekly_all',used:.4}],{id:'claude@fresh'});
+  const view=await taskbarView([old,fresh]);
+  assert.equal(view.chip(old.id).querySelector('.inner-track').style.opacity,'0');
+  assert.equal(view.chip(old.id).querySelector('.pct').textContent,'23%');
+  old.snapshot.fetched_at=now-16*60*1000;
+  view.events.get('notch_shows_remaining')({payload:false});
+  assert.equal(view.chip(old.id).querySelector('.pct').textContent,'—');
+  assert.equal(view.chip(fresh.id).querySelector('.pct').textContent,'40%');
+  const details=await taskbarView([old],{hover:true,selectedId:old.id});
+  assert.match(details.node('cards').innerHTML,/Última renovação informada/);
+  assert.match(details.node('cards').innerHTML,/Atualizado há 16 min/);
+  assert.match(details.node('cards').innerHTML,/71% usado/);
+});
+test('Enterprise accounts with only a spend quota still have a reported percentage',()=>{
+  const ctx=panelFns(),item=account('claude',[{id:'spend',label:'Spend limit',used:.31}]);
+  assert.equal(ctx.headline(item).id,'spend');assert.equal(ctx.displayPercent(item),31);
+});
+test('Taskbar mode leaves shared appearance controls enabled, including remaining display',()=>{
+  const settings=readFileSync(join(__dirname,'codenotch/ui/settings.html'),'utf8');
+  const disabled=[...settings.matchAll(/<fieldset[^>]*data-notch-only[^>]*>([\s\S]*?)<\/fieldset>/g)].map(match=>match[1]).join('\n');
+  for(const id of ['seg-show','sw-fullscreen','sw-adaptive','seg-edge','screen','btn-recentre'])assert.match(disabled,new RegExp('id="'+id+'"'));
+  for(const id of ['sw-remaining','seg-size','seg-theme','seg-weekly','sw-weekly-dashed','seg-transition','range-watch','range-critical']){
+    assert.match(settings,new RegExp('id="'+id+'"'));assert.doesNotMatch(disabled,new RegExp('id="'+id+'"'));
+  }
 });
 test('Unknown or absent quotas do not leave tracks that suggest an available limit',async()=>{
   const item=account('codex',[{id:'primary',label:'Monthly limit',used:.35}]),view=await taskbarView([item]),chip=view.chip(item.id);

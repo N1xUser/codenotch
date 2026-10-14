@@ -20,6 +20,7 @@ pub struct Appearance {
     pub weekly_dashed: bool,
     pub color_transition: String,
     pub size: f32,
+    pub shows_remaining: bool,
 }
 
 impl Appearance {
@@ -27,7 +28,7 @@ impl Appearance {
         Self { weekly_ring:config::weekly_ring_or_off(&cfg.weekly_ring),
             weekly_dashed:cfg.weekly_ring_dashed,
             color_transition:config::color_transition_or_step(&cfg.color_transition),
-            size:config::snap_scale(cfg.scale) as f32 }
+            size:config::snap_scale(cfg.scale) as f32, shows_remaining:cfg.notch_shows_remaining }
     }
 }
 
@@ -96,7 +97,7 @@ fn codex_window(window: &LimitWindow) -> Option<CodexWindow> {
 fn headline(item: &Item) -> Option<&LimitWindow> {
     let windows = &item.snapshot.windows;
     match item.provider.as_str() {
-        "claude" => by_id(windows, "session").or_else(|| by_id(windows, "five_hour")),
+        "claude" => by_id(windows, "session").or_else(|| by_id(windows, "five_hour")).or_else(|| by_id(windows, "spend")),
         "codex" => windows.iter().find(|window| codex_window(window) == Some(CodexWindow::FiveHour)),
         provider => {
             let default = match provider {
@@ -132,6 +133,15 @@ fn fraction(window: Option<&LimitWindow>) -> Option<f32> {
     Some(window.used.clamp(0.0, 1.0) as f32)
 }
 
+fn live_fraction(item: &Item, window: Option<&LimitWindow>, now: u64) -> Option<f32> {
+    if item.provider == "claude" && (item.snapshot.status != "ok" || item.snapshot.fetched_at == 0
+        || now.saturating_sub(item.snapshot.fetched_at) > 15 * 60 * 1000
+        || window.is_some_and(|w| w.resets_at.is_some_and(|reset| reset <= now))) { return None; }
+    fraction(window)
+}
+
+pub fn meter_fraction(used: f32, remaining: bool) -> f32 { if remaining { 1.0-used } else { used } }
+
 pub fn from_items(items: &[Item], dark: bool, cfg: &Config) -> Frame {
     let watch = cfg.watch_limit as f32;
     let critical = cfg.critical_limit as f32;
@@ -144,8 +154,8 @@ pub fn from_items(items: &[Item], dark: bool, cfg: &Config) -> Frame {
             let dual = matches!(item.provider.as_str(), "claude" | "codex");
             let main = headline(item);
             let weekly = weekly(item,cfg);
-            let session = fraction(main);
-            let week = fraction(weekly);
+            let session = live_fraction(item,main,now);
+            let week = live_fraction(item,weekly,now);
             let same = main.zip(weekly).is_some_and(|(a,b)| a.id == b.id);
             // The weekly option controls an additional ring. A sole available
             // weekly quota remains the primary outer ring, as in the original notch.
@@ -156,15 +166,16 @@ pub fn from_items(items: &[Item], dark: bool, cfg: &Config) -> Frame {
                 (None,Some(week),_,_) => (None,Some(week),false,true),
                 _ => (None,None,false,false),
             };
-            let shown = if dual { week } else { session };
+            let shown = if dual { week.or_else(|| if main.is_some_and(|w| w.id == "spend") { session } else { None }) } else { session };
             Indicator {
                 id: item.id.clone(), provider: item.provider.clone(),
                 inner, outer, inner_weekly, outer_weekly,
-                // Claude/Codex numbers are weekly only; missing never means 0%.
-                text: shown.map(|used| format!("{}%", (used * 100.0).round() as u32)).unwrap_or_else(|| "—".into()),
+                // Core Claude/Codex numbers are weekly; Enterprise can publish
+                // only a spend quota. A missing quota never means 0%.
+                text: shown.map(|used| format!("{}%", if appearance.shows_remaining { 100-(used*100.0).round() as u32 } else { (used*100.0).round() as u32 })).unwrap_or_else(|| "—".into()),
                 work_state: match item.work_state.as_str() { "busy" => "busy", "waiting" => "waiting", _ => "idle" }.into(),
                 dimmed: item.snapshot.status != "ok" || item.snapshot.fetched_at == 0
-                    || now.saturating_sub(item.snapshot.fetched_at) > 10 * 60 * 1000,
+                    || now.saturating_sub(item.snapshot.fetched_at) > 15 * 60 * 1000,
             }
         }).collect(),
         dark, watch, critical, appearance,
@@ -292,11 +303,43 @@ mod tests {
         let mut saved = item("claude", vec![window("weekly_all", "", 0.23)]);
         saved.snapshot.status = "stale".into(); saved.work_state = "waiting".into();
         let shown = indicator(saved);
-        assert!(shown.dimmed); assert_eq!(shown.outer, Some(0.23)); assert_eq!(shown.work_state, "waiting");
+        assert!(shown.dimmed); assert_eq!(shown.outer, None); assert_eq!(shown.text, "—"); assert_eq!(shown.work_state, "waiting");
         let mut unknown = item("codex", vec![]); unknown.snapshot.fetched_at = 0; unknown.work_state = "invalid".into();
         assert!(indicator(unknown).dimmed);
         assert_eq!(indicator(item("codex", vec![])).work_state, "idle");
         assert!(!indicator(item("codex", vec![])).dimmed);
+    }
+    #[test]
+    fn claude_hides_expired_or_old_quotas_without_blanketing_a_fresh_account() {
+        let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis() as u64;
+        let mut saved = item("claude", vec![window("session", "", 0.71), window("weekly_all", "", 0.23)]);
+        saved.snapshot.fetched_at = now;
+        saved.snapshot.windows[0].resets_at = Some(now - 1);
+        let shown = indicator(saved.clone());
+        assert_eq!((shown.inner, shown.outer, shown.text.as_str()), (None, Some(0.23), "23%"));
+        saved.snapshot.fetched_at = now - 16 * 60 * 1000;
+        let fresh = item("claude", vec![window("weekly_all", "", 0.4)]);
+        let frame = from_items(&[saved, fresh], true, &config());
+        assert_eq!((frame.items[0].outer, frame.items[0].text.as_str()), (None, "—"));
+        assert_eq!((frame.items[1].outer, frame.items[1].text.as_str()), (Some(0.4), "40%"));
+    }
+    #[test]
+    fn remaining_mode_inverts_meter_and_text_but_warning_colour_still_uses_consumption() {
+        let account = item("claude", vec![window("session", "", 0.71), window("weekly_all", "", 0.23)]);
+        let used = from_items(std::slice::from_ref(&account), true, &config());
+        let remaining = from_items(&[account], true, &Config { notch_shows_remaining:true, ..config() });
+        assert_eq!(remaining.items[0].text, "77%");
+        assert_eq!(remaining.items[0].inner, used.items[0].inner);
+        assert!(remaining.appearance.shows_remaining);
+        assert!((meter_fraction(0.71, true) - 0.29).abs() < 0.001);
+        assert_eq!(usage_color(0.71, &remaining), usage_color(0.71, &used));
+        assert_eq!(meter_fraction(0.0, true), 1.0);
+        assert_eq!(meter_fraction(1.0, true), 0.0);
+    }
+    #[test]
+    fn enterprise_spend_only_is_a_single_primary_limit() {
+        let shown = indicator(item("claude", vec![window("spend", "Spend limit", 0.31)]));
+        assert_eq!((shown.inner, shown.outer, shown.text.as_str()), (None, Some(0.31), "31%"));
     }
     #[test]
     fn invalid_thresholds_cannot_make_a_frame_nonfinite() {
