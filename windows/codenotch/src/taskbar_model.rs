@@ -315,7 +315,8 @@ mod tests {
         let mut saved = item("claude", vec![window("session", "", 0.71), window("weekly_all", "", 0.23)]);
         saved.snapshot.fetched_at = now;
         saved.snapshot.windows[0].resets_at = Some(now - 1);
-        let shown = indicator(saved.clone());
+        let frame = from_items(std::slice::from_ref(&saved), true, &config());
+        let shown = &frame.items[0];
         assert_eq!((shown.inner, shown.outer, shown.text.as_str()), (None, Some(0.23), "23%"));
         saved.snapshot.fetched_at = now - 16 * 60 * 1000;
         let fresh = item("claude", vec![window("weekly_all", "", 0.4)]);

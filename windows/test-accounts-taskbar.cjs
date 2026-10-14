@@ -450,7 +450,7 @@ function settingsStatusFns(auth={}){
 }
 test('Settings show the same real retry countdown and deadline for each individual account',()=>{
   const ctx=settingsStatusFns(),now=new Date(2026,9,13,16,0).getTime();
-  const a={id:'irani',enabled:true,connected:true,status:'stale',fetched_at:now-900000,backoff_until:now+480000,note:'Rate limited, retrying in 480s'};
+  const a={id:'limited',enabled:true,connected:true,status:'stale',fetched_at:now-900000,backoff_until:now+480000,note:'Rate limited, retrying in 480s'};
   assert.match(ctx.stateLabel(a,now),/Consulta limitada.*8m 00s.*16:08/);
   assert.match(ctx.stateLabel(a,now+170000),/5m 10s.*16:08/);
   assert.equal(ctx.stateNote(a),'','the historical 480s note must not contradict the countdown');
@@ -473,7 +473,7 @@ async function settingsView(fixtures,status=''){
 }
 test('Settings expose escaped account errors and replace the frozen rate-limit note with live status',async()=>{
   const node=await settingsView([
-    {id:'irani',name:'Irani',enabled:true,connected:true,status:'stale',fetched_at:Date.now()-900000,backoff_until:Date.now()+480000,note:'Rate limited, retrying in 480s',path:'fixture'},
+    {id:'limited',name:'Limited account',enabled:true,connected:true,status:'stale',fetched_at:Date.now()-900000,backoff_until:Date.now()+480000,note:'Rate limited, retrying in 480s',path:'fixture'},
     {id:'work',name:'Trabalho',enabled:true,connected:true,status:'error',note:'<img onerror="run()">',path:'fixture'},
   ]);
   assert.match(node('claude-profiles').innerHTML,/Consulta limitada.*nova tentativa em/);
