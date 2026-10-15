@@ -82,6 +82,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private(set) var waitingProviderIDs: Set<String> = []
     /// Started waiting since the item was last drawn, so owed their one nudge.
     private var waitingSinceLastDraw: Set<String> = []
+    /// Finished work since the item was last drawn, so owed their blinks.
+    /// Readable so the rule for "finished" can be tested without a status item.
+    private(set) var finishedSinceLastDraw: Set<String> = []
+    /// Each provider's sessions as last reported, by session id — what a
+    /// session was is what says whether it has just finished.
+    private var lastSessionStates: [String: [String: AgentSession.State]] = [:]
     /// Pulses the marks of the entries that are working without drawing a
     /// second, independently tinted copy of each mark over AppKit's image.
     private let pulse = StatusItemPulse()
@@ -163,6 +169,10 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         countdownTimer = nil
         pulse.clear()
         waitingBadges.clear()
+        // Owed to a bar that is no longer there: shown again later, it would
+        // blink for work that ended while it was hidden.
+        waitingSinceLastDraw.removeAll()
+        finishedSinceLastDraw.removeAll()
         stopObservingStatusWindow()
         for (center, token) in observers { center.removeObserver(token) }
         observers = []
@@ -259,12 +269,29 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     /// Called by the activity coordinator with provider-specific normalized
     /// sessions. Actual work (`busy`) pulses; a session waiting on a reply
     /// puts a red dot on the mark, and takes precedence over work from another
-    /// session of the same provider. Success and an open-but-idle process are
-    /// deliberately static.
+    /// session of the same provider. Work that has just ended blinks the mark
+    /// a few times as the pulse stops; after that, success and an
+    /// open-but-idle process are static.
     func setActivity(providerID: String, sessions: [AgentSession]) {
         let isActive = sessions.contains { $0.state == .busy }
         let isWaiting = sessions.contains { $0.state == .waiting }
+        // Finished as the notch's completion watcher means it: a session that
+        // was busy and now is not, without stopping to ask anything — Claude
+        // ends a turn at `idle`, others at `success`. A session seen for the
+        // first time has no "was", so nothing already running at launch
+        // blinks. Only once the provider has no work left: while another of
+        // its sessions is busy, the pulse goes on and says so.
+        let was = lastSessionStates[providerID] ?? [:]
+        let finished = !isActive && !isWaiting && sessions.contains { session in
+            guard let before = was[session.id] else { return false }
+            return SessionCompletionWatcher.reason(from: before, to: session.state) == .finished
+        }
+        lastSessionStates[providerID] = Dictionary(sessions.map { ($0.id, $0.state) },
+                                                   uniquingKeysWith: { _, last in last })
         var changed = false
+        if finished, finishedSinceLastDraw.insert(providerID).inserted {
+            changed = true
+        }
         if isActive {
             changed = activeProviderIDs.insert(providerID).inserted || changed
         } else {
@@ -325,11 +352,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             pulse.clear()
         } else {
             pulse.update(view: button, imageSize: artwork.size, glyphs: glyphs, working: working)
-            pulse.nudge(waitingSinceLastDraw.intersection(waiting))
+            pulse.nudge(waitingSinceLastDraw.intersection(waiting), .waiting)
+            pulse.nudge(finishedSinceLastDraw.intersection(visibleProviderIDs).subtracting(working), .finished)
         }
         // Owed once, on the draw that first shows the wait. A provider that
         // started waiting while it was off the bar arrives without one.
         waitingSinceLastDraw.removeAll()
+        finishedSinceLastDraw.removeAll()
     }
 
     private func scheduleCountdown(at change: Date?) {

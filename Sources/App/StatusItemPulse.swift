@@ -27,12 +27,53 @@ final class StatusItemPulse {
     /// How long a mark takes to come back to full once its provider stops.
     static let settleDuration: CFTimeInterval = 0.3
     private static let settleKey = "activity-settle"
-    /// Two quick dips when a provider starts waiting on a reply, then nothing:
-    /// enough for the eye to catch the red dot arriving, and over before it
-    /// could become one more thing on the bar that moves.
-    static let nudgeKey = "waiting-nudge"
-    static let nudgeDuration: CFTimeInterval = 1.0
+    static let nudgeKey = "activity-nudge"
     static let nudgeDimmest: Float = 0.15
+
+    /// A mark dipping a few times on a state change, then nothing.
+    enum Nudge: Equatable {
+        /// Two quick dips when a provider starts waiting on a reply: enough
+        /// for the eye to catch the red dot arriving, and over before it could
+        /// become one more thing on the bar that moves.
+        case waiting
+        /// Three double blinks, a beat apart, when a provider's work ends: the
+        /// breath stops with a signal rather than just fading out, so "done"
+        /// can be noticed after the fact and not only while watching.
+        case finished
+
+        /// One double blink: down, up, down, up.
+        static let blink: CFTimeInterval = 0.6
+        /// Still, between double blinks, so three read as three.
+        static let beat: CFTimeInterval = 0.6
+        static let finishedRepeats = 3
+
+        var duration: CFTimeInterval {
+            switch self {
+            case .waiting: return 1.0
+            case .finished: return Double(Self.finishedRepeats) * (Self.blink + Self.beat) - Self.beat
+            }
+        }
+
+        /// Opacity and when, as fractions of `duration`.
+        var keyframes: (values: [Float], times: [Double]) {
+            let dip = StatusItemPulse.nudgeDimmest
+            switch self {
+            case .waiting:
+                return ([1, dip, 1, dip, 1], [0, 0.25, 0.5, 0.75, 1])
+            case .finished:
+                var values: [Float] = []
+                var times: [Double] = []
+                for repeatIndex in 0..<Self.finishedRepeats {
+                    let start = Double(repeatIndex) * (Self.blink + Self.beat)
+                    for (step, value) in [Float(1), dip, 1, dip, 1].enumerated() {
+                        values.append(value)
+                        times.append((start + Self.blink * Double(step) / 4) / duration)
+                    }
+                }
+                return (values, times)
+            }
+        }
+    }
 
     private weak var view: NSView?
     /// The layer the mask was put on, so a replaced layer does not keep it.
@@ -50,7 +91,7 @@ final class StatusItemPulse {
     /// Marks nudging once, and when they started. Kept apart from `marks`,
     /// which `update` reconciles against what is working: a nudge is not
     /// work, and must run its course whatever the next redraw says.
-    private var nudges: [String: (mark: CALayer, since: Date)] = [:]
+    private var nudges: [String: (mark: CALayer, since: Date, kind: Nudge)] = [:]
 
     init() {
         rest.fillRule = .evenOdd
@@ -62,6 +103,9 @@ final class StatusItemPulse {
     var pulsing: Set<String> { Set(marks.keys).subtracting(settling.keys) }
     /// The providers whose marks are in the middle of a nudge.
     var nudging: Set<String> { Set(nudges.keys) }
+
+    /// Which nudge a provider's mark is in the middle of, if any.
+    func nudge(for providerID: String) -> Nudge? { nudges[providerID]?.kind }
 
     /// Called whenever the item is redrawn. `glyphs` are every entry's mark,
     /// `working` the ones to pulse.
@@ -76,6 +120,8 @@ final class StatusItemPulse {
             if glyphs[id] != nil { settle(id, mark) } else { remove(id) }
         }
         for id in working where glyphs[id] != nil {
+            // Back at work mid-nudge: the breath takes the column back.
+            if nudges[id] != nil { removeNudge(id) }
             let mark = marks[id] ?? makeMark(id)
             if settling.removeValue(forKey: id) != nil { mark.removeAnimation(forKey: Self.settleKey) }
             addPulse(to: mark)
@@ -100,10 +146,10 @@ final class StatusItemPulse {
         layout()
     }
 
-    /// Dip each of these marks twice and let it be. Call after `update`, with
-    /// the glyphs it was given; a provider not on the bar, or already nudging,
-    /// is left alone.
-    func nudge(_ ids: Set<String>) {
+    /// Run `kind` once on each of these marks and let them be. Call after
+    /// `update`, with the glyphs it was given; a provider not on the bar, or
+    /// already nudging, is left alone.
+    func nudge(_ ids: Set<String>, _ kind: Nudge = .waiting) {
         guard view != nil else { return }
         purgeNudges()
         for id in ids where glyphs[id] != nil && nudges[id] == nil {
@@ -114,7 +160,7 @@ final class StatusItemPulse {
             let mark = CALayer()
             mark.backgroundColor = NSColor.black.cgColor
             mask.addSublayer(mark)
-            nudges[id] = (mark, Date())
+            nudges[id] = (mark, Date(), kind)
             CATransaction.begin()
             CATransaction.setCompletionBlock { [weak self] in
                 MainActor.assumeIsolated {
@@ -124,10 +170,12 @@ final class StatusItemPulse {
                 }
             }
             let dips = CAKeyframeAnimation(keyPath: "opacity")
-            dips.values = [Float(1), Self.nudgeDimmest, 1, Self.nudgeDimmest, 1] as [Float]
-            dips.keyTimes = [0, 0.25, 0.5, 0.75, 1]
-            dips.timingFunctions = Array(repeating: CAMediaTimingFunction(name: .easeInEaseOut), count: 4)
-            dips.duration = Self.nudgeDuration
+            let frames = kind.keyframes
+            dips.values = frames.values
+            dips.keyTimes = frames.times.map { NSNumber(value: $0) }
+            dips.timingFunctions = Array(repeating: CAMediaTimingFunction(name: .easeInEaseOut),
+                                         count: frames.values.count - 1)
+            dips.duration = kind.duration
             mark.add(dips, forKey: Self.nudgeKey)
             CATransaction.commit()
         }
@@ -199,7 +247,7 @@ final class StatusItemPulse {
     /// ran — is over all the same.
     private func purgeNudges() {
         let now = Date()
-        for (id, nudge) in nudges where now.timeIntervalSince(nudge.since) > Self.nudgeDuration + 0.5 {
+        for (id, nudge) in nudges where now.timeIntervalSince(nudge.since) > nudge.kind.duration + 0.5 {
             removeNudge(id)
         }
     }

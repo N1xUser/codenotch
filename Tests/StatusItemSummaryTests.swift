@@ -861,6 +861,43 @@ final class StatusItemSummaryTests: XCTestCase {
         XCTAssertTrue(pulse.nudging.isEmpty)
         XCTAssertNil(view.layer?.mask)
     }
+
+    func testFinishedWorkBlinksTwiceThreeTimesAsItsBreathStops() throws {
+        let result = summary([claude(0.72, resetIn: hour), codex(0.41, resetIn: 2 * hour)])
+        let artwork = StatusItemArtwork(summary: result,
+                                        font: .monospacedDigitSystemFont(ofSize: 13, weight: .regular),
+                                        height: 22)
+        let view = NSView(frame: NSRect(x: 0, y: 0, width: artwork.size.width + 14, height: 22))
+        view.wantsLayer = true
+        let glyphs = Dictionary(uniqueKeysWithValues: result.entries.compactMap { entry in
+            artwork.glyphFrame(for: entry.id).map { (entry.id, $0) }
+        })
+        let pulse = StatusItemPulse()
+        pulse.update(view: view, imageSize: artwork.size, glyphs: glyphs, working: ["codex"])
+        // Work ends: the breath stops, and the blinks take its column.
+        pulse.update(view: view, imageSize: artwork.size, glyphs: glyphs, working: [])
+        pulse.nudge(["codex"], .finished)
+
+        XCTAssertEqual(pulse.nudge(for: "codex"), .finished)
+        XCTAssertTrue(pulse.pulsing.isEmpty)
+        let mask = try XCTUnwrap(view.layer?.mask)
+        let marks = (mask.sublayers ?? []).filter { !($0 is CAShapeLayer) }
+        XCTAssertEqual(marks.count, 1, "one column for the mark, not a settling breath under the blinks")
+        let blinks = try XCTUnwrap(marks.first?.animation(forKey: StatusItemPulse.nudgeKey) as? CAKeyframeAnimation)
+        let values = try XCTUnwrap(blinks.values as? [Float])
+        let times = try XCTUnwrap(blinks.keyTimes).map(\.doubleValue)
+        XCTAssertEqual(values.filter { $0 == StatusItemPulse.nudgeDimmest }.count, 6, "three double blinks")
+        XCTAssertEqual(times.first, 0)
+        XCTAssertEqual(try XCTUnwrap(times.last), 1, accuracy: 1e-9)
+        XCTAssertEqual(times, times.sorted(), "keyframes run forward")
+        XCTAssertEqual(blinks.repeatCount, 0)
+        XCTAssertEqual(blinks.duration, StatusItemPulse.Nudge.finished.duration)
+
+        // Back to work mid-blink: the breath takes over at once.
+        pulse.update(view: view, imageSize: artwork.size, glyphs: glyphs, working: ["codex"])
+        XCTAssertNil(pulse.nudge(for: "codex"))
+        XCTAssertEqual(pulse.pulsing, ["codex"])
+    }
 }
 
 /// The menu bar choice on its own: what "never chosen" means, and how the
