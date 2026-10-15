@@ -101,8 +101,13 @@ struct StatusItemSummary: Equatable {
             percent = Percent.whole(for: fraction) + "%"
         }
         let countdown = window?.resetsAt.flatMap { ResetCopy.countdown(to: $0, now: now) }
+        // A remote login's "slug" would be `<kind>-remote-<uuid>` — its
+        // display name is the user's own short word for it, and the label.
         let label = sharesMark
-            ? ClaudeProfile.slug(fromProviderID: snapshot.id) ?? CodexProfile.slug(fromProviderID: snapshot.id)
+            ? (RemoteHost.isRemote(providerID: snapshot.id)
+                ? snapshot.displayName
+                : ClaudeProfile.slug(fromProviderID: snapshot.id) ?? CodexProfile.slug(fromProviderID: snapshot.id)
+                ?? CommandCodeProfile.slug(fromProviderID: snapshot.id))
             : nil
         let weeklyWindow = showingWeeklyLimit ? snapshot.weeklyLimitWindow : nil
         let weeklyIsOver = weeklyWindow?.resetsAt.map { $0 <= now } ?? false
@@ -206,17 +211,21 @@ struct StatusItemArtwork {
     /// say anything.
     private var ruleAlpha: CGFloat { 0.35 }
 
-    /// The widest either figure gets in the ordinary run of a window, measured
-    /// in the current language. Each is given at least this much room, so the
-    /// item keeps one width from the start of a window to its reset — the
-    /// items to its left would otherwise shuffle every time "10%" became "9%"
-    /// or "1h 00m" became "59m".
-    private var percentRoom: CGFloat { width("00%") }
-    private var countdownRoom: CGFloat {
-        let now = Date(timeIntervalSinceReferenceDate: 0)
-        return width(ResetCopy.countdown(to: now.addingTimeInterval(5 * 3600 - 30), now: now) ?? "")
-    }
-
+    /// As wide as what it says, and no wider.
+    ///
+    /// The figures used to be padded to the widest reading each could take, so
+    /// the item held one width from the start of a window to its reset. That
+    /// room is empty whenever the figures are shorter, and it is emptiest
+    /// exactly when the bar is most worth reading: "0% · 8m" is eight
+    /// characters printed in a space kept for thirteen, and no arrangement of
+    /// it inside the item looked like anything but a hole — in front of the
+    /// figure it left "0%" adrift of its own mark, behind it left the item
+    /// trailing blank into its neighbour.
+    ///
+    /// The width moves instead, and less often than the padding suggests:
+    /// monospaced digits mean it changes only when a figure gains or loses a
+    /// character, which across a whole five-hour window happens five times for
+    /// one provider — see `testTheItemChangesWidthOnlyAsTheFiguresChangeShape`.
     var size: NSSize { NSSize(width: layout().width, height: height) }
 
     func image() -> NSImage {
@@ -272,15 +281,10 @@ struct StatusItemArtwork {
                 text(StatusItemSummary.Entry.unknown, alpha: alpha)
                 continue
             }
-            // Right-aligned, so the "%" stays put and the figure grows leftward.
-            let percentWidth = width(entry.percent)
-            x += max(0, percentRoom - percentWidth)
             text(entry.percent, alpha: alpha)
             if !summary.isCompact {
                 text(separator, alpha: alpha)
-                let start = x
                 text(entry.countdown, alpha: alpha)
-                x = max(x, start + countdownRoom)
             }
         }
         return (x.rounded(.up), marks, glyphFrames)

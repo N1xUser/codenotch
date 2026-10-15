@@ -714,6 +714,138 @@ final class AntigravityBridgeTests: XCTestCase {
         """
         XCTAssertEqual(AntigravityBridge.parsePorts(fromLSOF: output), [63881, 63882])
     }
+
+    /// The server refuses an absolute `--app_data_dir` outright, before it reads
+    /// anything, and the message ("must not be absolute") looks like a
+    /// configuration problem rather than the path mistake it is. The IDE passes
+    /// a bare name, and so must we.
+    func testTheStartedServerGetsANameForItsDataDirectoryNotAPath() {
+        let args = AntigravityBridge.arguments(token: "t")
+        let index = try? XCTUnwrap(args.firstIndex(of: "--app_data_dir"))
+        XCTAssertNotNil(index)
+        let value = args[(index ?? 0) + 1]
+        XCTAssertFalse(value.hasPrefix("/"), "an absolute --app_data_dir kills the server")
+        XCTAssertFalse(value.contains("~"))
+    }
+
+    /// Same flags the IDE passes, minus everything that wires it to a running
+    /// IDE. `--standalone` is what makes starting one without an IDE legal, and
+    /// `--csrf_token` is what `discover()` later matches on to find the server
+    /// we started — so without it this one would be invisible to the next poll.
+    func testTheStartedServerIsDiscoverableAndSelfContained() {
+        let args = AntigravityBridge.arguments(token: "tok-123")
+        XCTAssertTrue(args.contains("--standalone"))
+        XCTAssertEqual(AntigravityBridge.value(of: "--csrf_token", in: args.joined(separator: " ")), "tok-123")
+        XCTAssertTrue(args.contains("--https_server_port"))
+        // Nothing that names a running IDE, which there is none of.
+        XCTAssertFalse(args.contains { $0.contains("host_bridge") })
+    }
+
+    /// The port is left at 0 so the server picks one and `lsof` finds it, the
+    /// same way the IDE's own is found. Handing it a port chosen here would race
+    /// whatever claimed it in between.
+    func testThePortIsLeftForTheServerToChoose() {
+        let args = AntigravityBridge.arguments(token: "t")
+        let joined = args.joined(separator: " ")
+        XCTAssertEqual(AntigravityBridge.value(of: "--https_server_port", in: joined), "0")
+    }
+
+    /// A data directory of its own, so two writers never reach the IDE's SQLite
+    /// files if it is launched while a started server is still up.
+    func testTheStartedServerDoesNotShareTheIDEsDataDirectory() {
+        let joined = AntigravityBridge.arguments(token: "t").joined(separator: " ")
+        XCTAssertNotEqual(
+            AntigravityBridge.value(of: "--app_data_dir", in: joined), "antigravity")
+    }
+
+    /// The spawn itself, driven through the seam that replaces `run()` so a test
+    /// launches nothing. What matters is the Process we would have started: the
+    /// flags, and stdout not inherited — the server logs there, and the app's
+    /// stdout is not somewhere it should write.
+    func testStartingOneBuildsTheServerAndDoesNotInheritStdout() throws {
+        let owned = AntigravityBridge.Owned()
+        defer { owned.stop() }
+
+        var built: Process?
+        let endpoint = try XCTUnwrap(owned.endpointOrStart(
+            binary: URL(fileURLWithPath: "/Applications/Antigravity.app/Contents/Resources/bin/language_server"),
+            start: { built = $0; return true }))
+
+        let process = try XCTUnwrap(built)
+        XCTAssertTrue(process.arguments?.contains("--standalone") == true)
+        XCTAssertTrue((process.standardOutput as AnyObject) === FileHandle.nullDevice)
+        XCTAssertTrue((process.standardError as AnyObject) === FileHandle.nullDevice)
+        // Ports arrive empty: the server has not bound yet, and asking it here
+        // would be asking before it has listened.
+        XCTAssertTrue(endpoint.ports.isEmpty)
+        XCTAssertNotNil(endpoint.csrfToken)
+    }
+
+    /// A second poll must not start a second server. Two would bind their own
+    /// ports and one would be dialled for nothing.
+    func testStartingTwiceKeepsTheFirstServer() throws {
+        let owned = AntigravityBridge.Owned()
+        defer { owned.stop() }
+
+        var starts = 0
+        let binary = URL(fileURLWithPath: "/tmp/language_server")
+        let first = try XCTUnwrap(owned.endpointOrStart(binary: binary, start: { _ in starts += 1; return true }))
+        let second = try XCTUnwrap(owned.endpointOrStart(binary: binary, start: { _ in starts += 1; return true }))
+        XCTAssertEqual(starts, 1, "started a second server")
+        XCTAssertEqual(first.csrfToken, second.csrfToken)
+    }
+
+    /// A server that will not start leaves nothing behind to be dialled later.
+    func testAServerThatFailsToStartIsNotRemembered() {
+        let owned = AntigravityBridge.Owned()
+        XCTAssertNil(owned.endpointOrStart(binary: URL(fileURLWithPath: "/tmp/x"), start: { _ in false }))
+        XCTAssertNil(owned.current)
+    }
+
+    /// Ports are filled in once, and only once there are some — an empty set
+    /// means "not bound yet", not "bound on no ports".
+    func testPortsAreRecordedOnlyOnceTheServerHasBound() throws {
+        let owned = AntigravityBridge.Owned()
+        defer { owned.stop() }
+        _ = owned.endpointOrStart(binary: URL(fileURLWithPath: "/tmp/x"), start: { _ in true })
+
+        owned.resolvePorts([])
+        XCTAssertTrue(try XCTUnwrap(owned.current).ports.isEmpty)
+
+        owned.resolvePorts([57312])
+        XCTAssertEqual(owned.current?.ports, [57312])
+    }
+
+    /// No Antigravity installed is the honest answer — there is nothing to
+    /// start — and must not be papered over with some other path.
+    func testNoBinaryWithoutAnInstalledIDE() {
+        let empty = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("no-apps-\(UUID().uuidString)")
+        try? FileManager.default.createDirectory(at: empty, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: empty) }
+        XCTAssertNil(AntigravityBridge.serverBinaryURL(applications: [empty]))
+    }
+
+    /// Found through the bundle rather than a hardcoded path, and only when the
+    /// binary inside it is actually executable — a directory that merely exists
+    /// is not an installation.
+    func testFindsTheBinaryInsideTheApp() throws {
+        let root = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("apps-\(UUID().uuidString)")
+        let bin = root.appendingPathComponent("Antigravity.app/Contents/Resources/bin")
+        try FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let fake = bin.appendingPathComponent("language_server")
+        try Data("#!/bin/sh\n".utf8).write(to: fake)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: fake.path)
+        XCTAssertEqual(AntigravityBridge.serverBinaryURL(applications: [root])?.lastPathComponent,
+                       "language_server")
+
+        // Present but not runnable — a stub, or a partial install.
+        try FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: fake.path)
+        XCTAssertNil(AntigravityBridge.serverBinaryURL(applications: [root]))
+    }
 }
 
 /// Every keychain read risks interrupting someone, and the answer changes about

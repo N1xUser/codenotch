@@ -23,8 +23,8 @@ enum ResetTimeFormat: String, CaseIterable, Identifiable {
     }
 }
 
-/// "Resets in 51 min" under an hour, "Resets Thu 12:00 AM" within the week,
-/// "Resets Sep 28" beyond it.
+/// "Resets in 42 sec" inside the last minute, "Resets in 51 min" under an hour,
+/// "Resets Thu 12:00 AM" within the week, "Resets Sep 28" beyond it.
 enum ResetCopy {
     /// - Parameter withAbsoluteStamp: append when it lands, in brackets —
     ///   "Resets in 2h 18m (20:30)". Only ever added to wording that is purely
@@ -44,6 +44,20 @@ enum ResetCopy {
             // No word joins these, so there is nothing here to translate: a
             // bracket is a bracket in every language the app ships.
             return "\(relative) (\(absoluteStamp(for: resetsAt, now: now, calendar: calendar, locale: locale)))"
+        }
+
+        // Under a minute the sentence counted in minutes, so it read "Resets in
+        // 1 min" for anything from one second to fifty-nine of them — the one
+        // stretch where the exact figure is the whole point, and the only one
+        // where "1 min" could mean four seconds. Both formats get the seconds;
+        // the card is redrawn every second while it is open.
+        //
+        // Rounded like the minutes below, and for the same reason a value that
+        // rounds to sixty falls through rather than being clamped: "Resets in
+        // 60 sec" never appears, "Resets in 1 min" does.
+        let wholeSeconds = Int(seconds.rounded())
+        if wholeSeconds < 60 {
+            return stamped(L10n.t("Resets in \(max(1, wholeSeconds)) sec", locale: locale))
         }
 
         if format == .remaining {
@@ -71,9 +85,6 @@ enum ResetCopy {
             return stamped(L10n.t("Resets in \(max(1, minutes)) min", locale: locale))
         }
 
-        let formatter = formatter(for: calendar)
-        formatter.locale = locale
-
         // A weekday only identifies a day inside the coming week. Codex's
         // monthly window resets 26 days out, and "Resets Mon 3:55 PM" read as
         // *this* Monday — six days away rather than nearly four weeks, which is
@@ -81,8 +92,9 @@ enum ResetCopy {
         if daysApart(from: now, to: resetsAt, calendar: calendar) >= 7 {
             // Day and month only, matching how the vendors write it. A time
             // that far out is noise: nobody plans around 3:55 PM in four weeks.
-            formatter.setLocalizedDateFormatFromTemplate("MMM d")
-            return L10n.t("Resets \(formatter.string(from: resetsAt))", locale: locale)
+            let stamp = formatter(template: "MMM d", calendar: calendar,
+                                  locale: locale).string(from: resetsAt)
+            return L10n.t("Resets \(stamp)", locale: locale)
         }
 
         // `j`, not `h`: a literal hour symbol in a template pins the clock to
@@ -92,8 +104,9 @@ enum ResetCopy {
         // 00:00. `j` asks the locale, which also carries the "24-Hour Time"
         // switch in System Settings. Regions that write AM/PM keep it, so
         // English is still "Thu 12:00 AM".
-        formatter.setLocalizedDateFormatFromTemplate("E j:mm")
-        return L10n.t("Resets \(formatter.string(from: resetsAt))", locale: locale)
+        let stamp = formatter(template: "E j:mm", calendar: calendar,
+                              locale: locale).string(from: resetsAt)
+        return L10n.t("Resets \(stamp)", locale: locale)
     }
 
     /// When a reset lands, as short as it can be said without being ambiguous:
@@ -123,18 +136,27 @@ enum ResetCopy {
     }
 
     /// The time left before a reset, as short as the menu bar needs it: "2h 05m",
-    /// "47m", "<1m". Nil once the reset has passed — a window that is over has
+    /// "47m", "09s". Nil once the reset has passed — a window that is over has
     /// no time left to show, and never a negative one.
     ///
     /// Truncated where `text` rounds. This one is read against a clock, so it
-    /// may never claim more time than there is: "<1m" is always under a
-    /// minute, and "1h 00m" is gone the moment the hour is.
+    /// may never claim more time than there is: "09s" is always at least nine
+    /// seconds, and "1h 00m" is gone the moment the hour is.
     static func countdown(to resetsAt: Date, now: Date = Date(),
                           locale: Locale = L10n.locale) -> String? {
         let seconds = resetsAt.timeIntervalSince(now)
         guard seconds > 0 else { return nil }
         let minutes = Int(seconds / 60)
-        if minutes < 1 { return L10n.t("<1m", locale: locale) }
+        // The last minute counts in seconds. "<1m" was true for fifty-nine of
+        // them and said nothing about which — and it is the minute somebody is
+        // actually watching the bar for. Truncated, like the minutes below and
+        // for the reason in the doc comment: "09s" is always at least nine
+        // seconds, never ten. Two digits, so the figure does not change width
+        // as it falls.
+        if minutes < 1 {
+            let padded = String(format: "%02d", Int(seconds))
+            return L10n.t("\(padded)s", locale: locale)
+        }
         if minutes < 60 { return L10n.t("\(minutes)m", locale: locale) }
         // Two digits, so "2h 05m" is as wide as "2h 50m" and whatever sits
         // beside it in the menu bar does not shuffle as the minutes tick over.
@@ -142,12 +164,19 @@ enum ResetCopy {
         return L10n.t("\(minutes / 60)h \(padded)m", locale: locale)
     }
 
-    /// When `countdown` next reads differently — the next whole minute of time
-    /// left, or the reset itself in the last minute. Nil once it has passed.
+    /// When `countdown` next reads differently — the next whole second of time
+    /// left inside the last minute, the next whole minute above it, or the reset
+    /// itself. Nil once it has passed.
+    ///
+    /// The menu bar wakes itself on this and nothing else, so it is the only
+    /// thing deciding how often the item is redrawn: once a minute for four
+    /// hours and fifty-nine minutes of a five-hour window, then once a second
+    /// for the last sixty.
     static func nextCountdownChange(to resetsAt: Date, now: Date = Date()) -> Date? {
         let seconds = resetsAt.timeIntervalSince(now)
         guard seconds > 0 else { return nil }
-        return resetsAt.addingTimeInterval(-(seconds / 60).rounded(.down) * 60)
+        let step: TimeInterval = seconds <= 60 ? 1 : 60
+        return resetsAt.addingTimeInterval(-(seconds / step).rounded(.down) * step)
     }
 
     /// A formatter that renders in the given calendar's own zone.
@@ -162,6 +191,30 @@ enum ResetCopy {
         formatter.calendar = calendar
         formatter.timeZone = calendar.timeZone
         formatter.locale = calendar.locale ?? L10n.locale
+        return formatter
+    }
+
+    /// A formatter for `template`, kept across calls.
+    ///
+    /// `setLocalizedDateFormatFromTemplate` rebuilds the formatter's ICU state
+    /// on every call — milliseconds a throw — and the notch's hover path asks
+    /// for the same handful of templates on every mouse event (see
+    /// `NotchWindowController.cursorMoved`), so building a fresh formatter
+    /// there cost real CPU even at idle. The key carries everything a caller
+    /// could otherwise set after the fact, so a cached formatter is never
+    /// mutated again. Per-thread because `DateFormatter` is not thread-safe.
+    static func formatter(template: String, calendar: Calendar,
+                          locale: Locale, timeZone: TimeZone? = nil) -> DateFormatter {
+        let zone = timeZone ?? calendar.timeZone
+        let key = [template, "\(calendar.identifier)", zone.identifier,
+                   locale.identifier].joined(separator: "\n")
+        let caches = Thread.current.threadDictionary
+        if let hit = caches[key] as? DateFormatter { return hit }
+        let formatter = formatter(for: calendar)
+        formatter.locale = locale
+        formatter.timeZone = zone
+        formatter.setLocalizedDateFormatFromTemplate(template)
+        caches[key] = formatter
         return formatter
     }
 

@@ -87,8 +87,7 @@ pub fn is_out_of_topmost_band(_window: &WebviewWindow) -> bool {
 }
 
 /// Reasserts the notch at the top of the z-order with a direct Win32 call, bypassing `tao`'s
-/// diffed `set_always_on_top` entirely. Also what `dropzones.rs` uses to lift the notch back over
-/// the drop-zone overlay during a carry — `notch.set_always_on_top(true)` there was the same no-op.
+/// diffed `set_always_on_top` entirely.
 #[cfg(windows)]
 pub fn reassert(window: &WebviewWindow) {
     use windows::Win32::Foundation::HWND;
@@ -128,7 +127,7 @@ fn check(app: &AppHandle) {
     let Ok(_checking) = CHECK_LOCK.lock() else {
         return;
     };
-    // Mid-drag the carry has its own topmost handling via dropzones::show; do not fight it.
+    // Mid-carry the notch's page is empty and the overlay draws it; do not fight that.
     if crate::DRAGGING.load(SeqCst) {
         return;
     }

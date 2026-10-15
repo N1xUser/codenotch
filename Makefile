@@ -215,12 +215,22 @@ appcast: $(DMG)
 	@test -n "$(SPARKLE_BIN)" || (echo "Sparkle tools not found — run make build first" && exit 1)
 	mkdir -p $(PAGES_DIR)
 	@# Rebuilt from what is actually in the folder, never merged into the old
-	@# one. The dmg keeps a constant name, so only one build can exist at a
-	@# time — but generate_appcast preserves entries it already knows, and left
-	@# the previous version advertised at a URL now serving a different file,
-	@# with a signature that could never verify.
-	rm -f $(PAGES_DIR)/appcast.xml
-	cp $(DMG) $(PAGES_DIR)/
+	@# one — generate_appcast preserves entries it already knows, and left the
+	@# previous version advertised at a URL now serving a different file, with
+	@# a signature that could never verify. The old dmg goes for the same
+	@# reason: generate_appcast reads the whole folder, so a leftover would be
+	@# advertised as a version of its own.
+	rm -f $(PAGES_DIR)/appcast.xml $(PAGES_DIR)/*.dmg
+	@# The name carries the version, so the download URL is new every release.
+	@# Under one constant name each release put a different installer at the
+	@# same URL, and anything caching it — a browser, a proxy, a CDN — went on
+	@# serving the build before it. That reads as "the release shipped the old
+	@# installer" (#386) rather than as the stale copy it is, and it costs a
+	@# release to disprove. generate_appcast takes the enclosure URL from the
+	@# filename, so versioning the name is the whole of it. Sparkle fetches
+	@# that same URL, so a cached body could serve a stale update to the
+	@# updater as well as to a browser.
+	cp $(DMG) $(PAGES_DIR)/$(APP_NAME)-$(VERSION).dmg
 	$(SPARKLE_BIN)/generate_appcast $(PAGES_DIR) --download-url-prefix $(DOWNLOAD_PREFIX)
 	@echo "Publish by committing $(PAGES_DIR)/ and pushing."
 

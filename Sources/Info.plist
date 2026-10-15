@@ -38,6 +38,17 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>15.0</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>100.64.0.0/10</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Codenotch answers your phone on this network so it can show your usage.</string>
 	<key>SUAutomaticallyUpdate</key>

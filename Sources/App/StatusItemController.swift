@@ -18,11 +18,18 @@ import SwiftUI
 /// whenever none of them has such a window to show. See `StatusItemSummary`.
 @MainActor
 final class StatusItemController: NSObject, NSMenuDelegate {
-    private var item: NSStatusItem?
+    /// Readable so a test can measure what the bar was actually given; only
+    /// `show` and `hide` make or unmake it.
+    private(set) var item: NSStatusItem?
     private let onOpenSettings: () -> Void
     /// Refetch every provider. Hands back the pass, so the menu can say it is
     /// running and when it is done.
     var onRefreshAll: (() -> Task<Void, Never>?)?
+    /// Somebody has just opened the menu, so the readings in it are about to be
+    /// read. Separate from `onRefreshAll`, which is the **Refresh all** item and
+    /// must always fetch: this one is allowed to decide it has fetched recently
+    /// enough — see `UsageStore.refreshBecauseSomeoneIsLooking`.
+    var onLook: (() -> Void)?
     /// Switch limits in the bar on or off — the same Settings preference,
     /// written back through the same place, never a second one kept here. The
     /// controller stores no answer of its own: it asks `limits.isOn`, which is
@@ -278,8 +285,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             button.setAccessibilityLabel(nil)
             return
         }
-        item.length = NSStatusItem.variableLength
         button.imagePosition = .imageOnly
+        // `redrawArtwork` sets the length from the artwork it draws, so there
+        // is nothing for `variableLength` to work out.
         redrawArtwork()
         let details = next.entries.map(\.detail).joined(separator: "\n")
         button.toolTip = details
@@ -315,6 +323,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             activityBadgeProviderIDs: reducesMotion ? working : []
         )
         button.image = artwork.image()
+        // The item is its artwork and nothing besides. Left to size itself an
+        // NSStatusBarButton pads an image by 7pt a side — what a lone icon
+        // wants, and dead space either end of a line of figures. It lands
+        // against the next item's own padding, so a reading ended a clear 14pt
+        // before anything else began. macOS still keeps the items apart.
+        item.length = artwork.size.width
         let glyphs = Dictionary(uniqueKeysWithValues: summary.entries.compactMap { entry in
             artwork.glyphFrame(for: entry.id).map { (entry.id, $0) }
         })
@@ -339,10 +353,19 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             MainActor.assumeIsolated { self?.updateButton() }
         }
         // Late by a second is invisible at a minute's precision, and lets the
-        // system fold this wake-up into others.
-        timer.tolerance = 1
+        // system fold this wake-up into others. Inside the last minute the
+        // change *is* a second, and a second of slack there would let the timer
+        // wake up having skipped the figure it woke up to show — so the
+        // tolerance is a fraction of the step rather than a fixed second.
+        timer.tolerance = Self.tolerance(untilChange: fireDate.timeIntervalSinceNow)
         RunLoop.main.add(timer, forMode: .common)
         countdownTimer = timer
+    }
+
+    /// How much slack the next countdown wake-up may take. Pure, so the rule
+    /// can be tested without a status item.
+    static func tolerance(untilChange wait: TimeInterval) -> TimeInterval {
+        wait > 1.5 ? 1 : 0.15
     }
 
     // MARK: - Menu
@@ -351,6 +374,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     /// time would freeze "Resets in 51 min" and "20 hr ago" until the next
     /// reading lands.
     func menuWillOpen(_ menu: NSMenu) {
+        // Asked here rather than anywhere else because opening the menu is the
+        // one unambiguous "read these numbers" gesture the item has. The fetch
+        // it may start lands a moment later: the item's own face follows it at
+        // once — see `snapshots` — and the rows below are built from whatever
+        // has landed by the time the menu is next opened.
+        onLook?()
         rebuild(menu: menu, now: Date())
         startMenuClock()
     }
@@ -437,6 +466,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             ).target = self
         }
         menu.addItem(
+            withTitle: L10n.t("Activity…"), action: #selector(openActivity), keyEquivalent: ""
+        ).target = self
+        menu.addItem(
             withTitle: L10n.t("Settings…"), action: #selector(openSettings), keyEquivalent: ","
         ).target = self
         menu.addItem(.separator())
@@ -471,6 +503,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     @objc private func openSettings() { onOpenSettings() }
+    @objc private func openActivity() { Costs.showActivity() }
     @objc private func quit() { NSApp.terminate(nil) }
 
     /// "Refresh all", as a row the menu stays open for.
@@ -533,7 +566,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         // words — the header, then one line per limit — so the menu is as
         // readable aloud as it is on screen.
         let spoken = [Self.headerTitle(for: snapshot, now: now)]
-            + Self.detailLines(for: snapshot, cells: cells(), activity: activity, now: now)
+            + Self.detailLines(for: snapshot, cells: cells(), activity: activity,
+                               now: now, format: resetTimeFormat)
         item.setAccessibilityLabel(spoken.joined(separator: ", "))
         item.representedObject = snapshot.id
         return item
@@ -673,9 +707,16 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     /// nothing metered. For a local runtime, one line per loaded model, built
     /// from its decorated cell. Pure, so the wording can be tested without a
     /// menu.
+    ///
+    /// `format` is the user's **Reset time** choice, and it has to be passed in:
+    /// this is static, so it cannot read the controller's own copy, and the
+    /// default is not the shipped behaviour but merely a default. Without it
+    /// the menu wrote "Resets Tue 17:25" under a card and a tooltip that both
+    /// said "Resets in 4h 52m" — the same reset, the same instant, two ways of
+    /// saying it, one of which the user had switched off.
     static func detailLines(for snapshot: ProviderSnapshot, cells: [ProviderSnapshot] = [],
                             activity: (ProviderSnapshot) -> ActivitySummary? = { _ in nil },
-                            now: Date) -> [String] {
+                            now: Date, format: ResetTimeFormat = .automatic) -> [String] {
         let now = now
         if snapshot.kind == .localRuntime {
             // A cell *is* one model, so it describes itself. Without this a
@@ -692,13 +733,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         }
         if let block = snapshot.block {
             var lines = [block.summary(now: now)]
-            lines += snapshot.windows.map { windowLine(for: $0, now: now) }
+            lines += snapshot.windows.map { windowLine(for: $0, now: now, format: format) }
             return lines
         }
         if let message = snapshot.statusMessage {
             return [message]
         }
-        return snapshot.windows.map { windowLine(for: $0, now: now) }
+        return snapshot.windows.map { windowLine(for: $0, now: now, format: format) }
     }
 
     /// One loaded model on one line: what its cell prints, what it is doing,

@@ -3,22 +3,24 @@
     <channel>
         <title>Codenotch</title>
         <item>
-            <title>1.19.0</title>
-            <pubDate>Wed, 09 Sep 2026 09:56:29 +0700</pubDate>
-            <sparkle:version>21</sparkle:version>
-            <sparkle:shortVersionString>1.19.0</sparkle:shortVersionString>
+            <title>1.23.0</title>
+            <pubDate>Wed, 14 Oct 2026 12:14:05 +0700</pubDate>
+            <sparkle:version>25</sparkle:version>
+            <sparkle:shortVersionString>1.23.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<p>Carry the notch anywhere round your screen by its six dots — and new versions now ask first, right in the notch.</p>
+            <description><![CDATA[<p>Show what is left instead of what is used, a Dock style, oMLX, and Claude and Codex on your own servers.</p>
 <ul>
-<li><b>Six dots to carry the notch.</b> Hover the settings button, hold the dots beside it and drag: the notch follows along any edge and round the corners.</li>
-<li><b>Round the corners like liquid.</b> Dragged by the dots or with ⌥, it flows round each corner and settles where you let go.</li>
-<li><b>Updates ask first, in the notch</b>, with Update and Later, and install there with their progress.</li>
-<li><b>A notch that pours:</b> the settings arc and dots come out of it and go back in like goo.</li>
-<li><b>The percentage beside your Mac's notch</b>, with one ring, on the other side of the camera housing.</li>
-<li><b>Switching a provider on no longer hangs the app.</b></li>
+<li><b>Show remaining instead of used</b>: rings and figures count down what is left, can shut when a window is spent, and can order themselves by what remains.</li>
+<li><b>Remote hosts and Muse</b>: Claude and Codex accounts on servers you reach over SSH, and Muse.</li>
+<li><b>A Dock style</b>: the notch floats just clear of the screen's edge.</li>
+<li><b>oMLX</b>: loaded models, phase and queue, speed, context fill and a daily token count.</li>
+<li><b>Breathing working indicator</b>, optional, in the provider's colour.</li>
+<li><b>Enterprise spend forecast</b>: whether the monthly limit lasts until it resets.</li>
+<li>OpenCode activity on Custom Endpoints, Grok Bot's weekly usage, DeepSeek off-peak on Chinese public holidays, gentler Claude retries, notches back on external displays after sleep.</li>
+<li><b>Windows</b>: the notch folds over full-screen apps, Enterprise spend limits, configs saved with a byte-order mark, no stale Claude arcs after a failed sign-in, and the Z.AI key from <code>GLM_API_KEY</code>.</li>
 </ul>
 ]]></description>
-            <enclosure url="https://hivinz.com/Codenotch.dmg" length="11945185" type="application/octet-stream" sparkle:edSignature="gYB+t3sQmNT5Zo1ouOkLOGGgQGOLE6HbNcEFuElSOQNfON7uYX14NeLjCWO/1GewBnFSJxtCK63oXlSZySCQCA=="/>
+            <enclosure url="https://hivinz.com/Codenotch-1.23.0.dmg" length="13159964" type="application/octet-stream" sparkle:edSignature="HDbozJkzBtX0Nlhv1dmXreeVi/v+9wBrl0qCVPH4makMsxqPgNzdx6wmsuJHVY8YUey2KbjPl9KGVm32k7BPCw=="/>
         </item>
     </channel>
 </rss>

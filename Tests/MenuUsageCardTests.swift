@@ -49,7 +49,7 @@ final class MenuUsageCardTests: XCTestCase {
 
         let cards = menu.items.filter { $0.representedObject is String }
         XCTAssertEqual(cards.map { $0.representedObject as? String },
-                       ["claude", "openai", "third"])
+                       ["claude", "openai", "third", "lmstudio"])
         XCTAssertTrue(cards.allSatisfy { $0.view != nil }, "a provider was drawn as text")
 
         // The cards come first, before anything that acts on them.
@@ -76,6 +76,7 @@ final class MenuUsageCardTests: XCTestCase {
             L10n.t("Show limit information in menu bar"),
             L10n.t("Refresh all"),
             L10n.t("Connect Phone…"),
+            L10n.t("Activity…"),
             L10n.t("Settings…"),
             L10n.t("Quit Codenotch")
         ]), [], commands.joined(separator: "\n"))

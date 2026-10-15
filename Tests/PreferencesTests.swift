@@ -269,6 +269,18 @@ final class PreferencesMigrationTests: XCTestCase {
         XCTAssertEqual(reloaded.deepSeekPricingSchedule, .current)
     }
 
+    func testTurningOffTheHolidayRuleSurvivesARelaunch() {
+        let (fresh, name) = makeDefaults()
+        XCTAssertTrue(Preferences(defaults: fresh).deepSeekPricingSchedule.offPeakOnChineseHolidays)
+
+        var schedule = DeepSeekPricing.Schedule.current
+        schedule.offPeakOnChineseHolidays = false
+        Preferences(defaults: fresh).deepSeekPricingSchedule = schedule
+
+        let reloaded = Preferences(defaults: UserDefaults(suiteName: name)!)
+        XCTAssertFalse(reloaded.deepSeekPricingSchedule.offPeakOnChineseHolidays)
+    }
+
     /// Off by default, and it has to stay chosen once it is chosen: an extra
     /// arc in a 44pt circle changes how every reading looks, so it is not
     /// something to switch on for somebody, nor to forget they switched on.
@@ -279,6 +291,62 @@ final class PreferencesMigrationTests: XCTestCase {
         Preferences(defaults: fresh).weeklyRing = .outside
 
         XCTAssertEqual(Preferences(defaults: UserDefaults(suiteName: name)!).weeklyRing, .outside)
+    }
+
+    /// The arc is what every existing install already shows, so the disc has
+    /// to be asked for, and has to stay chosen once it is.
+    func testTheWorkingIndicatorIsTheArcUntilAskedForAndThenSurvivesARelaunch() {
+        let (fresh, name) = makeDefaults()
+        XCTAssertEqual(Preferences(defaults: fresh).busyIndicatorStyle, .arc)
+
+        Preferences(defaults: fresh).busyIndicatorStyle = .breath
+
+        XCTAssertEqual(Preferences(defaults: UserDefaults(suiteName: name)!).busyIndicatorStyle, .breath)
+    }
+
+    /// Off by default — used is what the notch has always drawn — and once
+    /// somebody flips it, it has to stay flipped across a relaunch.
+    func testRemainingStaysUsedUntilAskedForAndThenSurvivesARelaunch() {
+        let (fresh, name) = makeDefaults()
+        XCTAssertFalse(Preferences(defaults: fresh).showsRemainingInNotch)
+
+        Preferences(defaults: fresh).showsRemainingInNotch = true
+
+        XCTAssertTrue(Preferences(defaults: UserDefaults(suiteName: name)!).showsRemainingInNotch)
+    }
+
+    /// On by default — a spent window pretending its rings are usable is the
+    /// worse surprise — and it has to stay off across a relaunch once asked.
+    func testShutRingsDefaultOnAndSurviveARelaunch() {
+        let (fresh, name) = makeDefaults()
+        XCTAssertTrue(Preferences(defaults: fresh).shutRingsWhenSpent)
+
+        Preferences(defaults: fresh).shutRingsWhenSpent = false
+
+        XCTAssertFalse(Preferences(defaults: UserDefaults(suiteName: name)!).shutRingsWhenSpent)
+    }
+
+    /// Off by default — the manual arrangement is what dragging built — and
+    /// once somebody flips it, it has to stay flipped across a relaunch.
+    func testAutoOrderStaysManualUntilAskedForAndThenSurvivesARelaunch() {
+        let (fresh, name) = makeDefaults()
+        XCTAssertFalse(Preferences(defaults: fresh).autoOrderByRemaining)
+
+        Preferences(defaults: fresh).autoOrderByRemaining = true
+
+        XCTAssertTrue(Preferences(defaults: UserDefaults(suiteName: name)!).autoOrderByRemaining)
+    }
+
+    /// Off by default — rings disappearing unasked would strand the manual
+    /// arrangement — and once somebody flips it, it has to stay flipped
+    /// across a relaunch.
+    func testDepletedAccountsStayVisibleUntilAskedToHideAndThenSurvivesARelaunch() {
+        let (fresh, name) = makeDefaults()
+        XCTAssertFalse(Preferences(defaults: fresh).hideDepletedAccounts)
+
+        Preferences(defaults: fresh).hideDepletedAccounts = true
+
+        XCTAssertTrue(Preferences(defaults: UserDefaults(suiteName: name)!).hideDepletedAccounts)
     }
 
     /// The size has to outlive the launch that chose it, or it reads as a

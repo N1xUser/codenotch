@@ -30,6 +30,8 @@ use tauri::{AppHandle, Emitter, Manager};
 const ENDPOINT: &str = "https://api.anthropic.com/api/oauth/usage";
 const POLL_ACTIVE_SECS: u64 = 60;
 const POLL_IDLE_SECS: u64 = 300;
+/// Per-account floor, including tray refreshes and failed attempts.
+const MIN_FETCH_SECS: u64 = 300;
 const BACKOFF_BASE_SECS: u64 = 60;
 const BACKOFF_CAP_SECS: u64 = 900;
 /// Renew when this close to expiry. Must stay under Claude Code's own five minutes: its start-up renews the token
@@ -177,6 +179,26 @@ fn persist(s: &UsageSnapshot) {
     }
 }
 
+fn backoffs_path() -> PathBuf {
+    store_path().with_file_name("usage-backoffs.json")
+}
+
+fn load_backoffs() -> Option<HashMap<String, u64>> {
+    std::fs::read_to_string(backoffs_path()).ok().and_then(|text| serde_json::from_str(&text).ok())
+}
+
+fn persist_backoffs(accounts: &HashMap<String, Account>) {
+    let deadlines: HashMap<&str, u64> = accounts.iter()
+        .filter(|(_, account)| account.backoff_until > now_ms())
+        .map(|(profile, account)| (profile.as_str(), account.backoff_until))
+        .collect();
+    if let Ok(text) = serde_json::to_string_pretty(&deadlines) {
+        if let Err(error) = std::fs::write(backoffs_path(), text) {
+            crate::applog(&format!("claude: could not persist back-off deadlines: {error}"));
+        }
+    }
+}
+
 #[derive(Default)]
 struct Credential {
     token: String,
@@ -257,32 +279,51 @@ fn is_desktop_owned(p: &std::path::Path) -> bool {
     s.contains("\\anthropicclaude\\") || s.contains("\\claude\\claude-code\\") || s.contains("\\windowsapps\\")
 }
 
+/// The command file names to try for a CLI, most specific first. Windows needs the
+/// native exe before the .cmd shim; elsewhere there is only the bare name.
+pub(crate) fn command_names(stem: &str) -> Vec<String> {
+    if cfg!(windows) {
+        vec![format!("{stem}.exe"), format!("{stem}.cmd")]
+    } else {
+        vec![stem.to_string()]
+    }
+}
+
 /// The standalone Claude Code command: its own installer's location first, then global npm/pnpm/Volta, then PATH
 pub(crate) fn find_cli() -> Option<std::path::PathBuf> {
+    let names = command_names("claude");
     let mut v = Vec::new();
+    let push_all = |dir: std::path::PathBuf, v: &mut Vec<std::path::PathBuf>| {
+        for n in &names {
+            v.push(dir.join(n));
+        }
+    };
     if let Some(h) = dirs::home_dir() {
-        v.push(h.join(".local").join("bin").join("claude.exe"));
+        push_all(h.join(".local").join("bin"), &mut v);
     }
     if let Some(d) = dirs::config_dir() {
-        v.push(d.join("npm").join("claude.cmd"));
+        push_all(d.join("npm"), &mut v);
     }
     if let Some(d) = dirs::data_local_dir() {
-        v.push(d.join("pnpm").join("claude.cmd"));
+        push_all(d.join("pnpm"), &mut v);
     }
     if let Some(h) = dirs::home_dir() {
-        v.push(h.join(".volta").join("bin").join("claude.exe"));
+        push_all(h.join(".volta").join("bin"), &mut v);
+        // npm's global prefix and nvm's per-version bin are where a Linux install usually lands
+        push_all(h.join(".npm-global").join("bin"), &mut v);
+        push_all(h.join(".bun").join("bin"), &mut v);
     }
     if let Some(path) = std::env::var_os("PATH") {
         for dir in std::env::split_paths(&path) {
-            v.push(dir.join("claude.exe"));
-            v.push(dir.join("claude.cmd"));
+            push_all(dir, &mut v);
         }
     }
     v.into_iter().find(|p| p.is_file() && !is_desktop_owned(p))
 }
 
-/// Whether a launch is worth making. Pure, so every branch is testable without a clock or a subprocess
-fn should_renew(
+/// Whether a launch is worth making. Pure, so every branch is testable without a clock or a subprocess.
+/// grok.rs times its CLI launches by the same rule.
+pub(crate) fn should_renew(
     expires_at: Option<u64>,
     now: u64,
     attempted_for: Option<u64>,
@@ -409,6 +450,34 @@ fn label_for(kind: &str) -> String {
     }
 }
 
+/// An Enterprise seat answers with `limits` empty and both named windows null; its usage is only in
+/// `spend` (upstream #359, spendWindow): the amount used against the spend limit, each in minor units.
+/// The share is used / limit rather than `spend.percent`, which is rounded to a whole percent.
+/// Skipped when disabled or the limit is zero, so no "0 of 0" is invented.
+fn spend_window(v: &serde_json::Value) -> Option<LimitWindow> {
+    let s = v.get("spend")?;
+    if s.get("enabled").and_then(|x| x.as_bool()) == Some(false) {
+        return None;
+    }
+    let minor = |k: &str| s.get(k).and_then(|m| m.get("amount_minor")).and_then(|x| x.as_f64());
+    let (used, limit) = (minor("used")?, minor("limit")?);
+    if !(limit > 0.0) {
+        return None;
+    }
+    let money = |k: &str, amount: f64| {
+        let m = s.get(k);
+        let exp = m.and_then(|m| m.get("exponent")).and_then(|x| x.as_i64()).unwrap_or(2).clamp(0, 6);
+        let cur = m.and_then(|m| m.get("currency")).and_then(|x| x.as_str()).unwrap_or("");
+        format!("{:.*} {cur}", exp as usize, amount / 10f64.powi(exp as i32)).trim_end().to_string()
+    };
+    Some(LimitWindow {
+        id: "spend".into(),
+        label: format!("Spend limit ({} / {})", money("used", used), money("limit", limit)),
+        used: (used / limit).clamp(0.0, 1.0),
+        ..Default::default()
+    })
+}
+
 fn parse_response(v: &serde_json::Value) -> Vec<LimitWindow> {
     let mut out: Vec<LimitWindow> = Vec::new();
     if let Some(arr) = v.get("limits").and_then(|x| x.as_array()) {
@@ -457,6 +526,9 @@ fn parse_response(v: &serde_json::Value) -> Vec<LimitWindow> {
         }
         out.push(LimitWindow { id: id.into(), label, used, resets_at, ..Default::default() });
     }
+    if let Some(w) = spend_window(v) {
+        out.push(w);
+    }
     // session always comes first (upstream display order)
     out.sort_by_key(|w| if w.id == "session" { 0 } else { 1 });
     out
@@ -466,6 +538,15 @@ enum FetchErr {
     NeedsAuth,
     RateLimited(u64), // suggested wait in seconds (the Retry-After before the floor is applied)
     Other(String),
+}
+
+fn parse_retry_after(header: &str) -> Option<u64> {
+    let header = header.trim();
+    header.parse::<u64>().ok().or_else(|| {
+        chrono::DateTime::parse_from_rfc2822(header).ok().map(|date| {
+            date.timestamp().saturating_sub(chrono::Utc::now().timestamp()).max(0) as u64
+        })
+    })
 }
 
 fn fetch_once(token: &str) -> Result<Vec<LimitWindow>, FetchErr> {
@@ -487,7 +568,7 @@ fn fetch_once(token: &str) -> Result<Vec<LimitWindow>, FetchErr> {
         Err(ureq::Error::Status(429, r)) => {
             let ra = r
                 .header("retry-after")
-                .and_then(|s| s.parse::<u64>().ok())
+                .and_then(parse_retry_after)
                 .unwrap_or(0);
             Err(FetchErr::RateLimited(ra))
         }
@@ -525,6 +606,7 @@ struct Account {
     status: String,
     note: String,
     fetched_at: u64,
+    last_fetch: u64,
 }
 
 fn key(p: &Profile) -> String {
@@ -560,6 +642,41 @@ fn split_persisted(snap: &UsageSnapshot, order: &[Profile]) -> HashMap<String, V
         }
     }
     out
+}
+
+fn restore_accounts(
+    snap: &UsageSnapshot,
+    order: &[Profile],
+    backoffs: Option<&HashMap<String, u64>>,
+    now: u64,
+) -> HashMap<String, Account> {
+    let mut windows = split_persisted(snap, order);
+    order.iter().map(|profile| {
+        let profile_key = key(profile);
+        // Old versions saved only the aggregate; use it conservatively until a per-profile file exists.
+        let deadline = backoffs.map(|saved| saved.get(&profile_key).copied().unwrap_or(0))
+            .unwrap_or(snap.backoff_until);
+        let account = Account {
+            windows: windows.remove(&profile_key).unwrap_or_default(),
+            fetched_at: snap.fetched_at,
+            status: snap.status.clone(),
+            note: snap.note.clone(),
+            backoff_until: if deadline > now { deadline } else { 0 },
+            ..Default::default()
+        };
+        (profile_key, account)
+    }).collect()
+}
+
+fn should_fetch(last_fetch: u64, now: u64, windows: &[LimitWindow]) -> bool {
+    last_fetch == 0 || now.saturating_sub(last_fetch) >= MIN_FETCH_SECS * 1000
+        || windows.iter().any(|window| matches!(window.resets_at, Some(reset) if reset > last_fetch && reset <= now))
+}
+
+fn fetch_account(acc: &mut Account, token: &str, who: &str) -> Result<Vec<LimitWindow>, FetchErr> {
+    acc.last_fetch = now_ms();
+    crate::applog(&format!("claude[{who}]: GET /api/oauth/usage"));
+    fetch_once(token)
 }
 
 /// One reading out of every account's, in profile order. The status is the best news any account has:
@@ -603,15 +720,16 @@ fn aggregate(order: &[Profile], accounts: &HashMap<String, Account>) -> UsageSna
 /// One account's turn: renew if the token is aging, then read it, exactly as the single-account loop did.
 fn poll_account(p: &Profile, acc: &mut Account, group: Option<&str>) {
     let who = p.name();
-    // Ahead of the back-off: renewing never touches the usage endpoint, and a fresh token deserves a fresh try
+    // Renewal stays responsive, but token rotation cannot cancel the endpoint's penalty.
     if let Some(cred) = read_credentials(&p.dir) {
-        if acc.renewer.maybe_renew(&cred, &p.dir, &who) == Some(true) {
-            acc.consecutive_429 = 0;
-            acc.backoff_until = 0;
-        }
+        acc.renewer.maybe_renew(&cred, &p.dir, &who);
     }
     // No requests inside this account's back-off window
     if acc.backoff_until > now_ms() {
+        return;
+    }
+    acc.backoff_until = 0;
+    if !should_fetch(acc.last_fetch, now_ms(), &acc.windows) {
         return;
     }
     match read_credentials(&p.dir) {
@@ -627,9 +745,9 @@ fn poll_account(p: &Profile, acc: &mut Account, group: Option<&str>) {
         Some(cred) => {
             let token = cred.token;
             // On 401 re-read the credential and retry once (Claude Code may have just refreshed it)
-            let result = match fetch_once(&token) {
+            let result = match fetch_account(acc, &token, &who) {
                 Err(FetchErr::NeedsAuth) => match read_credentials(&p.dir) {
-                    Some(c2) if c2.token != token => fetch_once(&c2.token),
+                    Some(c2) if c2.token != token && !c2.expired(now_ms()) => fetch_account(acc, &c2.token, &who),
                     _ => Err(FetchErr::NeedsAuth),
                 },
                 other => other,
@@ -657,7 +775,7 @@ fn poll_account(p: &Profile, acc: &mut Account, group: Option<&str>) {
                     // rate limit. Age decides, as it does on the Mac (`UsageStore` keeps the previous
                     // status until `staleAfter`), and the note says why it is not moving.
                     acc.note = format!("Rate limited, retrying in {wait}s");
-                    acc.backoff_until = now_ms() + wait * 1000;
+                    acc.backoff_until = now_ms().saturating_add(wait.saturating_mul(1000));
                 }
                 Err(FetchErr::Other(msg)) => {
                     // No reading at all is an error worth showing; a reading we could not refresh is
@@ -681,10 +799,8 @@ pub fn start(app: AppHandle) {
             let _ = app.emit("usage", &snap);
             snap
         };
-        let mut accounts: HashMap<String, Account> = HashMap::new();
-        for (k, windows) in split_persisted(&persisted, &profiles()) {
-            accounts.entry(k).or_default().windows = windows;
-        }
+        let backoffs = load_backoffs();
+        let mut accounts = restore_accounts(&persisted, &profiles(), backoffs.as_ref(), now_ms());
         loop {
             // A sign-in the user started owns the credential until it finishes. Polling through it
             // reads a file being rewritten and reports a signed-out account mid-login.
@@ -705,10 +821,11 @@ pub fn start(app: AppHandle) {
                 poll_account(p, acc, group.as_deref());
             }
             accounts.retain(|k, _| order.iter().any(|p| key(p) == *k));
+            persist_backoffs(&accounts);
             let snap = aggregate(&order, &accounts);
             let backoff_until = snap.backoff_until;
             set_and_broadcast(&app, |u| *u = snap);
-            // 60 s while a session is active, 300 s otherwise (upstream throttling discipline)
+            // Keep renewal checks responsive; the per-account floor gates endpoint requests.
             let active = {
                 let st = app.state::<AppState>();
                 let store = st.store.lock().unwrap();
@@ -734,6 +851,103 @@ mod tests {
     use super::*;
 
     const EXP: u64 = 1_000_000_000;
+
+    #[test]
+    fn fetch_floor_applies_to_every_attempt() {
+        assert!(should_fetch(0, EXP, &[]));
+        assert!(!should_fetch(EXP, EXP + 60_000, &[]));
+        assert!(!should_fetch(EXP, EXP + MIN_FETCH_SECS * 1000 - 1, &[]));
+        assert!(should_fetch(EXP, EXP + MIN_FETCH_SECS * 1000, &[]));
+        assert!(!should_fetch(EXP, EXP - 1, &[]));
+    }
+
+    #[test]
+    fn a_rollover_bypasses_the_floor_only_once() {
+        let reset = EXP + 60_000;
+        let windows = vec![LimitWindow { resets_at: Some(reset), ..win("session") }];
+        assert!(!should_fetch(EXP, reset - 1, &windows));
+        assert!(should_fetch(EXP, reset, &windows));
+        assert!(!should_fetch(reset, reset + 1, &windows));
+        assert!(!should_fetch(reset + 1, reset + 60_000, &windows));
+    }
+
+    #[test]
+    fn retry_after_accepts_seconds_and_http_dates() {
+        assert_eq!(parse_retry_after(" 3600 "), Some(3600));
+        assert_eq!(parse_retry_after("0"), Some(0));
+        assert_eq!(parse_retry_after("Wed, 21 Oct 2015 07:28:00 GMT"), Some(0));
+        assert_eq!(parse_retry_after("invalid"), None);
+        assert_eq!(parse_retry_after(""), None);
+        let future = chrono::Utc::now() + chrono::Duration::seconds(3600);
+        let header = future.format("%a, %d %b %Y %H:%M:%S GMT").to_string();
+        let seconds = parse_retry_after(&format!(" {header} ")).unwrap();
+        assert!((3598..=3600).contains(&seconds));
+    }
+
+    #[test]
+    fn each_profile_restores_its_own_future_deadline() {
+        let order = vec![prof(None), prof(Some("work"))];
+        let snap = UsageSnapshot { backoff_until: EXP + 100, ..Default::default() };
+        let saved = HashMap::from([(key(&order[0]), EXP + 100), (key(&order[1]), EXP + 1000)]);
+        let restored = restore_accounts(&snap, &order, Some(&saved), EXP);
+        assert_eq!(restored[&key(&order[0])].backoff_until, EXP + 100);
+        assert_eq!(restored[&key(&order[1])].backoff_until, EXP + 1000);
+        let expired = restore_accounts(&snap, &order, Some(&saved), EXP + 101);
+        assert_eq!(expired[&key(&order[0])].backoff_until, 0);
+        assert_eq!(expired[&key(&order[1])].backoff_until, EXP + 1000);
+    }
+
+    #[test]
+    fn legacy_deadline_is_restored_conservatively() {
+        let order = vec![prof(None), prof(Some("work"))];
+        let snap = UsageSnapshot { backoff_until: EXP + 100, ..Default::default() };
+        let restored = restore_accounts(&snap, &order, None, EXP);
+        assert!(restored.values().all(|account| account.backoff_until == EXP + 100));
+        let expired = restore_accounts(&snap, &order, None, EXP + 100);
+        assert!(expired.values().all(|account| account.backoff_until == 0));
+        let empty = HashMap::new();
+        let restored = restore_accounts(&snap, &order, Some(&empty), EXP);
+        assert!(restored.values().all(|account| account.backoff_until == 0));
+    }
+
+
+    #[test]
+    fn enterprise_seat_reads_its_spend_limit() {
+        let v = serde_json::json!({
+            "five_hour": null, "seven_day": null, "limits": [],
+            "spend": {
+                "used": {"amount_minor": 1214, "currency": "USD", "exponent": 2},
+                "limit": {"amount_minor": 15000, "currency": "USD", "exponent": 2},
+                "percent": 8, "enabled": true
+            }
+        });
+        let ws = parse_response(&v);
+        assert_eq!(ws.len(), 1);
+        assert_eq!(ws[0].id, "spend");
+        assert_eq!(ws[0].label, "Spend limit (12.14 USD / 150.00 USD)");
+        assert!((ws[0].used - 1214.0 / 15000.0).abs() < 1e-9, "used / limit, not the rounded percent");
+        assert_eq!(ws[0].resets_at, None);
+    }
+
+    #[test]
+    fn spend_is_skipped_when_disabled_or_unlimited() {
+        let off = serde_json::json!({"spend": {"enabled": false,
+            "used": {"amount_minor": 1}, "limit": {"amount_minor": 100}}});
+        assert!(parse_response(&off).is_empty());
+        let zero = serde_json::json!({"spend": {"enabled": true,
+            "used": {"amount_minor": 0}, "limit": {"amount_minor": 0}}});
+        assert!(parse_response(&zero).is_empty());
+    }
+
+    #[test]
+    fn plan_windows_still_come_first() {
+        let v = serde_json::json!({
+            "five_hour": {"utilization": 40.0, "resets_at": "2026-10-08T20:00:00Z"},
+            "spend": {"enabled": true, "used": {"amount_minor": 1}, "limit": {"amount_minor": 100}}
+        });
+        let ids: Vec<_> = parse_response(&v).into_iter().map(|w| w.id).collect();
+        assert_eq!(ids, ["session", "spend"]);
+    }
 
     #[test]
     fn renews_only_inside_the_margin() {
@@ -762,7 +976,7 @@ mod tests {
     }
 
     #[test]
-    fn retry_after_never_exceeds_the_cap() {
+    fn retry_after_can_exceed_our_schedule_cap() {
         assert_eq!(backoff_secs(0, 3600), 3600);
         assert_eq!(backoff_secs(0, 0), BACKOFF_BASE_SECS);
         assert_eq!(backoff_secs(1, 300), 300);

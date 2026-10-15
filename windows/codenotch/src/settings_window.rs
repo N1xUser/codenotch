@@ -37,7 +37,10 @@ fn open_now(app: &AppHandle) {
         .maximizable(false)
         .decorations(false)
         .shadow(true)
-        .center();
+        .center()
+        // Shown by `settings_ready` once the page has drawn its first state. Shown at once, WebView2
+        // paints white before the page does, and every switch slides from off to its real value.
+        .visible(false);
     // Both before the build: a window that opens on the system appearance and is corrected after
     // shows the wrong one for a frame, which on a dark Windows under a light choice is a black flash
     let theme = crate::theme_choice(app);
@@ -49,12 +52,30 @@ fn open_now(app: &AppHandle) {
         builder = builder.transparent(true).effects(EffectsBuilder::new().effect(mica_for(theme)).build());
     }
     match builder.build() {
-        // Raised again once it exists: a window created while the app is not in front can come up behind
+        // A page that never reports ready must not leave the window open but invisible
         Ok(w) => {
-            let _ = w.set_focus();
+            std::thread::spawn(move || {
+                std::thread::sleep(std::time::Duration::from_secs(3));
+                if !w.is_visible().unwrap_or(true) {
+                    reveal(&w);
+                }
+            });
         }
         Err(e) => crate::applog(&format!("settings window: {e}")),
     }
+}
+
+#[tauri::command]
+pub fn settings_ready(app: AppHandle) {
+    if let Some(w) = app.get_webview_window(LABEL) {
+        reveal(&w);
+    }
+}
+
+/// Raised as well as shown: a window created while the app is not in front can come up behind.
+fn reveal(w: &tauri::WebviewWindow) {
+    let _ = w.show();
+    let _ = w.set_focus();
 }
 
 #[derive(serde::Serialize)]

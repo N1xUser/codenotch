@@ -81,6 +81,21 @@ final class LocalizationTests: XCTestCase {
         )
     }
 
+    /// The last minute counts in seconds, and a locale that translates the
+    /// minutes translates the seconds too — mixing English into one minute out
+    /// of five hours is the kind of thing nobody notices until they see it.
+    func testTheLastMinuteIsTranslatedWhereTheMinutesAre() {
+        let lastMinute = resetNow.addingTimeInterval(42)
+        XCTAssertEqual(ResetCopy.text(for: lastMinute, now: resetNow, locale: english),
+                       "Resets in 42 sec")
+        XCTAssertEqual(ResetCopy.text(for: lastMinute, now: resetNow, locale: zhHans),
+                       "42 秒后重置")
+        XCTAssertEqual(ResetCopy.text(for: lastMinute, now: resetNow, locale: turkish),
+                       "42 sn içinde sıfırlanır")
+        XCTAssertEqual(ResetCopy.countdown(to: lastMinute, now: resetNow, locale: english), "42s")
+        XCTAssertEqual(ResetCopy.countdown(to: lastMinute, now: resetNow, locale: turkish), "42 sn")
+    }
+
     func testResetCopyUnderAnHourInEnglishWhenAsked() {
         XCTAssertEqual(
             ResetCopy.text(for: resetNow.addingTimeInterval(51 * 60), now: resetNow, locale: english),

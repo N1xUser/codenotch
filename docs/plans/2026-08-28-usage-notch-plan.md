@@ -111,8 +111,11 @@ pointer from cell to card does not dismiss it.
 3. **Plan ceilings.** The local Claude Code adapter needs to know your plan's session
    ceiling to turn tokens into a percentage. Configured by hand, or inferred from the
    highest usage ever observed?
-4. **Web-session adapters.** Out of v1 by default. If ChatGPT usage is a must-have for
-   v1, that decision needs making explicitly, with the fragility accepted.
+4. **Web-session adapters.** Decided: Out of scope for ChatGPT/OpenAI. Local Codex
+   integration (`CodexLocalProvider`) and Custom Endpoints provide reliable,
+   official usage tracking without web-session fragility. `WebSessionProvider` is
+   limited to explicit opt-in WKWebView providers without CLI alternatives (DeepSeek,
+   Qianwen, MiniMax, Qoder). See `docs/plans/2026-10-12-web-session-adapters-roadmap-decision.md`.
 
 ## Risks
 

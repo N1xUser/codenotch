@@ -240,13 +240,16 @@ actor AntigravityProvider: UsageProvider {
                 let windows = try await AntigravityBridge.quota(from: bridge, session: localSession)
                 if !windows.isEmpty { return windows }
             } catch {
-                Log.usage.error("Antigravity localQuota bridge error: \(String(describing: error), privacy: .public)")
+                // Quitting the IDE invalidates a cached port, so a refusal here
+                // is the ordinary shape of "it is not running any more" rather
+                // than a fault — and the honest answer is logged a moment
+                // later. Kept at debug so an ordinary state does not read as
+                // two errors a poll, one of them a connection failure.
+                Log.usage.debug("Antigravity cached bridge endpoint gone: \(String(describing: error), privacy: .public)")
+                self.bridge = nil
             }
         }
-        // Cached endpoint gone or never found: the port changes every time
-        // Antigravity restarts, so a stale one is expected, not exceptional.
-        guard let fresh = AntigravityBridge.discover() else {
-            self.bridge = nil
+        guard let fresh = await resolveEndpoint() else {
             Log.usage.error("Antigravity localQuota discover failed to find process")
             return nil
         }
@@ -257,6 +260,38 @@ actor AntigravityProvider: UsageProvider {
             Log.usage.error("Antigravity localQuota fresh bridge error: \(String(describing: error), privacy: .public)")
             return nil
         }
+    }
+
+    /// Where to ask: the IDE's own server while it runs, otherwise one we start.
+    ///
+    /// The server does not actually need the IDE. It reads the same credential
+    /// from the login keychain either way, so a closed IDE is a reason to start
+    /// one rather than a reason to report that the figure cannot be read — and
+    /// because the started server carries the same flags on the same command
+    /// line, `discover()` finds it on every later poll like any other, which is
+    /// why nothing past this point knows the difference.
+    private func resolveEndpoint() async -> AntigravityBridge.Endpoint? {
+        if let running = AntigravityBridge.discover() { return running }
+
+        guard let binary = AntigravityBridge.serverBinaryURL(),
+              AntigravityBridge.owned.endpointOrStart(binary: binary) != nil,
+              let pid = AntigravityBridge.owned.pid
+        else { return nil }
+
+        // Binding is near-instant; authenticating is not — measured at about
+        // eight seconds, because it is a round trip to Google. Bounded so a
+        // server that never binds costs one poll's wait and no more, and the
+        // next poll finds it already running.
+        for _ in 0..<40 {
+            let ports = AntigravityBridge.listeningPorts(ofPID: Int(pid))
+            if !ports.isEmpty {
+                AntigravityBridge.owned.resolvePorts(ports)
+                return AntigravityBridge.owned.current
+            }
+            try? await Task.sleep(for: .milliseconds(250))
+        }
+        Log.usage.debug("Antigravity: started server never bound a port")
+        return nil
     }
 
     /// Ask for the account's quota, returning nil when it is not allowed to.

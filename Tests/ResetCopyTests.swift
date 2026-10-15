@@ -84,6 +84,24 @@ final class ResetCopyTests: XCTestCase {
         }
     }
 
+    /// The hover path formats the same templates on every mouse event, so the
+    /// formatter behind each template is built once and then reused — while
+    /// two templates, or two locales, must never share one.
+    func testFormattersAreReusedPerTemplateAndLocale() {
+        let calendar = Calendar(identifier: .gregorian)
+        let us = Locale(identifier: "en_US")
+        let first = ResetCopy.formatter(template: "E j:mm", calendar: calendar, locale: us)
+        let second = ResetCopy.formatter(template: "E j:mm", calendar: calendar, locale: us)
+        XCTAssertIdentical(first, second)
+        XCTAssertNotIdentical(
+            first,
+            ResetCopy.formatter(template: "MMM d", calendar: calendar, locale: us))
+        XCTAssertNotIdentical(
+            first,
+            ResetCopy.formatter(template: "E j:mm", calendar: calendar,
+                                locale: Locale(identifier: "fr_FR")))
+    }
+
     func testPastResetsReadAsResetting() {
         XCTAssertEqual(ResetCopy.text(for: now.addingTimeInterval(-5), now: now), "Resetting…")
     }
@@ -91,7 +109,8 @@ final class ResetCopyTests: XCTestCase {
     func testRemainingFormatAndRoundingBoundaries() {
         let cases: [(TimeInterval, String)] = [
             (-5, "Resetting…"), (0, "Resetting…"),
-            (1, "Resets in 1 min"),
+            (1, "Resets in 1 sec"),
+            (42, "Resets in 42 sec"),
             (50 * 60 + 40, "Resets in 51 min"),
             (59 * 60 + 40, "Resets in 1h 0m"),
             (3 * 3600 + 20 * 60, "Resets in 3h 20m"),
@@ -107,13 +126,14 @@ final class ResetCopyTests: XCTestCase {
     }
 
     /// The menu bar's countdown truncates where `text` rounds: it is read
-    /// against a clock, so it never claims time that is not left — "<1m" is
-    /// under a minute, and "1h 00m" is gone the moment the hour is. Minutes
-    /// carry two digits beside hours so the width holds as they tick over.
+    /// against a clock, so it never claims time that is not left — "09s" is at
+    /// least nine seconds, and "1h 00m" is gone the moment the hour is. Seconds
+    /// and minutes both carry two digits beside what follows them, so the width
+    /// holds as they tick over.
     func testCountdownBoundaries() {
         let cases: [(TimeInterval, String?)] = [
             (-30, nil), (0, nil),
-            (1, "<1m"), (59, "<1m"),
+            (0.5, "00s"), (1, "01s"), (9.9, "09s"), (42, "42s"), (59, "59s"), (59.9, "59s"),
             (60, "1m"), (8 * 60 + 3, "8m"), (47 * 60 + 50, "47m"), (59 * 60 + 59, "59m"),
             (3600, "1h 00m"), (2 * 3600 + 5 * 60, "2h 05m"), (2 * 3600 + 18 * 60 + 20, "2h 18m"),
             (4 * 3600 + 59 * 60 + 59, "4h 59m"), (5 * 3600, "5h 00m"),
@@ -121,6 +141,28 @@ final class ResetCopyTests: XCTestCase {
         for (seconds, expected) in cases {
             XCTAssertEqual(ResetCopy.countdown(to: now.addingTimeInterval(seconds), now: now),
                            expected, "\(seconds)s left")
+        }
+    }
+
+    /// The one figure "<1m" could not tell you: which of the fifty-nine seconds
+    /// it was. The last minute of a window is the minute somebody is watching
+    /// the bar through, so it counts down through it.
+    func testTheLastMinuteCountsInSeconds() {
+        let readings = [59, 30, 5, 1].map { seconds in
+            ResetCopy.countdown(to: now.addingTimeInterval(TimeInterval(seconds)), now: now)
+        }
+        XCTAssertEqual(readings, ["59s", "30s", "05s", "01s"])
+        XCTAssertEqual(Set(readings).count, readings.count, "the last minute reads the same throughout")
+    }
+
+    /// A five-hour window wakes the menu bar once a minute for four hours and
+    /// fifty-nine of them, and once a second for the last sixty. Nothing else
+    /// decides how often the item is redrawn, so the step is worth pinning.
+    func testTheCountdownStepsByMinutesUntilTheLastOne() throws {
+        for (seconds, step) in [(5 * 3600, 60.0), (61, 60.0), (60, 1.0), (42, 1.0), (1, 1.0)] {
+            let resetsAt = now.addingTimeInterval(TimeInterval(seconds))
+            let change = try XCTUnwrap(ResetCopy.nextCountdownChange(to: resetsAt, now: now))
+            XCTAssertLessThanOrEqual(change.timeIntervalSince(now), step, "\(seconds)s left")
         }
     }
 
@@ -278,6 +320,39 @@ final class WindowSummaryTests: XCTestCase {
     /// Only the number shortens; the wording around it does not.
     func testALargeCountKeepsItsWording() {
         XCTAssertEqual(LimitWindow(id: "w", label: "Tokens", used: 651_061).summary, "651k used")
+    }
+
+    /// Both ends stay on the line — the card is the detailed view — but the
+    /// remaining figure leads when the notch is set that way.
+    func testRemainingLeadsWhenSet() {
+        XCTAssertEqual(window(0.12).summary(showingRemaining: true), "88% left · 12% Used")
+    }
+
+    /// Swapping the order never changes the numbers, so the halves still add
+    /// up in either mode.
+    func testTheHalvesStillSumToAHundredWhenRemainingLeads() {
+        for percent in stride(from: 0, through: 100, by: 7) {
+            let text = window(Double(percent) / 100).summary(showingRemaining: true)
+            let numbers = text.split(separator: " ").compactMap { Int($0.replacingOccurrences(of: "%", with: "")) }
+            XCTAssertEqual(numbers.count, 2, "unexpected wording: \(text)")
+            XCTAssertEqual(numbers[0] + numbers[1], 100, "\(text) does not add up")
+        }
+    }
+
+    func testAnOverspentLimitLeadsWithNothingLeft() {
+        XCTAssertEqual(window(1.04).summary(showingRemaining: true), "0% left · 104% Used")
+    }
+
+    func testFractionsOfAPercentLeadFromTheOtherEnd() {
+        XCTAssertEqual(window(0.0034).summary(showingRemaining: true), "99.7% left · 0.3% Used")
+        XCTAssertEqual(window(0.998).summary(showingRemaining: true), "0.2% left · 99.8% Used")
+        XCTAssertEqual(window(0.0004).summary(showingRemaining: true), ">99.9% left · <0.1% Used")
+    }
+
+    /// Counts keep their own wording — "3 left" already leads with what is left.
+    func testCountsAreUntouchedWhenRemainingLeads() {
+        XCTAssertEqual(LimitWindow(id: "w", label: "Requests", used: 8).summary(showingRemaining: true), "8 used")
+        XCTAssertEqual(LimitWindow(id: "w", label: "Requests", remaining: 3).summary(showingRemaining: true), "3 left")
     }
 }
 

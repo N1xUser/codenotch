@@ -12,7 +12,6 @@
     --ample:#00FF88; --watch:#F2FF00; --crit:#FF3F00;
     --ink:#ffffff; --ink-2:#e8e8ea; --ink-3:#c8c8c8; --ink-4:#b0b0b3; --ink-dim:#808080;
     --btn:#252525; --btn-line:#555; --btn-hover:#383838; --btn-line-hover:#aaa;
-    --armed:rgba(0,0,0,.72);
   }
   /* Rust resolves the choice — Light, Dark, or what Windows is set to — and the page is told, rather
      than reading prefers-color-scheme: correcting a live window's theme does not reliably reach
@@ -25,7 +24,6 @@
     --ample:#00A356; --watch:#B08800; --crit:#FF3F00;
     --ink:#1d1d1f; --ink-2:#1d1d1f; --ink-3:#3c3c43; --ink-4:#4a4a4f; --ink-dim:#6b6b6b;
     --btn:#ffffff; --btn-line:#c6c6cc; --btn-hover:#f0f0f2; --btn-line-hover:#8e8e93;
-    --armed:rgba(255,255,255,.78);
   }
   .c-auth{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
   .c-auth button{font:inherit;font-size:11px;color:var(--ink);background:var(--btn);border:1px solid var(--btn-line);border-radius:7px;padding:6px 9px;cursor:pointer}
@@ -107,7 +105,7 @@
 
   /* Hover card, shown to the left of the pill */
   #card{
-    position:absolute;left:10px;right:100px;top:50%;transform:translateY(-50%);
+    position:absolute;left:5px;right:108.7px;top:50%;transform:translateY(-50%);
     /* Anchored on both sides = fluid width: whatever the WebView's real logical width, the card cannot
        extend past the window's left edge (a fixed max-width got clipped when the DPI disagreed).
        The 246 cap matches the upstream spec. */
@@ -119,11 +117,12 @@
   #card.show{display:block}
   /* The tail, its point on the hovered ring: the Mac's curved wedge (TooltipTail), whose shoulders
      leave the card tangent to its edge so the two read as one shape. An element of its own rather
-     than ::after, so the card's overflow cannot clip it and it can be reported as hot. It spans the
-     whole gap, its tip tucked 1 px under the pill's edge so the two meet. */
+     than ::after, so the card's overflow cannot clip it and it can be reported as hot. The Mac's
+     size, 28.2 long and 32.7 across (NotchLayout.tailLength, tailHeight), its tip stopping 10.5
+     short of the pill (tailGap): hence the card's 108.7 = the pill's 70 + 10.5 + 28.2. */
   #tail{
-    position:absolute;right:69px;width:32px;height:36px;background:var(--card);display:none;
-    clip-path:path('M0 0C0 9 18.56 13.68 32 18C18.56 22.32 0 27 0 36Z');
+    position:absolute;right:80.5px;width:28.2px;height:32.7px;background:var(--card);display:none;
+    clip-path:path('M0 0C0 8.18 16.36 12.43 28.2 16.36C16.36 20.29 0 24.54 0 32.72Z');
   }
   #card.show + #tail{display:block}
   .c-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
@@ -159,14 +158,17 @@
   body[data-edge="left"] #pill::before,body[data-edge="left"] #pill::after{right:auto;left:0}
   body[data-edge="left"] #pill::before{background:radial-gradient(circle at 100% 0, transparent calc(var(--fillet) - 1.5px), var(--edge) calc(var(--fillet) - 0.5px), var(--pill) calc(var(--fillet) + 0.5px))}
   body[data-edge="left"] #pill::after{background:radial-gradient(circle at 100% 100%, transparent calc(var(--fillet) - 1.5px), var(--edge) calc(var(--fillet) - 0.5px), var(--pill) calc(var(--fillet) + 0.5px))}
-  body[data-edge="left"] #card{left:100px;right:10px;margin-left:0;margin-right:auto}
-  body[data-edge="left"] #tail{right:auto;left:69px;clip-path:path('M32 0C32 9 13.44 13.68 0 18C13.44 22.32 32 27 32 36Z')}
+  body[data-edge="left"] #card{left:108.7px;right:5px;margin-left:0;margin-right:auto}
+  body[data-edge="left"] #tail{right:auto;left:80.5px;clip-path:path('M28.2 0C28.2 8.18 11.84 12.43 0 16.36C11.84 20.29 28.2 24.54 28.2 32.72Z')}
 
   /* Top and bottom: the pill lies flat, so it is a row and its thickness comes from the cells rather
      than a fixed 70 px column. The card is centred under (or over) the hovered ring by `placeCard`. */
   body[data-edge="top"] #pill,body[data-edge="bottom"] #pill{
     right:auto;left:50%;top:auto;transform:translateX(-50%);
     flex-direction:row;width:auto;height:auto;padding:12px 18px;
+    /* Both ends have a flare here, and each flare's edge line runs on into the pill's own: without this
+       one, the far flare's line stopped short at the pill and stood out of it as a stub */
+    border-right:1px solid var(--edge);
   }
   body[data-edge="top"] #pill::before,body[data-edge="top"] #pill::after,
   body[data-edge="bottom"] #pill::before,body[data-edge="bottom"] #pill::after{right:auto;top:auto;bottom:auto}
@@ -182,9 +184,9 @@
     left:8px;right:auto;top:0;transform:none;margin-left:0;
     width:246px;max-height:calc(100% - 150px);
   }
-  body[data-edge="top"] #tail,body[data-edge="bottom"] #tail{right:auto;width:36px;height:32px}
-  body[data-edge="top"] #tail{clip-path:path('M0 32C9 32 13.68 13.44 18 0C22.32 13.44 27 32 36 32Z')}
-  body[data-edge="bottom"] #tail{clip-path:path('M0 0C9 0 13.68 18.56 18 32C22.32 18.56 27 0 36 0Z')}
+  body[data-edge="top"] #tail,body[data-edge="bottom"] #tail{right:auto;width:32.7px;height:28.2px}
+  body[data-edge="top"] #tail{clip-path:path('M0 28.2C8.18 28.2 12.43 11.84 16.36 0C20.29 11.84 24.54 28.2 32.72 28.2Z')}
+  body[data-edge="bottom"] #tail{clip-path:path('M0 0C8.18 0 12.43 16.36 16.36 28.2C20.29 16.36 24.54 0 32.72 0Z')}
 
   /* Show on hover, the Mac's .onHover: folded, the notch rests as a small pill at the edge. Its size is
      the Mac's NotchLayout.pillWidth × pillHeight, 26 × 210 of its design px — 10 × 79 of this page's,
@@ -223,14 +225,14 @@
   body.folded[data-edge="left"] .cell{translate:-10px 0}
   body.folded[data-edge="top"] .cell{translate:0 -10px}
   body.folded[data-edge="bottom"] .cell{translate:0 10px}
-  .handle{transition:opacity .2s ease}
-  body.folded .handle{opacity:0;pointer-events:none}
+  /* Shown as the notch opens, its arc still buried in the notch; gone once the arc is back in */
+  .handle{transition:opacity .01s linear}
+  body.folded .handle{opacity:0;pointer-events:none;transition:opacity .04s linear .23s}
   @media (prefers-reduced-motion: reduce){#pill,#rest,body.folded #rest,.cell,.handle{transition:none}}
 
-  /* The two handles, one off each end of the pill, as on the Mac (SettingsOrb and MoveHandle):
-     settings past the far fillet, move past the near one. At rest each is a quarter arc tucked into
-     that fillet's pocket, concentric with it and a gap inside; under the pointer the same circle
-     fills in and takes its glyph. The Mac's measures, unscaled: arc radius 28.5, stroke 6.8, disc
+  /* The settings orb past the far end of the pill, as on the Mac (SettingsOrb). At rest it is a
+     quarter arc tucked into that fillet's pocket, concentric with it and a gap inside; under the
+     pointer the same circle fills in and takes its glyph. The Mac's measures, unscaled: arc radius 28.5, stroke 6.8, disc
      46.6, glyph 21. `placeHandles` puts each box's centre on its fillet's centre. */
   .handle{position:absolute;width:57px;height:57px;display:none;--arc:270deg}
   .handle.placed{display:block}
@@ -240,48 +242,91 @@
   .h-disc{width:46.6px;height:46.6px;margin:-23.3px 0 0 -23.3px;border-radius:50%;background:var(--pill);border:1px solid var(--edge);opacity:0;transform:scale(1.1)}
   .h-ring{stroke:var(--edge)}
   .h-fill{stroke:var(--pill)}
+  /* A gear drawn from geometry, its corners rounded by a stroke in its own colour */
+  .h-glyph path{stroke:var(--ink-2);stroke-width:1.6;stroke-linejoin:round}
   .h-glyph{width:21px;height:21px;margin:-10.5px 0 0 -10.5px;fill:var(--ink-2);opacity:0;
     transform:rotate(calc(var(--spins,0) * 360deg - 60deg)) scale(.5);transition:opacity .2s,transform .55s cubic-bezier(.34,1.2,.64,1)}
   .handle.hover .h-rest{opacity:0;transform:rotate(var(--arc)) scale(.86)}
   .handle.hover .h-disc{opacity:1;transform:scale(1)}
   .handle.hover .h-glyph{opacity:1;transform:rotate(calc(var(--spins,0) * 360deg)) scale(1)}
-  /* Carrying: the disc goes dashed and the hand stops turning — it is being held now, not offered */
-  #move.armed .h-disc{border:2px dashed var(--ink-2);background:var(--armed)}
-  /* The quarter that faces the fillet: up and outward past the far end on the right, and the same two
-     directions mirrored along the stack at the near end */
+  /* The quarter that faces the fillet: up and outward past the far end on the right */
   body[data-edge="left"] #orb,body[data-edge="top"] #orb{--arc:180deg}
   body[data-edge="bottom"] #orb{--arc:90deg}
-  #move{--arc:0deg}
-  body[data-edge="left"] #move{--arc:90deg}
-  body[data-edge="top"] #move{--arc:270deg}
   @media (prefers-reduced-motion: reduce){.handle > *{transition:none}}
+  /* Carried, the orb's parts are drawn frame by frame from the carry's times (drawCarriedHandle) */
+  .handle.carried > *{transition:none}
+  /* The orb's goo (drawOrb) stands in for the arc and the disc while it runs. Over the pill, unlike
+     the orb, so a neck leaving the notch covers the pill's edge line where it crosses it */
+  .handle.drawn > .h-rest,.handle.releasing > .h-rest,.handle.releasing > .h-disc{visibility:hidden}
+  #orbGoo{position:absolute;width:130px;height:130px;margin:-65px 0 0 -65px;overflow:visible;pointer-events:none;display:none}
+  #orbGoo.placed{display:block}
+  #orbGoo{transition:opacity .01s linear}
+  body.folded #orbGoo{opacity:0;transition:opacity .04s linear .23s}
+  #orbGoo .p-ring{fill:none;stroke:var(--edge);stroke-linecap:round}
+  #orbGoo .p-fill{fill:none;stroke:var(--pill);stroke-linecap:round}
+  #orbGoo .p-disc{fill:var(--pill);stroke:var(--edge);stroke-width:1}
+  #orbGoo .liquid path{fill:none;stroke:#000;stroke-linecap:round}
+  #orbGoo .liquid .l-neck,#orbGoo .liquid circle{fill:#000;stroke:none}
+  #orbGooF .rim{flood-color:var(--edge)} #orbGooF .fill{flood-color:var(--pill)}
+  /* The six dots beside the orb (MoveGrip), drawn centred on the orb and under it, so they come out
+     of it and go back into it. Liquid while they come and go: the goo is cut back to a shape and
+     drawn in the pill's colour with its edge, as the orb's disc is. */
+  #grip{position:absolute;width:166px;height:166px;margin:-83px 0 0 -83px;overflow:visible;pointer-events:none;display:none}
+  #grip.placed{display:block}
+  body.folded #grip{visibility:hidden}
+  #grip .dot{fill:var(--pill);stroke:var(--edge);stroke-width:1}
+  #grip .liquid .dot,#grip .liquid .core,#grip .liquid .neck{fill:#000;stroke:none}
+  #gripGoo .rim{flood-color:var(--edge)} #gripGoo .fill{flood-color:var(--pill)}
 </style>
 </head>
 <body>
 <div id="root">
   <div id="card"></div>
   <div id="tail"></div>
-  <div id="move" class="handle">
-    <svg class="h-rest" viewBox="-36 -36 72 72" aria-hidden="true">
-      <circle class="h-ring" r="28.5" fill="none" stroke-width="8.8" stroke-linecap="round" stroke-dasharray="44.77 179.07"/>
-      <circle class="h-fill" r="28.5" fill="none" stroke-width="6.8" stroke-linecap="round" stroke-dasharray="44.77 179.07"/>
-    </svg>
-    <div class="h-disc"></div>
-    <!-- A hand, as on the Mac: the gesture is a carry, not a nudge, which is what arrows would say -->
-    <svg class="h-glyph" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8 13V5.6a1.5 1.5 0 0 1 3 0V11h.6V3.5a1.5 1.5 0 0 1 3 0V11h.6V5a1.5 1.5 0 0 1 3 0v8.4c0 4.2-2 7.1-5.6 7.1-2.4 0-3.8-1-5.1-2.7l-3.8-5a1.5 1.5 0 0 1 2.2-2z"/>
-    </svg>
-  </div>
+  <svg id="grip" viewBox="-83 -83 166 166" aria-hidden="true">
+    <defs>
+      <filter id="gripGoo" x="-83" y="-83" width="166" height="166" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="0" result="blur"/>
+        <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 18 -8.5" result="shape"/>
+        <feMorphology in="shape" operator="erode" radius="1" result="inner"/>
+        <feFlood class="rim" result="rimColour"/>
+        <feComposite in="rimColour" in2="shape" operator="in" result="rim"/>
+        <feFlood class="fill" result="fillColour"/>
+        <feComposite in="fillColour" in2="inner" operator="in" result="body"/>
+        <feMerge><feMergeNode in="rim"/><feMergeNode in="body"/></feMerge>
+      </filter>
+    </defs>
+    <g id="gripDots" style="display:none"><circle class="core"/><path class="neck"/><circle class="dot"/><circle class="dot"/><circle class="dot"/><circle class="dot"/><circle class="dot"/><circle class="dot"/></g>
+  </svg>
   <div id="orb" class="handle">
     <svg class="h-rest" viewBox="-36 -36 72 72" aria-hidden="true">
       <circle class="h-ring" r="28.5" fill="none" stroke-width="8.8" stroke-linecap="round" stroke-dasharray="44.77 179.07"/>
       <circle class="h-fill" r="28.5" fill="none" stroke-width="6.8" stroke-linecap="round" stroke-dasharray="44.77 179.07"/>
     </svg>
     <div class="h-disc"></div>
-    <svg class="h-glyph" viewBox="0 0 12 12" aria-hidden="true"><path fill-rule="evenodd" d="M5.1.6h1.8l.3 1.5 1.1.5 1.3-.8 1.3 1.3-.8 1.3.5 1.1 1.5.3v1.8l-1.5.3-.5 1.1.8 1.3-1.3 1.3-1.3-.8-1.1.5-.3 1.5H5.1l-.3-1.5-1.1-.5-1.3.8-1.3-1.3.8-1.3-.5-1.1L.6 6.9V5.1l1.5-.3.5-1.1-.8-1.3 1.3-1.3 1.3.8 1.1-.5zM6 4.1a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8z"/></svg>
+    <svg class="h-glyph" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M10.03 4.66L10.14 1.97 A10.20 10.20 0 0 1 13.86 1.97 L13.97 4.66A7.60 7.60 0 0 1 15.80 5.42L17.78 3.59 A10.20 10.20 0 0 1 20.41 6.22 L18.58 8.20A7.60 7.60 0 0 1 19.34 10.03L22.03 10.14 A10.20 10.20 0 0 1 22.03 13.86 L19.34 13.97A7.60 7.60 0 0 1 18.58 15.80L20.41 17.78 A10.20 10.20 0 0 1 17.78 20.41 L15.80 18.58A7.60 7.60 0 0 1 13.97 19.34L13.86 22.03 A10.20 10.20 0 0 1 10.14 22.03 L10.03 19.34A7.60 7.60 0 0 1 8.20 18.58L6.22 20.41 A10.20 10.20 0 0 1 3.59 17.78 L5.42 15.80A7.60 7.60 0 0 1 4.66 13.97L1.97 13.86 A10.20 10.20 0 0 1 1.97 10.14 L4.66 10.03A7.60 7.60 0 0 1 5.42 8.20L3.59 6.22 A10.20 10.20 0 0 1 6.22 3.59 L8.20 5.42A7.60 7.60 0 0 1 10.03 4.66 ZM7.90 12a4.10 4.10 0 1 0 8.20 0a4.10 4.10 0 1 0 -8.20 0Z"/></svg>
   </div>
   <div id="pill"></div><!-- one .cell per provider, stacked vertically (upstream: data-driven, the same layout for 1–5 cells) -->
   <div id="rest"></div><!-- after the pill, so its outline is drawn over the clipped pill -->
+  <svg id="orbGoo" viewBox="-65 -65 130 130" aria-hidden="true">
+    <defs>
+      <filter id="orbGooF" x="-65" y="-65" width="130" height="130" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="0" result="blur"/>
+        <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 18 -8.5" result="shape"/>
+        <feMorphology in="shape" operator="erode" radius="1" result="inner"/>
+        <feFlood class="rim" result="rimColour"/>
+        <feComposite in="rimColour" in2="shape" operator="in" result="rim"/>
+        <feFlood class="fill" result="fillColour"/>
+        <feComposite in="fillColour" in2="inner" operator="in" result="body"/>
+        <feMerge><feMergeNode in="rim"/><feMergeNode in="body"/></feMerge>
+      </filter>
+      <clipPath id="orbCut"><circle r="39.2"/></clipPath>
+    </defs>
+    <g id="orbInk" clip-path="url(#orbCut)" style="display:none">
+      <g class="plain"><path class="p-ring"/><path class="p-fill"/><circle class="p-disc"/></g>
+      <g class="liquid" filter="url(#orbGooF)"><path class="l-band"/><path class="l-neck"/><path class="l-arc"/><circle class="l-disc"/></g>
+    </g>
+  </svg>
   <div id="notice"></div>
 </div>
 <script>
@@ -314,10 +359,9 @@ function applyTheme(name){
 invoke('get_theme_resolved').then(applyTheme).catch(()=>{});
 listen('theme_resolved',e=>applyTheme(e.payload)).catch(()=>{});
 let colorTransition='hard_step';
-const stepTone=f=> f>=0.7?CRIT : f>=0.5?WATCH : AMPLE;
-// A continuous sRGB ramp across the whole range: the Windows watch cut has always been 50%, so
-// this is a named equivalence rather than a magic number. Windows has no watch-limit slider.
-const WATCH_AT=0.5;
+// Settings' own sliders; a page opened before either invoke resolves draws with the Mac's defaults.
+let watchLimit=0.5, criticalLimit=0.7;
+const stepTone=f=> f>=criticalLimit?CRIT : f>=watchLimit?WATCH : AMPLE;
 function hex3(c){ const n=parseInt(c.slice(1),16); return [(n>>16)&255,(n>>8)&255,n&255]; }
 function lerpHex(a,b,t){
   const A=hex3(a), B=hex3(b);
@@ -326,11 +370,12 @@ function lerpHex(a,b,t){
 }
 const rampTone=f=>{
   f=Math.max(0,Math.min(1,f));
-  if(f<WATCH_AT) return lerpHex(AMPLE,WATCH,f/WATCH_AT);
-  return lerpHex(WATCH,CRIT,(f-WATCH_AT)/(1-WATCH_AT));
+  if(f<watchLimit) return lerpHex(AMPLE,WATCH,f/watchLimit);
+  return lerpHex(WATCH,CRIT,(f-watchLimit)/(1-watchLimit));
 };
 const tone=f=> colorTransition==='ramp'?rampTone(f):stepTone(f);
 // Whole percents, except where rounding would read as nothing used or nothing left, as the Mac's Percent does
+// HEADLINE_PCT_START
 function smallPct(v){
   if(v<=0) return '0';
   const t=Math.round(v*10)/10;
@@ -339,21 +384,43 @@ function smallPct(v){
   return t.toFixed(1);
 }
 function pctText(f){ const v=f*100; return v>0&&v<1?smallPct(v):String(Math.round(v)); }
-// Both ends, since vendors disagree on which they print; the left half comes from the rounded used half, as their dashboards do
-function usedCopy(w){
-  const v=w.used*100;
+// The tooltip's own left half, not one minus the fraction: it derives from the *rounded* used
+// figure, so the notch and the card never disagree by a point. As the Mac's Percent.halves does.
+function leftPctText(f){
+  const v=f*100;
+  if((v>0&&v<1)||(v>99&&v<100)){ const l=Math.max(0,100-v); return l>99.9?'>99.9':smallPct(l); }
+  return String(Math.max(0,100-Math.round(v)));
+}
+// The share of the allowance the meters draw: spent by default, what is left when the notch is
+// set that way. One rule behind the rings' sweep and the card's bars — callers clamp to what
+// they draw, so an overspent limit reads empty rather than negative. As the Mac's Percent.metered
+// does. Colours never come through here: how bad a reading is stays a question about what was spent.
+function meteredFraction(f,showRemaining){ return showRemaining?1-f:f; }
+// Both halves as text, the '~' staying on the used half it qualifies. Shared so the card line and
+// the tests below read the same computation.
+function usedHalves(f,derived){
+  const v=f*100;
   let used, left;
   if((v>0&&v<1)||(v>99&&v<100)){ used=smallPct(v); left=100-v>99.9?'>99.9':smallPct(Math.max(0,100-v)); }
   else { const u=Math.round(v); used=String(u); left=String(Math.max(0,100-u)); }
-  if(w.derived) used='~'+used;
-  return ui().usedLeft(used,left);
+  if(derived) used='~'+used;
+  return [used,left];
 }
+// Both ends, since vendors disagree on which they print; the left half comes from the rounded used half, as their dashboards do.
+// The line keeps both ends either way — the card is the detailed view — but the remaining figure leads when set.
+function usedCopy(w){
+  const [u,l]=usedHalves(w.used,w.derived);
+  return showRemaining?ui().leftUsed(l,u):ui().usedLeft(u,l);
+}
+// HEADLINE_PCT_END
 
 let usage={status:'',windows:[],fetched_at:0,note:''};
 let codexSnap={status:'absent',windows:[],fetched_at:0,note:''};
 let cursorSnap={status:'absent',windows:[],fetched_at:0,note:''};
 // Grok Build credits, from the Grok CLI's own session; absent until that CLI is signed in
 let grokSnap={status:'absent',windows:[],fetched_at:0,note:''};
+// GitHub Copilot quotas, from the GitHub CLI's own session; absent until gh is installed or a token is set
+let copilotSnap={status:'absent',windows:[],fetched_at:0,note:''};
 let glmSnap={status:'absent',windows:[],fetched_at:0,note:''};
 // OpenCode Go plan, read with OpenCode's own sign-in; absent until OpenCode is installed
 let opencodeSnap={status:'absent',windows:[],fetched_at:0,note:''};
@@ -363,8 +430,8 @@ let activity=[]; // working state of the non-Claude providers: {provider,state:'
 /* Which screen edge the notch is pinned to. Rust owns it (it is what placed the window); the page is
    told so it can mirror or rotate itself to match. 'right' is the default and the pre-edge layout. */
 let notchEdge='right';
-// Show on hover — the logic is beside the move handle below; declared here, since reportHot reads `folded` from the first frame
-let onHover=false, folded=false, pointerIn=false, menuOpen=false, foldTimer=null;
+// Show on hover — the logic is beside the handles below; declared here, since reportHot reads `folded` from the first frame
+let onHover=false, fullScreen=false, folded=false, pointerIn=false, menuOpen=false, foldTimer=null;
 /* How much of the window the taskbar covers, in CSS px, from Rust: top, right, bottom, left. The pill
    stays against the screen edge; the card is kept out of these. */
 let insets=[0,0,0,0];
@@ -449,6 +516,10 @@ const TEXT={
     'Unable to open Claude sign-in window.':'Claude 로그인 창을 열 수 없습니다.',
     'Claude HTTP 403: access denied. Check network or account access; sign-in may still be valid.':'Claude HTTP 403: 접근이 거부되었습니다. 네트워크나 계정의 접근 권한을 확인하십시오. 로그인은 여전히 유효할 수 있습니다.',
     'Run grok login to see usage.':'사용량을 확인하려면 grok login을 실행하십시오.',
+    'Run gh auth login to see usage.':'사용량을 확인하려면 gh auth login을 실행하십시오.',
+    'Premium requests':'프리미엄 요청',
+    'Chat requests':'채팅 요청',
+    'Completions':'코드 완성',
   },
   'pt-BR':{
     'Included usage':'Uso incluído',
@@ -500,6 +571,10 @@ const TEXT={
     'Sign in to Codex to see usage.':'Entre no Codex para ver o uso.',
     'Sign in to Antigravity to see usage.':'Entre no Antigravity para ver o uso.',
     'Run grok login to see usage.':'Execute grok login para ver o uso.',
+    'Run gh auth login to see usage.':'Execute gh auth login para ver o uso.',
+    'Premium requests':'Solicitações premium',
+    'Chat requests':'Solicitações de chat',
+    'Completions':'Conclusões de código',
     'Run opencode auth login to see usage.':'Execute opencode auth login para ver o uso.',
     'No OpenCode Go subscription on this account':'Nenhuma assinatura do OpenCode Go nesta conta',
     'needs your input':'precisa da sua resposta',
@@ -507,6 +582,19 @@ const TEXT={
   },
   uk:{
     'Included usage':'Використання в тарифі',
+    'Sign in':'Увійти',
+    'Signing in...':'Вхід...',
+    'Refresh':'Оновити',
+    'Browser sign-in through Claude Code':'Вхід у браузері через Claude Code',
+    'Complete sign-in in the browser or terminal window.':'Завершіть вхід у браузері або у вікні терміналу.',
+    'Sign-in complete. Refreshing usage...':'Вхід виконано. Оновлення використання...',
+    'Sign-in cancelled, failed or timed out. Try again.':'Вхід не завершено: його скасовано, сталася помилка або минув час очікування. Спробуйте ще раз.',
+    'Checking usage...':'Перевірка використання...',
+    'Rate limited. Wait for the retry deadline.':'Ліміт запитів. Зачекайте до часу повтору.',
+    'Claude Code CLI not found. Install the standalone CLI first.':'Claude Code CLI не знайдено. Спершу встановіть автономний CLI.',
+    'Claude sign-in or renewal is already running.':'Вхід у Claude або поновлення входу вже виконується.',
+    'Unable to open Claude sign-in window.':'Не вдалося відкрити вікно входу Claude.',
+    'Claude HTTP 403: access denied. Check network or account access; sign-in may still be valid.':'Claude HTTP 403: доступ заборонено. Перевірте мережу або доступ до акаунта; вхід, можливо, ще дійсний.',
     'API usage':'Використання API',
     'On demand':'За потребою',
     'Usage':'Використання',
@@ -524,6 +612,7 @@ const TEXT={
     'Monthly Limit':'Місячний ліміт',
     'Longer window':'Довше вікно',
     'Requests today · no limit published':'Запитів сьогодні · ліміт не опубліковано',
+    'Updated':'Оновлено',
     'Resetting…':'Скидання…',
     'Resets at':'Скидання о',
     'Resets':'Скидання',
@@ -540,10 +629,19 @@ const TEXT={
     'Sign in to Cursor to see usage.':'Увійдіть у Cursor, щоб бачити використання.',
     'Sign in to Codex to see usage.':'Увійдіть у Codex, щоб бачити використання.',
     'Sign in to Antigravity to see usage.':'Увійдіть в Antigravity, щоб бачити використання.',
+    'Run grok login to see usage.':'Запустіть grok login, щоб бачити використання.',
+    'Run gh auth login to see usage.':'Запустіть gh auth login, щоб бачити використання.',
+    'Premium requests':'Преміум-запити',
+    'Chat requests':'Запити чату',
+    'Completions':'Автодоповнення',
+    'Run opencode auth login to see usage.':'Запустіть opencode auth login, щоб бачити використання.',
+    'No OpenCode Go subscription on this account':'Для цього акаунта немає підписки OpenCode Go',
     'needs your input':'потрібна ваша відповідь',
     'Working in':'Працює в'
   },
   ru:{
+    'Last known usage — not current.':'Последние известные данные — не текущие лимиты.',
+    'Last reported reset':'Последнее известное время сброса',
     'Included usage':'Включённое использование',
     'Sign in':'Авторизоваться',
     'Signing in...':'Вход…',
@@ -589,6 +687,10 @@ const TEXT={
     'Sign in to Codex to see usage.':'Войдите в Codex, чтобы увидеть использование.',
     'Sign in to Antigravity to see usage.':'Войдите в Antigravity, чтобы увидеть использование.',
     'Run grok login to see usage.':'Выполните grok login, чтобы увидеть использование.',
+    'Run gh auth login to see usage.':'Выполните gh auth login, чтобы увидеть использование.',
+    'Premium requests':'Премиум-запросы',
+    'Chat requests':'Запросы чата',
+    'Completions':'Автодополнения',
     'needs your input':'требуется ваш ответ',
     'Working in':'Работает в'
   },
@@ -628,8 +730,28 @@ const TEXT={
     'Sign in to Codex to see usage.':'请登录 Codex 以查看用量。',
     'Sign in to Antigravity to see usage.':'请登录 Antigravity 以查看用量。',
     'Run grok login to see usage.':'请运行 grok login 以查看用量。',
+    'Run gh auth login to see usage.':'请运行 gh auth login 以查看用量。',
+    'Premium requests':'高级请求',
+    'Chat requests':'聊天请求',
+    'Completions':'代码补全',
     'needs your input':'等待你的输入',
     'Working in':'工作于',
+    'Sign in':'登录',
+    'Signing in...':'正在登录…',
+    'Refresh':'刷新',
+    'Browser sign-in through Claude Code':'通过 Claude Code 在浏览器登录',
+    'Complete sign-in in the browser or terminal window.':'请在浏览器或终端窗口中完成登录。',
+    'Sign-in complete. Refreshing usage...':'登录完成。正在刷新用量…',
+    'Sign-in cancelled, failed or timed out. Try again.':'登录已取消、失败或超时。请重试。',
+    'Checking usage...':'正在检查用量…',
+    'Rate limited. Wait for the retry deadline.':'已限流。请等到可以重试的时间。',
+    'Claude Code CLI not found. Install the standalone CLI first.':'未找到 Claude Code CLI。请先安装独立的 CLI。',
+    'Claude sign-in or renewal is already running.':'Claude 登录或续期已在进行。',
+    'Unable to open Claude sign-in window.':'无法打开 Claude 登录窗口。',
+    'Claude HTTP 403: access denied. Check network or account access; sign-in may still be valid.':'Claude HTTP 403：访问被拒绝。请检查网络或账号权限；登录可能仍然有效。',
+    'Updated':'已更新',
+    'Run opencode auth login to see usage.':'请运行 opencode auth login 以查看用量。',
+    'No OpenCode Go subscription on this account':'此账号没有 OpenCode Go 订阅',
   },
   'zh-Hant':{
     'Included usage':'包含用量',
@@ -667,8 +789,28 @@ const TEXT={
     'Sign in to Codex to see usage.':'請登入 Codex 以查看用量。',
     'Sign in to Antigravity to see usage.':'請登入 Antigravity 以查看用量。',
     'Run grok login to see usage.':'請執行 grok login 以查看用量。',
+    'Run gh auth login to see usage.':'請執行 gh auth login 以查看用量。',
+    'Premium requests':'進階請求',
+    'Chat requests':'聊天請求',
+    'Completions':'程式碼補全',
     'needs your input':'等待你的輸入',
     'Working in':'工作於',
+    'Sign in':'登入',
+    'Signing in...':'正在登入…',
+    'Refresh':'重新整理',
+    'Browser sign-in through Claude Code':'透過 Claude Code 在瀏覽器登入',
+    'Complete sign-in in the browser or terminal window.':'請在瀏覽器或終端機視窗中完成登入。',
+    'Sign-in complete. Refreshing usage...':'登入完成。正在重新整理用量…',
+    'Sign-in cancelled, failed or timed out. Try again.':'登入已取消、失敗或逾時。請重試。',
+    'Checking usage...':'正在檢查用量…',
+    'Rate limited. Wait for the retry deadline.':'已限流。請等到可以重試的時間。',
+    'Claude Code CLI not found. Install the standalone CLI first.':'未找到 Claude Code CLI。請先安裝獨立的 CLI。',
+    'Claude sign-in or renewal is already running.':'Claude 登入或續期已在進行。',
+    'Unable to open Claude sign-in window.':'無法開啟 Claude 登入視窗。',
+    'Claude HTTP 403: access denied. Check network or account access; sign-in may still be valid.':'Claude HTTP 403：存取被拒。請檢查網路或帳號權限；登入可能仍然有效。',
+    'Updated':'已更新',
+    'Run opencode auth login to see usage.':'請執行 opencode auth login 以查看用量。',
+    'No OpenCode Go subscription on this account':'此帳號沒有 OpenCode Go 訂閱',
   },
 };
 // Kept as patterns rather than exact keys: each one carries a number, a plan name or an error
@@ -909,31 +1051,31 @@ const UI={
   ko:{locale:'ko-KR',title:n=>n+' 사용량',resetting:'재설정 중…',resetsIn:m=>`${m}분 후 재설정`,
       resetsAt:t=>`${t}에 재설정`,resetsOn:(d,t)=>`${d} ${t}에 재설정`,resetsDate:d=>`${d}에 재설정`,
       ago:m=>m<60?`${m}분 전`:`${Math.round(m/60)}시간 전`,
-      usedLeft:(used,left)=>`${used}% 사용 · ${left}% 남음`,andMore:n=>`외 ${n}개`,updated:a=>`${a}에 마지막 업데이트됨`},
+      usedLeft:(used,left)=>`${used}% 사용 · ${left}% 남음`,leftUsed:(left,used)=>`${left}% 남음 · ${used}% 사용`,andMore:n=>`외 ${n}개`,updated:a=>`${a}에 마지막 업데이트됨`},
   'pt-BR':{locale:'pt-BR',title:n=>'Uso do '+n,resetting:'Renovando…',resetsIn:m=>`Renova em ${m} min`,
       resetsAt:t=>`Renova às ${t}`,resetsOn:(d,t)=>`Renova ${d} às ${t}`,resetsDate:d=>`Renova ${d}`,
       ago:m=>m<60?`há ${m} min`:`há ${Math.round(m/60)} h`,
-      usedLeft:(used,left)=>`${used}% usado · ${left}% restante`,andMore:n=>`e mais ${n}`},
+      usedLeft:(used,left)=>`${used}% usado · ${left}% restante`,leftUsed:(left,used)=>`${left}% restante · ${used}% usado`,andMore:n=>`e mais ${n}`},
   en:{locale:'en-US',title:n=>n+' Usage',resetting:'Resetting…',resetsIn:m=>`Resets in ${m} min`,
       resetsAt:t=>`Resets at ${t}`,resetsOn:(d,t)=>`Resets ${d} ${t}`,resetsDate:d=>`Resets ${d}`,
       ago:m=>m<60?`${m}m ago`:`${Math.round(m/60)}h ago`,
-      usedLeft:(used,left)=>`${used}% Used · ${left}% left`,andMore:n=>`and ${n} more`,updated:a=>`Updated ${a}`},
+      usedLeft:(used,left)=>`${used}% Used · ${left}% left`,leftUsed:(left,used)=>`${left}% left · ${used}% Used`,andMore:n=>`and ${n} more`,updated:a=>`Updated ${a}`},
   uk:{locale:'uk-UA',title:n=>'Використання '+n,resetting:'Скидання…',resetsIn:m=>`Скидання через ${m} хв`,
       resetsAt:t=>`Скидання о ${t}`,resetsOn:(d,t)=>`Скидання: ${d} ${t}`,resetsDate:d=>`Скидання: ${d}`,
       ago:m=>m<60?`${m} хв тому`:`${Math.round(m/60)} год тому`,
-      usedLeft:(used,left)=>`Використано ${used}% · лишилось ${left}%`,andMore:n=>`і ще ${n}`,updated:a=>`Оновлено ${a}`},
+      usedLeft:(used,left)=>`Використано ${used}% · лишилось ${left}%`,leftUsed:(left,used)=>`лишилось ${left}% · Використано ${used}%`,andMore:n=>`і ще ${n}`,updated:a=>`Оновлено ${a}`},
   ru:{locale:'ru-RU',title:n=>'Использование '+n,resetting:'Сброс…',resetsIn:m=>`Сброс через ${m} мин`,
       resetsAt:t=>`Сброс в ${t}`,resetsOn:(d,t)=>`Сброс: ${d} ${t}`,resetsDate:d=>`Сброс: ${d}`,
       ago:m=>m<60?`${m} мин назад`:`${Math.round(m/60)} ч назад`,
-      usedLeft:(used,left)=>`Использовано ${used}% · осталось ${left}%`,andMore:n=>`и ещё ${n}`,updated:a=>`Обновлено ${a}`},
+      usedLeft:(used,left)=>`Использовано ${used}% · осталось ${left}%`,leftUsed:(left,used)=>`осталось ${left}% · Использовано ${used}%`,andMore:n=>`и ещё ${n}`,updated:a=>`Обновлено ${a}`},
   zh:{locale:'zh-CN',title:n=>n+' 用量',resetting:'正在重置…',resetsIn:m=>`${m} 分钟后重置`,
       resetsAt:t=>`${t} 重置`,resetsOn:(d,t)=>`${d} ${t} 重置`,resetsDate:d=>`${d} 重置`,
       ago:m=>m<60?`${m} 分钟前`:`${Math.round(m/60)} 小时前`,
-      usedLeft:(used,left)=>`已用 ${used}% · 剩余 ${left}%`,andMore:n=>`另有 ${n} 个`,updated:a=>`更新于 ${a}`},
+      usedLeft:(used,left)=>`已用 ${used}% · 剩余 ${left}%`,leftUsed:(left,used)=>`剩余 ${left}% · 已用 ${used}%`,andMore:n=>`另有 ${n} 个`,updated:a=>`更新于 ${a}`},
   'zh-Hant':{locale:'zh-TW',title:n=>n+' 用量',resetting:'正在重置…',resetsIn:m=>`${m} 分鐘後重置`,
       resetsAt:t=>`${t} 重置`,resetsOn:(d,t)=>`${d} ${t} 重置`,resetsDate:d=>`${d} 重置`,
       ago:m=>m<60?`${m} 分鐘前`:`${Math.round(m/60)} 小時前`,
-      usedLeft:(used,left)=>`已用 ${used}% · 剩餘 ${left}%`,andMore:n=>`另有 ${n} 個`,updated:a=>`更新於 ${a}`},
+      usedLeft:(used,left)=>`已用 ${used}% · 剩餘 ${left}%`,leftUsed:(left,used)=>`剩餘 ${left}% · 已用 ${used}%`,andMore:n=>`另有 ${n} 個`,updated:a=>`更新於 ${a}`},
 };
 function ui(){return UI[uiLang]||UI.en;}
 function textCopy(value){
@@ -1009,6 +1151,7 @@ function providers(){
   if(opencodeSnap.status!=='absent') list.push({id:'opencode',base:'opencode',name:'OpenCode',glyph:'OC',snap:opencodeSnap});
   if(cursorSnap.status!=='absent') list.push({id:'cursor',base:'cursor',name:'Cursor',glyph:'Cu',snap:cursorSnap});
   if(grokSnap.status!=='absent') list.push({id:'grok',base:'grok',name:'Grok',glyph:'Gk',snap:grokSnap});
+  if(copilotSnap.status!=='absent') list.push({id:'copilot',base:'copilot',name:'GitHub Copilot',glyph:'Cp',snap:copilotSnap});
   if(agSnap.status!=='absent') list.push({id:'gemini',base:'gemini',name:'Antigravity',glyph:'Ag',snap:agSnap});
   if(Array.isArray(notchSlots)&&notchSlots.length){
     const picked=list.filter(p=>!!slotFor(p.base));
@@ -1022,6 +1165,7 @@ function providers(){
 let agPrefs={limit:'automatic',model:'gemini'};
 // Where the weekly limit's own ring goes, from settings: 'off', 'inside' or 'outside'
 let weeklyRing='off';
+let weeklyRingDashed=false;
 // The tightest metered window, ties going to the lower id so the choice never flickers
 function tightestOf(ws){
   return ws.filter(w=>w.count==null).reduce((a,b)=>!a||b.used>a.used||(b.used===a.used&&b.id<a.id)?b:a,null);
@@ -1036,10 +1180,11 @@ function laneIs(w,limit){
 function headlineOf(snap,id){
   const ws=snap.windows; if(!ws.length) return null;
   const byId=x=>ws.find(w=>w.id===x)||null;
-  if(id==='claude') return byId('session');
+  if(id==='claude') return byId('session')||byId('spend'); // an Enterprise seat reports only its spend limit
   if(id==='codex') return byId('primary');
   if(id==='cursor') return byId('included')||byId('api');
   if(id==='grok') return byId('credits')||ws[0];
+  if(id==='copilot') return byId('premium_interactions')||ws[0];
   if(id==='glm') return byId('session');
   if(id==='opencode') return byId('rolling');
   const fam=ws.filter(w=>laneFamily(w)===agPrefs.model), lanes=fam.length?fam:ws;
@@ -1057,6 +1202,7 @@ function weeklyOf(snap,id){
   if(id==='codex') return byId('secondary');
   if(id==='cursor') return null;
   if(id==='grok') return null; // the credits window is already the weekly one
+  if(id==='copilot') return null; // monthly quotas only; nothing weekly to draw
   if(id==='glm') return byId('weekly');
   if(id==='opencode') return byId('weekly');
   const fam=ws.filter(w=>laneFamily(w)===agPrefs.model), lanes=fam.length?fam:ws;
@@ -1067,6 +1213,22 @@ function weeklyOf(snap,id){
 // provider that is answering perfectly well, which made "stale" mean "recently fetched" rather than
 // "old enough not to trust". A provider that knows its own reading is stale still says so in status.
 function staleOf(snap){ if(snap.status==='stale') return true; return snap.fetched_at>0 && (Date.now()-snap.fetched_at)>15*60*1000; }
+// CLAUDE_QUOTA_FRESHNESS_START
+// Cached quota is useful in the card, but must not look like a current reading
+// after sign-out, a denied request, or the reported window's reset.
+function claudeQuotaCurrent(snap,w,now=Date.now()){
+  return snap.status==='ok' && snap.fetched_at>0 && !staleOf(snap)
+    && !!w && (w.resets_at==null || w.resets_at>now);
+}
+function ringWindow(snap,id,w){
+  return id!=='claude' || claudeQuotaCurrent(snap,w) ? w : null;
+}
+function quotaResetCopy(snap,id,w){
+  if(id==='claude' && !claudeQuotaCurrent(snap,w))
+    return w.resets_at ? textCopy('Last reported reset')+': '+new Date(w.resets_at).toLocaleString() : '';
+  return resetCopy(w.resets_at);
+}
+// CLAUDE_QUOTA_FRESHNESS_END
 let stateSnap={sessions:[],agg:'idle'};
 
 function svgArc(r,frac,color,width,extra=''){
@@ -1081,6 +1243,24 @@ function svgArc(r,frac,color,width,extra=''){
     transform="rotate(-90 28 28)" ${extra}/>`;
 }
 
+// svgArc's sweep drawn as the Mac's dashed weekly ring: 4-on 2-off butt-capped ticks. A circle has
+// one dasharray, and svgArc spends it on cropping to `frac`, so the ticks are spelled out up to the
+// sweep's end (the last one cut short) and a closing gap takes up the rest of the circumference.
+function dashedArc(r,frac,color,width,extra=''){
+  if(!(frac>0)) return '';
+  const C=2*Math.PI*r, len=C*Math.min(frac,1), seg=4, gap=2, parts=[];
+  let pos=0;
+  for(;;){
+    const d=Math.min(seg,len-pos); pos+=d;
+    if(pos+gap>=len){ parts.push(d,C-pos); break; }
+    parts.push(d,gap); pos+=gap;
+  }
+  return `<circle cx="28" cy="28" r="${r}" fill="none" stroke="${color}" stroke-width="${width}"
+    stroke-dasharray="${parts.map(n=>n.toFixed(2)).join(' ')}" stroke-linecap="butt"
+    transform="rotate(-90 28 28)" ${extra}/>`;
+}
+
+// QUOTA_RING_RENDER_START
 function renderRing(){
   const ps=providers();
   // Rebuild the DOM only when the structure changes (never swap the element under the cursor)
@@ -1094,18 +1274,24 @@ function renderRing(){
   for(const p of ps){
     const cell=pill.querySelector(`.cell[data-p="${p.id}"]`); if(!cell) continue;
     const svg=cell.querySelector('svg.ring'), reading=cell.querySelector('svg.reading'), activity=cell.querySelector('svg.activity'), pct=cell.querySelector('.pct'), glyph=cell.querySelector('.glyph'), wrap=cell.querySelector('.ringwrap');
-    const h=headlineOf(p.snap,p.base);
+    const h=ringWindow(p.snap,p.base,headlineOf(p.snap,p.base));
     let inner=`<circle cx="28" cy="28" r="22" fill="${HOLE}"/><circle cx="28" cy="28" r="25" fill="none" stroke="${TRACK}" stroke-width="5"/>`;
     wrap.classList.toggle('pressed',!!refreshing[p.id]);
-    reading.innerHTML=h && h.count==null?svgArc(25,Math.min(h.used,1),tone(h.used),5):'';
+    reading.innerHTML=h && h.count==null?svgArc(25,Math.min(Math.max(meteredFraction(h.used,showRemaining),0),1),tone(h.used),5):'';
     if(weeklyRing!=='off'){ // the week, thinner and at its own radius, in its own colour: a session at 12% beside a week at 91% is the case this exists for
-      const wk=weeklyOf(p.snap,p.base);
+      const wk=ringWindow(p.snap,p.base,weeklyOf(p.snap,p.base));
       // Inside, it shares the gap with the working indicator, so it stands down while that is showing
       const taken=weeklyRing==='inside'&&workState(p.base)!=='idle';
       if(wk&&(!h||wk.id!==h.id)&&!taken){
         const r=weeklyRing==='inside'?16:31;
-        inner+=`<circle cx="28" cy="28" r="${r}" fill="none" stroke="${TRACK}" stroke-width="2.4" opacity="0.7"/>`
-          +svgArc(r,Math.min(wk.used,1),tone(wk.used),2.4,'opacity="0.85"');
+        const frac=Math.min(Math.max(meteredFraction(wk.used,showRemaining),0),1);
+        const track=weeklyRingDashed
+          ?`<circle cx="28" cy="28" r="${r}" fill="none" stroke="${TRACK}" stroke-width="2.4" stroke-dasharray="4 2" opacity="0.7"/>`
+          :`<circle cx="28" cy="28" r="${r}" fill="none" stroke="${TRACK}" stroke-width="2.4" opacity="0.7"/>`;
+        const arc=weeklyRingDashed
+          ?dashedArc(r,frac,tone(wk.used),2.4,'opacity="0.85"')
+          :svgArc(r,frac,tone(wk.used),2.4,'opacity="0.85"');
+        inner+=track+arc;
       }
     }
     svg.innerHTML=inner;
@@ -1118,7 +1304,7 @@ function renderRing(){
     }
     if(p.snap.status==='needsAuth'||p.snap.status==='none') pct.textContent='—';
     else if(h && h.count!=null) pct.textContent='~'+h.count;
-    else if(h) pct.textContent=(h.derived?'~':'')+pctText(h.used)+'%';
+    else if(h) pct.textContent=(h.derived?'~':'')+(showRemaining?leftPctText(h.used):pctText(h.used))+'%';
     else pct.textContent=p.snap.windows.length?'—':'…'; // its declared window is missing: a dash, not a wait
     glyph.classList.toggle('dim', !!(h && h.used>=1));
     wrap.classList.toggle('stale', staleOf(p.snap));
@@ -1126,6 +1312,7 @@ function renderRing(){
   reportHot(); // a provider appearing or leaving resizes the pill
 }
 
+// QUOTA_RING_RENDER_END
 function resetCopy(ms){
   if(!ms) return '';
   const diff=ms-Date.now();
@@ -1189,12 +1376,14 @@ function renderCard(){
   let html=`<div class="c-head">${headIcon}<span class="c-title">${esc(ui().title(p.name))}</span></div>`;
   if(staleOf(snap)&&snap.fetched_at) html+=`<div class="c-sub">${ui().updated(ago(snap.fetched_at))}</div>`;
   if(snap.status==='needsAuth'){
-    const who={claude:'Sign in to Claude Code to see usage.',cursor:'Sign in to Cursor to see usage.',codex:'Sign in to Codex to see usage.',grok:'Run grok login to see usage.',opencode:'Run opencode auth login to see usage.',gemini:'Sign in to Antigravity to see usage.'}[p.base]||'';
+    const who={claude:'Sign in to Claude Code to see usage.',cursor:'Sign in to Cursor to see usage.',codex:'Sign in to Codex to see usage.',grok:'Run grok login to see usage.',copilot:'Run gh auth login to see usage.',opencode:'Run opencode auth login to see usage.',gemini:'Sign in to Antigravity to see usage.'}[p.base]||'';
     html+=`<div class="c-note">${textCopy(who)}<br>${esc(textCopy(snap.note||''))}</div>`;
   }else if(!snap.windows.length){
     html+=`<div class="c-note">${esc(textCopy(snap.note||'Waiting for first reading…'))}</div>`;
   }else{
     // Windows that share a group (Antigravity's model families) sit in one box under its name, as on the Mac
+    if(p.base==='claude' && snap.windows.some(w=>!claudeQuotaCurrent(snap,w)))
+      html+=`<div class="c-note">${esc(textCopy('Last known usage — not current.'))}</div>`;
     let group=null;
     for(const w of snap.windows){
       if((w.group||null)!==group){
@@ -1208,8 +1397,8 @@ function renderCard(){
         continue;
       }
       html+=`<div class="win">
-        <div class="w-row"><span class="w-label">${esc(textCopy(w.label))}</span><span class="w-reset">${resetCopy(w.resets_at)}</span></div>
-        <div class="w-track"><div class="w-fill" style="width:${(Math.min(w.used,1)*100).toFixed(0)}%;background:${tone(w.used)}"></div></div>
+        <div class="w-row"><span class="w-label">${esc(textCopy(w.label))}</span><span class="w-reset">${esc(quotaResetCopy(snap,p.base,w))}</span></div>
+        <div class="w-track"><div class="w-fill" style="width:${(Math.min(Math.max(meteredFraction(w.used,showRemaining),0),1)*100).toFixed(0)}%;background:${tone(w.used)}"></div></div>
         <div class="w-used">${esc(usedCopy(w))}</div>
       </div>`;
     }
@@ -1246,32 +1435,39 @@ function renderCard(){
 // The card follows the hovered cell: centred on it along the pill (kept inside the window), tail pointing at it.
 // On the upright edges that means matching its vertical centre; on the flat ones, its horizontal centre,
 // and the card is pushed clear of a pill whose thickness follows the cells it holds.
+// The Mac's NotchLayout.tailGap and tailLength: the tail's tip stops short of the notch, as the CSS above has it
+const TAIL_GAP=10.5, TAIL_LENGTH=28.2;
 function placeCard(){
+  // Rects and the viewport come back zoomed when fitZoom has zoomed the page; offsetWidth/Height and
+  // the styles written here are not, so the rects are brought back first, as placeHandles does. Mixed,
+  // a page zoomed past 1 put the bottom edge's card down behind the pill, which then hid all but its top.
+  const z=parseFloat(document.documentElement.style.zoom)||1;
+  const box=el=>{ const r=el.getBoundingClientRect(); return {left:r.left/z,top:r.top/z,bottom:r.bottom/z,width:r.width/z,height:r.height/z}; };
   const cell=pill.querySelector(`.cell[data-p="${hoverId}"]`)||pill;
-  const cr=cell.getBoundingClientRect();
+  const cr=box(cell);
   // The point sits on the ring, not the cell, which includes the label below it
-  const rr=(cell.querySelector('.ringwrap')||cell).getBoundingClientRect();
+  const rr=box(cell.querySelector('.ringwrap')||cell);
   card.style.transform='none';
   if(edgeIsVertical()){
     const cy=cr.top+cr.height/2;
-    const H=innerHeight, ch=card.offsetHeight||0;
+    const H=innerHeight/z, ch=card.offsetHeight||0;
     let top=Math.round(cy-ch/2); top=Math.max(8+insets[0],Math.min(top,H-insets[2]-ch-8));
     card.style.top=top+'px'; card.style.left='';
     const ry=rr.top+rr.height/2;
-    const th=tail.offsetHeight||36, ty=Math.max(top+16+th/2,Math.min(top+ch-16-th/2,ry));
+    const th=tail.offsetHeight||33, ty=Math.max(top+16+th/2,Math.min(top+ch-16-th/2,ry));
     tail.style.top=Math.round(ty-th/2)+'px'; tail.style.left='';
   }else{
-    const pr=pill.getBoundingClientRect();
+    const pr=box(pill);
     const cx=cr.left+cr.width/2;
-    const W=innerWidth, cw=card.offsetWidth||0, ch=card.offsetHeight||0;
+    const W=innerWidth/z, cw=card.offsetWidth||0, ch=card.offsetHeight||0;
     let left=Math.round(cx-cw/2); left=Math.max(8+insets[3],Math.min(left,W-insets[1]-cw-8));
     card.style.left=left+'px';
     const rx=rr.left+rr.width/2;
-    const tw=tail.offsetWidth||36, tx=Math.max(left+16+tw/2,Math.min(left+cw-16-tw/2,rx));
+    const tw=tail.offsetWidth||33, tx=Math.max(left+16+tw/2,Math.min(left+cw-16-tw/2,rx));
     tail.style.left=Math.round(tx-tw/2)+'px';
-    // 30 px of clear gap, the same the upright edges leave, with the tail spanning it 1 px under the pill
-    if(notchEdge==='top'){ card.style.top=Math.round(pr.bottom+30)+'px'; tail.style.top=Math.round(pr.bottom-1)+'px'; }
-    else{ card.style.top=Math.round(pr.top-30-ch)+'px'; tail.style.top=Math.round(pr.top-31)+'px'; }
+    // The upright edges' gap, turned: the tail's tip TAIL_GAP clear of the pill, the card past the tail
+    if(notchEdge==='top'){ card.style.top=Math.round(pr.bottom+TAIL_GAP+TAIL_LENGTH)+'px'; tail.style.top=Math.round(pr.bottom+TAIL_GAP)+'px'; }
+    else{ card.style.top=Math.round(pr.top-TAIL_GAP-TAIL_LENGTH-ch)+'px'; tail.style.top=Math.round(pr.top-TAIL_GAP-TAIL_LENGTH)+'px'; }
   }
 }
 
@@ -1298,13 +1494,24 @@ function callq(cmd,args){ // invoke with visible failure: any command error is r
 }
 // Hot rectangles are reported in physical pixels (multiplied by this page's real DPR), so the Rust side does no conversion — WebView2's DPR and the window scale can disagree
 function rectOf(el){const r=el.getBoundingClientRect(),k=window.devicePixelRatio||1;return [r.left*k,r.top*k,r.width*k,r.height*k];}
+/* The tail and the gap between its tip and the pill: crossing it is still being on the notch, so it is
+   hot too, or a click there would go through to whatever is behind. */
+function tailReach(){
+  const t=tail.getBoundingClientRect(), p=pill.getBoundingClientRect(), k=window.devicePixelRatio||1;
+  let {left,top,right,bottom}=t;
+  if(notchEdge==='left') left=Math.min(left,p.right);
+  else if(notchEdge==='top') top=Math.min(top,p.bottom);
+  else if(notchEdge==='bottom') bottom=Math.max(bottom,p.top);
+  else right=Math.max(right,p.left);
+  return [left*k,top*k,(right-left)*k,(bottom-top)*k];
+}
 /* Rust gates click-through on these, so they are reported whenever the pill or card moves, not only
    when the card opens: a stale pill rectangle is a pill that cannot be clicked. */
 function reportHot(){
   if(folded){ callq('set_hot',{rects:[wakeRect()],expanded:false,probe:probeRect()}).catch(()=>{}); return; }
   const open=card.classList.contains('show');
-  const rects=open?[rectOf(pill),rectOf(tail),rectOf(card)]:[rectOf(pill)];
-  if(placeHandles()){ rects.push(rectOf(orb)); if(showMove) rects.push(rectOf(moveHandle)); }
+  const rects=open?[rectOf(pill),tailReach(),rectOf(card)]:[rectOf(pill)];
+  if(placeHandles()){ rects.push(rectOf(orb)); if(gripOut()||handleCarry) rects.push(gripRect()); }
   callq('set_hot',{rects,expanded:open}).catch(()=>{});
 }
 /* What wakes the folded notch: the resting pill, as long along the edge as the pill and deepened into
@@ -1365,7 +1572,15 @@ listen('notch_landing',()=>{
   document.documentElement.style.visibility='hidden';
   requestAnimationFrame(()=>requestAnimationFrame(()=>invoke('notch_hidden').catch(()=>{})));
 }).catch(()=>{});
-listen('notch_reveal',()=>{ document.documentElement.style.visibility=''; }).catch(()=>{});
+listen('notch_reveal',()=>{
+  document.documentElement.style.visibility='';
+  if(carried){
+    carried=false;
+    // Released a moment ago, as far as the squeeze is concerned: the drawing had it spring back already
+    if(handleCarry&&!handleCarry.landedAt){ handleCarry.releasedAt=Date.now()-400; handleCarry.landedAt=Date.now(); runGrip(); }
+    requestAnimationFrame(()=>requestAnimationFrame(()=>invoke('carry_revealed').catch(()=>{})));
+  }
+}).catch(()=>{});
 
 /* Collapse test: no trust in element-level mouseenter/mouseleave/e.target at all —
    pure geometry: is the cursor (clientX/Y) inside pill rect ∪ card rect ∪ their bounding box?
@@ -1389,7 +1604,6 @@ document.addEventListener('mousemove',e=>{
   // Folded, the page is sent events only over the pill, so any movement at all is the pointer reaching it
   if(folded){ pointerIn=true; unfold(); }
   if(dragging)return; // no card while dragging
-  if(carrying) return; // the notch is in hand; the card would only be in the way
   setHovered(onHandle(e.clientX,e.clientY));
   if(hovered){ if(card.classList.contains('show')){ clearTimeout(hideTimer); hideCard(); } return; }
   const hot=pointerInHot(e.clientX,e.clientY);
@@ -1442,16 +1656,35 @@ function settle(id){
   delete refreshing[id];
   renderRing();
 }
-// Alt+drag, the Mac's ⌥-drag. Without Alt a press on the pill is only ever a click — a ring
-// refreshes (#244) — so one that slips can no longer carry the notch off (#251).
+// Alt+drag, the Mac's ⌥-drag: round the screen's border, drawn by carry.html meanwhile. Without Alt
+// a press on the pill is only ever a click — a ring refreshes (#244) — so one that slips can no
+// longer carry the notch off (#251).
 pill.addEventListener('mousedown',e=>{ if(e.button!==0||folded)return; press={x:e.clientX,y:e.clientY,id:cellAt(e.clientX,e.clientY)||hoverId,alt:e.altKey}; });
 document.addEventListener('mousemove',e=>{
   if(!press||dragging||!press.alt)return;
   if(Math.abs(e.clientY-press.y)>4||Math.abs(e.clientX-press.x)>4){
     dragging=true; clearTimeout(hideTimer); hideCard();
-    invoke('drag_begin').catch(err=>{notice('drag_begin failed: '+err);dragging=false;});
+    const handle=beginHandleCarry(false);
+    invoke('begin_carry',{shape:{...carryShape(),handle}}).catch(err=>{notice('begin_carry failed: '+err);dragging=false;endHandleCarry();});
   }
 });
+/* This notch as the overlay draws it in the hand, on either kind of edge: a column standing upright,
+   a row lying flat, the same cells laid out the two ways the CSS above does — so it is measured
+   from the cells, not from the pill, which is only ever one of the two. Borders included. */
+function carryShape(){
+  const cells=[...pill.querySelectorAll('.cell')], n=Math.max(1,cells.length);
+  const cw=cells[0]?cells[0].offsetWidth:44, ch=cells[0]?cells[0].offsetHeight:70, gap=14, ends=36;
+  return {
+    radius:20, fillet:parseFloat(getComputedStyle(pill).getPropertyValue('--fillet'))||38.7,
+    upright:{depth:70, length:ends+n*ch+(n-1)*gap+2, pitch:ch+gap, inset:34.5},
+    flat:{depth:24+ch+1, length:ends+n*cw+(n-1)*gap+2, pitch:cw+gap, inset:12+ch/2},
+    cells:cells.map(el=>el.outerHTML)
+  };
+}
+// Emptied once the overlay has this notch drawn, and shown again where it was put down, after which
+// the overlay can go — so between them there is never a frame with neither
+let carried=false;
+listen('carry_hold',()=>{ carried=true; document.documentElement.style.visibility='hidden'; }).catch(()=>{});
 document.addEventListener('mouseup',e=>{
   if(e.button!==0)return;
   if(press&&!dragging&&press.id) refreshRing(press.id);
@@ -1466,7 +1699,11 @@ document.addEventListener('contextmenu',e=>{
   invoke('show_notch_menu',{provider:cellAt(e.clientX,e.clientY)||hoverId}).catch(err=>notice('show_notch_menu failed: '+err))
     .finally(()=>{ menuOpen=false; scheduleFold(); });
 });
-listen('drag_end',()=>{dragging=false;press=null;reportHot();scheduleFold();}).catch(()=>{});
+listen('drag_end',()=>{
+  dragging=false; press=null; document.body.style.cursor=hovered==='grip'?'grab':'';
+  if(handleCarry&&!handleCarry.landedAt){ handleCarry.landedAt=Date.now(); runGrip(); }
+  reportHot(); scheduleFold();
+}).catch(()=>{});
 
 function notice(msg){
   const n=document.getElementById('notice');
@@ -1475,44 +1712,76 @@ function notice(msg){
 }
 
 /* ---- The handles ----------------------------------------------------------
-   Settings past the far end of the pill, move past the near one. Placed whenever the hot rectangles
-   are reported, since those follow every change to the pill. Hover is a circle round each fillet's
-   centre, as on the Mac, not the whole box; the card gives way while either is under the pointer.
-   A click on the settings orb opens Settings; holding the move handle carries the notch. */
-const orb=document.getElementById('orb'), moveHandle=document.getElementById('move');
+   The settings orb past the far end of the pill, and beside it, further along, the six dots that
+   carry the notch (the Mac's SettingsOrb and MoveGrip): the dots come out of the orb like goo while
+   it is under the pointer, and stay out while the pointer is on them. Placed whenever the hot
+   rectangles are reported, since those follow every change to the pill. Hover is a circle round
+   each, as on the Mac, not the whole box; the card gives way while either is under the pointer.
+   A click on the orb opens Settings; holding the dots carries the notch, as Alt+drag does. */
+const orb=document.getElementById('orb');
 const HANDLE_REACH=28.5; // the Mac's hot zone, half of 57
-let orbAt=null, moveAt=null, hovered=null, orbSpins=0, moveSpins=0, showMove=true, carrying=false;
+let orbAt=null, hovered=null, orbSpins=0;
+let showRemaining=false;
+// The grip (NotchLayout's): a dot, dot centre to dot centre, the orb's disc and the gap from it, and
+// the grip's hot zone. Its middle is the disc, the gap and half its own width out. Smaller than the
+// Mac's 7.15 and 11.66 and 7 further from the orb than its 4.89, which crowded the orb here.
+const grip=document.getElementById('grip'), gripDots=document.getElementById('gripDots');
+const gripBlur=grip.querySelector('feGaussianBlur');
+const [gripCore,gripNeck,...gripDot]=gripDots.children;
+// The orb's goo, placed with the dots (see drawOrb)
+const orbGoo=document.getElementById('orbGoo'), orbCut=orbGoo.querySelector('#orbCut circle');
+let orbFillet=38.7;
+const GRIP_DOT=6.1, GRIP_PITCH=9.9, GRIP_GAP=11.9, DISC_R=23.3, GRIP_HOT=26.3;
+const GRIP_WIDTH=GRIP_PITCH+GRIP_DOT, GRIP_REACH=DISC_R+GRIP_GAP+GRIP_WIDTH/2;
+let gripAt=null;
 function put(el,x,y,z){
   el.style.left=(x/z-HANDLE_REACH)+'px'; el.style.top=(y/z-HANDLE_REACH)+'px';
   el.classList.add('placed');
   return {x,y,reach:HANDLE_REACH*z};
 }
+// The orb hangs off the pill's far end on every edge, so away from the notch is on along the edge
+const away=()=>edgeIsVertical()?[0,1]:[1,0];
 function placeHandles(){
   const r=pill.getBoundingClientRect();
   if(!r.width) return false;
   // Measurements come back zoomed when fitZoom has zoomed the page; styles are written unzoomed
   const z=parseFloat(document.documentElement.style.zoom)||1;
   const R=(parseFloat(getComputedStyle(pill).getPropertyValue('--fillet'))||38.7)*z;
-  // Each fillet's centre: the corner of its square diagonally opposite the one on the screen edge
-  const far=notchEdge==='left'?[r.left+R,r.bottom+R]:notchEdge==='top'?[r.right+R,r.top+R]
-    :notchEdge==='bottom'?[r.right+R,r.bottom-R]:[r.right-R,r.bottom+R];
-  const near=notchEdge==='left'?[r.left+R,r.top-R]:notchEdge==='top'?[r.left-R,r.top+R]
-    :notchEdge==='bottom'?[r.left-R,r.bottom-R]:[r.right-R,r.top-R];
+  // The fillet's centre: the corner of its square diagonally opposite the one on the screen edge. The
+  // square is placed from the pill's padding box, so the border at that end is not part of it
+  const cs=getComputedStyle(pill), bb=(parseFloat(cs.borderBottomWidth)||0)*z, br=(parseFloat(cs.borderRightWidth)||0)*z;
+  const far=notchEdge==='left'?[r.left+R,r.bottom-bb+R]:notchEdge==='top'?[r.right-br+R,r.top+R]
+    :notchEdge==='bottom'?[r.right-br+R,r.bottom-R]:[r.right-R,r.bottom-bb+R];
   orbAt=put(orb,far[0],far[1],z);
-  // No point at all when it is switched off, since hover, the press and the hot area all read this
-  moveAt=showMove?put(moveHandle,near[0],near[1],z):null;
-  if(!showMove) moveHandle.classList.remove('placed','hover');
+  grip.style.left=(far[0]/z)+'px'; grip.style.top=(far[1]/z)+'px';
+  grip.classList.add('placed');
+  orbGoo.style.left=grip.style.left; orbGoo.style.top=grip.style.top;
+  orbGoo.classList.add('placed');
+  orbFillet=R/z; orbCut.setAttribute('r',(orbFillet+.5).toFixed(2));
+  const [dx,dy]=away();
+  gripAt={x:far[0]+dx*GRIP_REACH*z,y:far[1]+dy*GRIP_REACH*z,reach:GRIP_HOT*z};
   return true;
 }
 function near(at,x,y){ return !!at&&Math.hypot(x-at.x,y-at.y)<=at.reach; }
-function onHandle(x,y){ return near(orbAt,x,y)?'orb':near(moveAt,x,y)?'move':null; }
+const gripOut=()=>hovered==='orb'||hovered==='grip';
+function gripRect(){
+  const k=window.devicePixelRatio||1, g=gripAt;
+  return [(g.x-g.reach)*k,(g.y-g.reach)*k,2*g.reach*k,2*g.reach*k];
+}
+// The dots can only be taken while they are out, so reaching for them means passing the orb first
+function onHandle(x,y){ return near(orbAt,x,y)?'orb':(gripOut()&&near(gripAt,x,y))?'grip':null; }
 function setHovered(which){
   if(which===hovered) return;
+  const wasOut=gripOut();
   hovered=which;
-  orb.classList.toggle('hover',which==='orb');
-  moveHandle.classList.toggle('hover',which==='move'||carrying);
+  // Held open while the pointer is on its dots, so the pair stay together
+  orb.classList.toggle('hover',gripOut());
+  document.body.style.cursor=which==='grip'?'grab':'';
+  if(gripOut()!==wasOut){ gripTo(gripOut()); reportHot(); if(gripOut()) holdOrb(); else releaseOrb(); }
+  gripHover.to=which==='grip'?1:0;
+  runGrip();
 }
-document.addEventListener('mouseout',e=>{ if(!e.relatedTarget&&!carrying) setHovered(null); });
+document.addEventListener('mouseout',e=>{ if(!e.relatedTarget&&!dragging) setHovered(null); });
 orb.addEventListener('click',e=>{
   if(!near(orbAt,e.clientX,e.clientY)) return;
   orb.style.setProperty('--spins',++orbSpins);
@@ -1524,61 +1793,364 @@ function pressIn(el){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   el.animate([{transform:'scale(1)',easing:'ease-out'},{transform:'scale(.84)',offset:.21,easing:'cubic-bezier(.34,1.56,.64,1)'},{transform:'scale(1)'}],{duration:430});
 }
-/* Holding the move handle puts the notch in hand: Rust raises the drop zones and follows the pointer
-   until the button comes up. The notch itself does not move — what is being chosen is a place on the
-   screen, not a distance. The pill's own size goes with it, so a zone is the notch, not a guess. */
-/* The shape the zones draw: the pill standing upright, whichever edge it is on now. Worked out from
-   the parts it is made of rather than measured, so a notch lying flat still offers the same
-   silhouette everywhere — the 70 px depth and the 18 px end padding are the pill's own, from the CSS
-   above. The notch really is shallower and shorter lying flat, but drawing that would offer four
-   outlines of two sizes, which reads as four different things instead of one notch offered a place. */
-function pillShapes(){
-  const cells=Math.max(1,pill.querySelectorAll('.cell').length);
-  const ring=(pill.querySelector('.ringwrap')||{}).offsetHeight||44;
-  const label=(pill.querySelector('.pct')||{}).offsetHeight||20;
-  const ends=36, between=14, underRing=6;
-  return { depth:70, length:ends+cells*(ring+underRing+label)+(cells-1)*between };
+
+/* The dots' own motion (NotchRootView.gripDivide, gripReturn and gripHover): out on a drawn-out ease
+   a beat after the orb, so there is an orb to come out of; back in quicker; swelling to meet the
+   pointer on a quick, springy spring. */
+function bezier(x1,y1,x2,y2){
+  const at=(t,a,b)=>3*a*t*(1-t)*(1-t)+3*b*t*t*(1-t)+t*t*t;
+  return x=>{
+    if(x<=0) return 0; if(x>=1) return 1;
+    let lo=0,hi=1,t=x;
+    for(let i=0;i<24;i++){ t=(lo+hi)/2; if(at(t,x1,x2)<x) lo=t; else hi=t; }
+    return at(t,y1,y2);
+  };
 }
-moveHandle.addEventListener('mousedown',e=>{
-  if(e.button!==0||!near(moveAt,e.clientX,e.clientY)) return;
-  e.stopPropagation();
-  carrying=true;
-  moveHandle.classList.add('armed','hover');
-  moveHandle.style.setProperty('--spins',++moveSpins);
-  clearTimeout(hideTimer); hideCard();
-  callq('begin_move',pillShapes()).catch(()=>{carrying=false;moveHandle.classList.remove('armed');});
-});
-listen('move_end',()=>{ carrying=false; moveHandle.classList.remove('armed'); setHovered(null); reportHot(); scheduleFold(); }).catch(()=>{});
+const GRIP_OUT=bezier(.35,0,.25,1), GRIP_IN=bezier(.42,0,1,1);
+function springStep(gap,velocity,elapsed,response,damping){
+  const omega=2*Math.PI/response; let moved=0;
+  for(let i=0;i<2;i++){ const dt=elapsed/2; velocity+=(omega*omega*(gap-moved)-2*damping*omega*velocity)*dt; moved+=velocity*dt; }
+  return {moved,velocity};
+}
+const still=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+let gripSep=0, gripRun=null, gripFrame=0, gripLast=null;
+const gripHover={v:0,velocity:0,to:0};
+function gripTo(out){
+  gripRun={from:gripSep,to:out?1:0,start:performance.now()+(out?20:0),dur:out?420:200,ease:out?GRIP_OUT:GRIP_IN};
+  runGrip();
+}
+function runGrip(){ if(!gripFrame) gripFrame=requestAnimationFrame(gripTick); }
+function gripTick(t){
+  gripFrame=0;
+  const elapsed=gripLast==null?1/60:Math.min(Math.max((t-gripLast)/1000,0),1/30);
+  gripLast=t;
+  const hidden=carried&&handleCarry&&!handleCarry.landedAt;
+  let busy=!!handleCarry&&!hidden;
+  if(gripRun){
+    const u=still()?1:Math.min(Math.max((t-gripRun.start)/gripRun.dur,0),1);
+    gripSep=gripRun.from+(gripRun.to-gripRun.from)*gripRun.ease(u);
+    if(u<1) busy=true; else gripRun=null;
+  }
+  const gap=gripHover.to-gripHover.v;
+  if(still()||(Math.abs(gap)<.002&&Math.abs(gripHover.velocity)<.02)){ gripHover.v=gripHover.to; gripHover.velocity=0; }
+  else { const s=springStep(gap,gripHover.velocity,elapsed,.22,.55); gripHover.v+=s.moved; gripHover.velocity=s.velocity; busy=true; }
+  if(arcRun){
+    const u=still()?1:clamp01((t-arcRun.start)/arcRun.dur);
+    arcSep=arcRun.from+(arcRun.to-arcRun.from)*arcRun.ease(u);
+    if(u<1) busy=true; else { arcSep=arcRun.to; arcRun=null; }
+  }
+  if(release){ if(still()||t>=release.start+release.dur){ release=null; orb.classList.remove('releasing'); } else busy=true; }
+  if(!hidden){ drawGrip(); drawOrb(t); }
+  if(handleCarry&&handleCarry.landedAt&&Date.now()-handleCarry.landedAt>HANDLE_SETTLES) endHandleCarry();
+  if(busy) runGrip(); else gripLast=null;
+}
+
+const smooth=x=>{ const t=Math.min(Math.max(x,0),1); return t*t*(3-2*t); };
+function gripOffsets(){
+  // Two lines of three, each running out from the screen's edge
+  const v=edgeIsVertical(), pts=[];
+  for(const line of [-.5,.5]) for(const row of [-1,0,1]){ const a=line*GRIP_PITCH, c=row*GRIP_PITCH; pts.push(v?[c,a]:[a,c]); }
+  return pts;
+}
+function setCircle(el,x,y,r){ el.setAttribute('cx',x.toFixed(2)); el.setAttribute('cy',y.toFixed(2)); el.setAttribute('r',Math.max(r,0).toFixed(2)); }
+
+/* Out of the orb like goo (MoveGrip): one drop pushes out of the orb's edge on a neck, runs out to
+   where the dots go, and divides into the six as the neck lets go; back, the same the other way.
+   Liquid only while they come and go, so the dots arrive crisp and apart. */
+function drawGrip(){
+  if(handleCarry){ drawCarriedHandle(); return; }
+  gripDots.style.opacity='';
+  const t=gripSep, [dx,dy]=away();
+  gripDots.style.display=t>.01?'':'none';
+  if(t<=.01) return;
+  const start=DISC_R*.6, pull=GRIP_REACH*.18*Math.sin(Math.PI*Math.min(t/.8,1));
+  const out=start+(GRIP_REACH-start)*smooth(t/.6)+pull, mx=dx*out, my=dy*out;
+  const goo=3*(1-smooth((t-.42)/.36)), liquid=goo>.3;
+  gripDots.classList.toggle('liquid',liquid);
+  if(liquid){ gripDots.setAttribute('filter','url(#gripGoo)'); gripBlur.setAttribute('stdDeviation',goo.toFixed(2)); }
+  else gripDots.removeAttribute('filter');
+  // A piece of the orb, inside its edge on the dots' side, for the neck to swell out of
+  const core=liquid?DISC_R*.55*smooth(t/.15):0;
+  setCircle(gripCore,dx*(DISC_R-core),dy*(DISC_R-core),core);
+  // Each fat while it is still part of the drop, its own size once divided off, one a beat after another
+  const dot=GRIP_DOT/2*(1+.3*gripHover.v);
+  gripOffsets().forEach(([ox,oy],i)=>{
+    const s=smooth((t-.32-.015*i)/.4);
+    setCircle(gripDot[i],mx+ox*s,my+oy*s,dot*(1+1.9*(1-s))*smooth(t/.12));
+  });
+  const neck=GRIP_WIDTH*.55*(1-smooth((t-.25)/.35));
+  if(!liquid||neck<=.5){ gripNeck.setAttribute('d',''); return; }
+  const fx=dx*(DISC_R-2), fy=dy*(DISC_R-2), cx=(fx+mx)/2, cy=(fy+my)/2, px=-dy, py=dx;
+  const side=(x,y,half,sign)=>`${(x+px*half*sign).toFixed(2)} ${(y+py*half*sign).toFixed(2)}`;
+  const base=GRIP_WIDTH*.8, top=GRIP_WIDTH*.5;
+  gripNeck.setAttribute('d',`M${side(fx,fy,base/2,1)} Q${side(cx,cy,neck/2,1)} ${side(mx,my,top/2,1)} L${side(mx,my,top/2,-1)} Q${side(cx,cy,neck/2,-1)} ${side(fx,fy,base/2,-1)} Z`);
+}
+
+/* ---- The handle's end of a carried notch (CarriedHandle) ---------------------
+   Taken by its dots: the orb into the notch, and the dots, squeezed in the hand, into its place.
+   Taken by Alt+drag: the orb's arc gives way to the dots. Let go, they spring back; put down, the
+   same run backwards. Worked out from the carry's times alone, never from animations started here:
+   carry.html draws this end while the notch is in the hand, and the two hand over at any moment of
+   it, so both have to show the same frame. carry.html holds an identical copy of handleFrame. */
+const HANDLE_SETTLES=500; // Carry.settles
+let handleCarry=null;
+const clamp01=x=>Math.min(Math.max(x,0),1);
+function handleFrame(c,now){
+  const easeOut=x=>{ const u=1-clamp01(x); return 1-u*u*u; };
+  const easeOutBack=x=>{ const t=clamp01(x)-1; return 1+2.5*t*t*t+1.5*t*t; };
+  const t=(now-c.at)/1000;
+  const slide=easeOutBack((t-.12)/.36);
+  let squeeze=easeOut(t/.26);
+  if(c.releasedAt) squeeze*=1-easeOutBack((now-c.releasedAt)/1000/.34);
+  let merged=smooth(t/.3), held=slide, dots=1, arc=0, gear=1-smooth(t/.1), grow=0;
+  if(c.landedAt){
+    const v=(now-c.landedAt)/1000;
+    if(c.fromHover){ merged*=1-smooth(v/.32); held*=1-easeOutBack(v/.36); gear=Math.max(gear,smooth((v-.16)/.16)); grow=smooth(v/.3); }
+    else { dots=1-smooth(v/.24); arc=easeOutBack((v-.06)/.34); }
+  }
+  return {t,slide,squeeze,merged,held,dots,arc,gear,grow};
+}
+function drawCarriedHandle(){
+  const c=handleCarry, f=handleFrame(c,Date.now()), [dx,dy]=away();
+  gripDots.style.display=''; gripDots.classList.remove('liquid'); gripDots.removeAttribute('filter');
+  setCircle(gripCore,0,0,0); gripNeck.setAttribute('d','');
+  const shift=c.fromHover?GRIP_REACH*(1-f.held):0;
+  const scale=c.fromHover?1:.4+.6*f.slide;
+  const r=GRIP_DOT/2*(1-.3*f.squeeze)*(1+.3*f.grow)*scale, pitch=(1-.18*f.squeeze)*scale;
+  gripOffsets().forEach(([ox,oy],i)=>setCircle(gripDot[i],dx*shift+ox*pitch,dy*shift+oy*pitch,r));
+  gripDots.style.opacity=clamp01(c.fromHover?1:f.slide)*f.dots;
+  const [rest,disc,glyph]=['.h-rest','.h-disc','.h-glyph'].map(q=>orb.querySelector(q));
+  orb.classList.add('carried');
+  if(c.fromHover){
+    rest.style.opacity=0;
+    const merging=f.merged>.001;
+    disc.style.opacity=merging?0:1;
+    glyph.style.opacity=f.gear;
+    paintOrb(merging?discMerge(f.merged,orbFillet,ORB_STROKE,DISC_R,pocket()):null);
+  } else {
+    paintOrb(null);
+    const arc=c.landedAt?clamp01(f.arc):1-smooth(f.t/.2);
+    const size=c.landedAt?.6+.4*f.arc:1-.4*smooth(f.t/.25);
+    rest.style.opacity=arc; rest.style.transform=`rotate(var(--arc)) scale(${size})`;
+    disc.style.opacity=0; glyph.style.opacity=0;
+  }
+}
+function beginHandleCarry(fromHover){
+  // The notch is open for a carry, so the arc is out; whatever the orb was doing gives way to it
+  release=null; arcRun=null; arcSep=1;
+  orb.classList.remove('drawn','releasing');
+  handleCarry={at:Date.now(),fromHover};
+  runGrip();
+  // With the dots' and the disc's own measures, so the overlay draws the same dots and disc
+  return {at:handleCarry.at,fromHover,dot:GRIP_DOT,pitch:GRIP_PITCH,reach:GRIP_REACH,disc:DISC_R,stroke:ORB_STROKE};
+}
+function endHandleCarry(){
+  const fromHover=handleCarry.fromHover;
+  handleCarry=null;
+  orb.classList.remove('carried');
+  for(const el of orb.children){ el.style.opacity=''; el.style.transform=''; }
+  paintOrb(null);
+  // Put down by its dots, they stay out beside the orb while the pointer rests where it let go
+  gripRun=null; gripSep=fromHover?1:0;
+  hovered=fromHover?'grip':null;
+  gripHover.v=gripHover.to=fromHover?1:0;
+  orb.classList.toggle('hover',fromHover);
+  document.body.style.cursor=fromHover?'grab':'';
+  drawGrip(); reportHot();
+}
+// Held from the press, not the first movement: taking hold of it is itself the carry beginning
+grip.parentElement.addEventListener('mousedown',e=>{
+  if(e.button!==0||hovered!=='grip'||!near(gripAt,e.clientX,e.clientY)||dragging) return;
+  e.stopPropagation(); e.preventDefault();
+  dragging=true; clearTimeout(hideTimer); hideCard();
+  document.body.style.cursor='grabbing';
+  const handle=beginHandleCarry(true);
+  invoke('begin_carry',{shape:{...carryShape(),handle}}).catch(err=>{ notice('begin_carry failed: '+err); dragging=false; endHandleCarry(); });
+},true);
+
+/* ---- The orb's goo (the Mac's GooArc, DiscToArc and DiscMerge) ----------------------------------
+   The arc does not fade with the notch: as it opens, a drop pushes out of the flare on a neck, lets
+   go and unrolls into the arc; before it folds, the arc rolls up and a neck draws it back in. Left,
+   the disc waits for the dots to run back into it, then flows out along the arc; taken by its dots,
+   it is drawn into the notch on a neck. The Mac's is black on black; here it is drawn over the pill
+   and cut back to the fillet's circle, so nothing of it shows inside the notch. */
+const orbInk=document.getElementById('orbInk'), orbBlur=orbGoo.querySelector('feGaussianBlur');
+const [plainInk,liquidInk]=orbInk.children, [pRing,pFill,pDisc]=plainInk.children, [lBand,lNeck,lArc,lDisc]=liquidInk.children;
+const ARC_R=28.5, ORB_STROKE=6.8;
+// NotchRootView's arcDivides, arcReturn and arcQuickReturn, and SettingsOrb.turnsBack
+const ARC_DIVIDES=340, ARC_RETURN=400, ARC_QUICK=260, TURNS_BACK=500;
+const ARC_DIVIDE=bezier(.35,0,.25,1), EASE_IN_OUT=bezier(.42,0,.58,1), EASE_OUT=bezier(0,0,.58,1), RELEASE=bezier(.3,0,.2,1);
+let arcSep=1, arcRun=null, arcHome=-Infinity, release=null, tuckTimer=null;
+// Into the notch from the fillet's centre: the middle of the quarter the arc lies in
+function pocket(){ const s=Math.SQRT1_2; return notchEdge==='right'?[s,-s]:notchEdge==='bottom'?[-s,s]:[-s,-s]; }
+
+/* The part `a` to `b` (0 to 1) of the quarter circle facing `m` round the fillet's centre, `r` out
+   and moved by (sx, sy): the Mac's FlareArc, whose flare is a circle here */
+function quarter(m,r,a,b,sx=0,sy=0){
+  const th=Math.atan2(m[1],m[0])-Math.PI/4;
+  const p=s=>`${(sx+r*Math.cos(th+s*Math.PI/2)).toFixed(2)} ${(sy+r*Math.sin(th+s*Math.PI/2)).toFixed(2)}`;
+  return `M${p(a)} A${r.toFixed(2)} ${r.toFixed(2)} 0 0 1 ${p(b)}`;
+}
+/* A neck of goo from `f` to `t`, half `base` wide where it leaves, `pinch` in its middle and `top`
+   where it holds on */
+function strand(f,t,base,pinch,top){
+  const dx=t[0]-f[0], dy=t[1]-f[1], l=Math.max(Math.hypot(dx,dy),.001), px=-dy/l, py=dx/l, mid=[f[0]+dx/2,f[1]+dy/2];
+  const side=(p,h,s)=>`${(p[0]+px*h*s).toFixed(2)} ${(p[1]+py*h*s).toFixed(2)}`;
+  return `M${side(f,base,1)} Q${side(mid,pinch,1)} ${side(t,top,1)} L${side(t,top,-1)} Q${side(mid,pinch,-1)} ${side(f,base,-1)} Z`;
+}
+/* DiscMerge: the disc drawn along a neck into the flare, smaller as it goes. Round the fillet's
+   centre, for a fillet `F`, the arc's stroke `S`, the disc's radius `D` and `m` into the notch. */
+function discMerge(t,F,S,D,m){
+  t=clamp01(t);
+  const goo=5*smooth(t/.2), at=o=>[m[0]*(F-o),m[1]*(F-o)];
+  const inside=at(-D*.75), k=smooth(t), c=[inside[0]*k,inside[1]*k], r=D*(1-.72*smooth((t-.2)/.8));
+  const g={goo,liquid:goo>.3,disc:[c[0],c[1],r]};
+  if(!g.liquid) return g;
+  const band=S*2.4, hold=smooth(t/.22);
+  g.band={d:quarter(m,F+.5+band/2,0,1),width:band};
+  if(hold>.02) g.neck=strand(at(-S),c,D*1.1*hold/2,r*.8*hold/2,r*1.2*hold/2);
+  return g;
+}
+/* GooArc: at 0 buried in the notch, at 1 the resting arc. `returning` is the way back in — rolled
+   up first, then drawn home on a neck — and `quick` that way with the notch already folding, when
+   there is nothing to go into and it only rolls up and dwindles where it is. */
+function gooArc(sep,returning,quick,F,S,m){
+  if(sep<=.001) return null;
+  const rest=F-ARC_R, t=clamp01(sep), rq=returning&&quick, buried=-(rest+S*1.4);
+  const goo=rq?0:returning?S*.45*(1+.8*(1-smooth((sep-.04)/.32)))*smooth((.93-sep)/.15)*smooth(sep/.05)
+    :S*.4*smooth(sep/.15)*(1-smooth((sep-.6)/.35));
+  const slide=rq?0:returning?buried*(1-t)+(t<.85?rest*1.2*Math.sin(Math.PI*t/.85):0)
+    :buried*(1-t)+(t<.8?rest*2.1*Math.sin(Math.PI*t/.8):0);
+  const unrolled=rq?smooth((sep-.05)/.9):returning?smooth((sep-.6)/.35):smooth((sep-.52)/.43);
+  let width=S*2.3+(S-S*2.3)*unrolled;
+  if(rq) width=S*smooth(sep/.7);
+  if(returning&&!quick) width*=smooth(sep/.35);
+  if(width<.4) return null;
+  const half=Math.max(.004,unrolled/2), whole=unrolled>=.999;
+  const g={goo,liquid:goo>.2,arc:{d:quarter(m,ARC_R,whole?0:.5-half,whole?1:.5+half,-m[0]*slide,-m[1]*slide),width}};
+  if(!g.liquid) return g;
+  g.arc.width+=goo*.4;
+  const neck=returning?(quick?0:S*1.1*smooth((.94-sep)/.1)):S*1.1*(1-smooth((sep-.2)/.5));
+  if(neck>S*.18){
+    const reach=returning?smooth((.92-sep)/.32):1, out=rest+slide;
+    const from=[m[0]*(F+S),m[1]*(F+S)], drop=[m[0]*(F-out),m[1]*(F-out)];
+    g.neck=strand(from,[from[0]+(drop[0]-from[0])*reach,from[1]+(drop[1]-from[1])*reach],S*1.3,neck/2,S*.7);
+  }
+  const band=S+goo*1.6;
+  g.band={d:quarter(m,F+.5+band/2,0,1),width:band};
+  return g;
+}
+/* DiscToArc: the disc flowing out along the arc from its middle, thinning as it goes, until it is the
+   arc. From the disc's own size, edge included, so it takes over from it without a step. */
+function discToArc(p,S,D,m){
+  p=clamp01(p);
+  const onto=smooth(p/.55), half=Math.max(.004,.5*smooth((p-.08)/.82)), from=2*D-2;
+  return {goo:0,liquid:false,arc:{d:quarter(m,ARC_R,.5-half,.5+half,-m[0]*ARC_R*(1-onto),-m[1]*ARC_R*(1-onto)),width:from+(S-from)*smooth(p/.8)}};
+}
+function paintOrb(g){
+  if(!g){ orbInk.style.display='none'; return; }
+  orbInk.style.display='';
+  plainInk.style.display=g.liquid?'none':''; liquidInk.style.display=g.liquid?'':'none';
+  const a=g.arc, d=g.disc||[0,0,0];
+  if(!g.liquid){
+    // The resting arc's own drawing: the edge a pixel either side of the fill
+    pRing.setAttribute('d',a?a.d:''); pRing.setAttribute('stroke-width',a?(a.width+2).toFixed(2):'0');
+    pFill.setAttribute('d',a?a.d:''); pFill.setAttribute('stroke-width',a?a.width.toFixed(2):'0');
+    setCircle(pDisc,d[0],d[1],d[2]-.5);
+    return;
+  }
+  orbBlur.setAttribute('stdDeviation',g.goo.toFixed(2));
+  lArc.setAttribute('d',a?a.d:''); lArc.setAttribute('stroke-width',a?(a.width+2).toFixed(2):'0');
+  lBand.setAttribute('d',g.band?g.band.d:''); lBand.setAttribute('stroke-width',g.band?g.band.width.toFixed(2):'0');
+  lNeck.setAttribute('d',g.neck||'');
+  setCircle(lDisc,d[0],d[1],d[2]);
+}
+function drawOrb(now){
+  if(handleCarry) return;
+  let g=null, drawn=false;
+  if(release){
+    const p=RELEASE(clamp01((now-release.start)/release.dur)), m=pocket();
+    g=release.home?discMerge(p,orbFillet,ORB_STROKE,DISC_R,m):discToArc(p,ORB_STROKE,DISC_R,m);
+  } else if(!gripOut()&&(arcRun||arcSep<1)){
+    g=gooArc(arcSep,!!arcRun&&arcRun.returning,!!arcRun&&arcRun.quick,orbFillet,ORB_STROKE,pocket());
+    drawn=true;
+  }
+  orb.classList.toggle('drawn',drawn);
+  paintOrb(g);
+}
+function arcTo(to,run){
+  arcRun={from:arcSep,to,returning:false,quick:false,start:performance.now(),...run};
+  runGrip();
+}
+// Out as the notch opens; caught on its way back in, straight back out the way it was going
+function arcOut(){
+  if(arcRun?arcRun.to===1:arcSep>=1) return;
+  if(performance.now()-arcHome<ARC_RETURN) arcTo(1,{returning:true,dur:350,ease:EASE_OUT});
+  else { arcSep=0; arcTo(1,{start:performance.now()+ARC_DIVIDES,dur:950,ease:ARC_DIVIDE}); }
+}
+// Home before the notch folds; `quick` when it is folding already
+function arcIn(quick){
+  if(arcRun?arcRun.to===0:arcSep<=0) return;
+  arcHome=performance.now();
+  arcTo(0,{returning:true,quick,dur:quick?ARC_QUICK:ARC_RETURN,ease:EASE_IN_OUT});
+}
+/* Left, the disc turns back into its arc a beat late, so the dots have run back into it while it is
+   still the disc there to take them; with the arc already going home, it goes into the notch instead */
+function releaseOrb(){
+  if(handleCarry||still()) return;
+  const home=(arcRun?arcRun.to:arcSep)<.5;
+  release={start:performance.now()+(home?0:100),dur:home?340:400,home};
+  orb.classList.add('releasing');
+  runGrip();
+}
+function holdOrb(){ release=null; orb.classList.remove('releasing'); runGrip(); }
 
 /* Show on hover, the Mac's .onHover. It opens on contact and folds a moment after the pointer has gone.
    Rust says which (notch_pointer): once click-through is back on, the page is sent nothing at all. It
    never folds mid-carry, mid-drag or under the right-click menu, all of which take the pointer off the
    notch on purpose — folding under them is what #239's reviewers caught, so it is ruled out here. */
 const FOLD_GRACE=450; // NotchWindowController.foldGrace
-function foldAllowed(){ return onHover&&!pointerIn&&!carrying&&!dragging&&!menuOpen; }
+function foldAllowed(){ return (onHover||fullScreen)&&!pointerIn&&!dragging&&!menuOpen; }
 function setFolded(f){
   if(f===folded) return;
   folded=f;
-  if(f){ clearTimeout(hideTimer); hideCard(); setHovered(null); }
+  if(f){ clearTimeout(hideTimer); hideCard(); arcIn(true); setHovered(null); } else arcOut();
   document.body.classList.toggle('folded',f);
   reportHot();
 }
-function unfold(){ clearTimeout(foldTimer); setFolded(false); }
+function unfold(){ clearTimeout(foldTimer); clearTimeout(tuckTimer); setFolded(false); arcOut(); }
+/* The Mac's order: left from the orb or its dots, the disc turns back into its arc first; then the arc
+   goes home, while there is still a notch to go into; and only then does the notch fold */
 function scheduleFold(){
-  clearTimeout(foldTimer);
-  if(!onHover){ setFolded(false); return; }
-  if(foldAllowed()) foldTimer=setTimeout(()=>{ if(foldAllowed()) setFolded(true); },FOLD_GRACE);
+  clearTimeout(foldTimer); clearTimeout(tuckTimer);
+  if(!onHover&&!fullScreen){ setFolded(false); arcOut(); return; }
+  if(!foldAllowed()){ if(!folded) arcOut(); return; }
+  const turnBack=gripOut()?TURNS_BACK:release?Math.max(0,release.start+release.dur-performance.now()):0;
+  tuckTimer=setTimeout(()=>{ if(foldAllowed()) arcIn(false); },turnBack);
+  foldTimer=setTimeout(()=>{ if(foldAllowed()) setFolded(true); },FOLD_GRACE+turnBack);
 }
 function applyUiFlags(f){ onHover=!!(f&&f.notch_on_hover); scheduleFold(); }
-listen('notch_pointer',e=>{ pointerIn=e.payload===true; if(pointerIn) unfold(); else scheduleFold(); }).catch(()=>{});
+/* A full-screen app in front folds it as Show on hover would, whatever Show says, and at once rather
+   than after the grace — the Mac's foldForFullScreen. */
+function applyFullScreen(on){
+  fullScreen=on===true;
+  if(fullScreen&&foldAllowed()){ clearTimeout(foldTimer); clearTimeout(tuckTimer); setFolded(true); } else scheduleFold();
+}
+listen('full_screen',e=>applyFullScreen(e.payload)).catch(()=>{});
+invoke('get_full_screen').then(applyFullScreen).catch(()=>{});
+// Off the notch is off the orb too: once the window is click-through the page may never see it leave
+listen('notch_pointer',e=>{
+  pointerIn=e.payload===true;
+  if(pointerIn) unfold(); else { if(!dragging) setHovered(null); scheduleFold(); }
+}).catch(()=>{});
 listen('ui_flags',e=>applyUiFlags(e.payload)).catch(()=>{});
 listen('pill_backdrop',e=>{
   if(e.payload==='dark'||e.payload==='light') document.body.dataset.behind=e.payload;
   else delete document.body.dataset.behind;
 }).catch(()=>{});
 invoke('get_ui_flags').then(applyUiFlags).catch(()=>{});
-listen('move_handle',e=>{ showMove=e.payload!==false; reportHot(); }).catch(()=>{});
-invoke('get_move_handle').then(v=>{ showMove=v!==false; reportHot(); }).catch(()=>{});
+listen('notch_shows_remaining',e=>{ showRemaining=e.payload===true; renderRing(); }).catch(()=>{});
+invoke('get_notch_shows_remaining').then(v=>{ showRemaining=v===true; renderRing(); }).catch(()=>{});
 
 listen('usage',e=>{usage=e.payload||usage;claudeActionMessage='';settle('claude');renderRing();if(card.classList.contains('show'))renderCard();})
   .catch(e=>notice('listen(usage) failed: '+e));
@@ -1590,6 +2162,8 @@ listen('cursor',e=>{cursorSnap=e.payload||cursorSnap;settle('cursor');renderRing
 invoke('get_cursor').then(u=>{cursorSnap=u||cursorSnap;renderRing();}).catch(()=>{});
 listen('grok',e=>{grokSnap=e.payload||grokSnap;settle('grok');renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
 invoke('get_grok').then(u=>{grokSnap=u||grokSnap;renderRing();}).catch(()=>{});
+listen('copilot',e=>{copilotSnap=e.payload||copilotSnap;settle('copilot');renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
+invoke('get_copilot').then(u=>{copilotSnap=u||copilotSnap;renderRing();}).catch(()=>{});
 
 listen('antigravity',e=>{agSnap=e.payload||agSnap;settle('gemini');renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
 invoke('get_antigravity').then(u=>{agSnap=u||agSnap;renderRing();}).catch(()=>{});
@@ -1608,6 +2182,12 @@ invoke('get_weekly_ring').then(v=>{if(typeof v==='string'){weeklyRing=v;renderRi
 listen('weekly_ring',e=>{if(typeof e.payload==='string'){weeklyRing=e.payload;renderRing();}}).catch(()=>{});
 invoke('get_color_transition').then(v=>{if(typeof v==='string'){colorTransition=v;renderRing();}}).catch(()=>{});
 listen('color_transition',e=>{if(typeof e.payload==='string'){colorTransition=e.payload;renderRing();}}).catch(()=>{});
+invoke('get_weekly_ring_dashed').then(v=>{if(typeof v==='boolean'){weeklyRingDashed=v;renderRing();}}).catch(()=>{});
+listen('weekly_ring_dashed',e=>{if(typeof e.payload==='boolean'){weeklyRingDashed=e.payload;renderRing();}}).catch(()=>{});
+invoke('get_watch_limit').then(v=>{if(typeof v==='number'){watchLimit=v;renderRing();}}).catch(()=>{});
+listen('watch_limit',e=>{if(typeof e.payload==='number'){watchLimit=e.payload;renderRing();}}).catch(()=>{});
+invoke('get_critical_limit').then(v=>{if(typeof v==='number'){criticalLimit=v;renderRing();}}).catch(()=>{});
+listen('critical_limit',e=>{if(typeof e.payload==='number'){criticalLimit=e.payload;renderRing();}}).catch(()=>{});
 listen('antigravity_prefs',e=>{if(e.payload){agPrefs=e.payload;renderRing();}}).catch(()=>{});
 listen('glyphs',e=>{glyphs=e.payload||glyphs;renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
 listen('activity',e=>{activity=e.payload||activity;renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
@@ -1622,7 +2202,7 @@ invoke('get_notch_edge').then(e=>{applyEdge(e);reportDpr();}).catch(()=>reportDp
 invoke('get_codex').then(u=>{codexSnap=u||codexSnap;renderRing();}).catch(()=>{});
 invoke('get_usage').then(u=>{usage=u||usage;renderRing();}).catch(e=>notice('get_usage failed: '+e));
 invoke('get_state').then(s=>{stateSnap=s||stateSnap;setUiLanguage(stateSnap.lang_resolved);renderRing();}).catch(()=>{});
-setInterval(renderRing,30_000); // stale state and reset copy move with time
+setInterval(()=>{renderRing();if(card.classList.contains('show'))renderCard();},30_000); // freshness changes even without a new response
 setInterval(async()=>{
   if(!claudeAuth.busy&&!(hoverId==='claude'&&card.classList.contains('show'))) return;
   try{

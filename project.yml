@@ -14,8 +14,8 @@ settings:
     # Sources/Info.plist reads both from here — hardcoding them there instead
     # silently pins every build to one version, so no customer ever sees an
     # update. Bump CURRENT_PROJECT_VERSION on every release.
-    MARKETING_VERSION: "1.19.0"
-    CURRENT_PROJECT_VERSION: "21"
+    MARKETING_VERSION: "1.23.0"
+    CURRENT_PROJECT_VERSION: "25"
     # Signed with a stable identity on purpose. The app reads Claude Code's
     # OAuth token out of the login keychain, and the keychain's ACL remembers
     # *which signed binary* was allowed. Ad-hoc or unsigned builds get a new
@@ -91,6 +91,12 @@ targets:
         # build settings keeps one place to bump.
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        # HTTP endpoints on Tailscale use shared address space. Keep the ATS
+        # exception scoped to that range; other destinations retain defaults.
+        NSAppTransportSecurity:
+          NSExceptionDomains:
+            "100.64.0.0/10":
+              NSExceptionAllowsInsecureHTTPLoads: true
         NSLocalNetworkUsageDescription: "Codenotch answers your phone on this network so it can show your usage."
         # --- Sparkle -------------------------------------------------------
         # Beside the download itself, on hivinz.com. It used to point at a

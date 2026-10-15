@@ -187,6 +187,24 @@ final class StatusItemSummaryTests: XCTestCase {
                                               format: .remaining).entries.first?.detail)
     }
 
+    /// And so do the menu's own rows. They are built by a static function that
+    /// cannot read the controller's copy of the setting, so the setting has to
+    /// be handed to it — and was not: the menu said "Resets Tue 17:25" under a
+    /// card and a tooltip that both said "Resets in 4h 52m".
+    func testTheMenusRowsFollowTheChosenResetWording() throws {
+        let account = claude(0.53, resetIn: 4 * hour + 52 * minute)
+
+        let automatic = StatusItemController.detailLines(for: account, now: now, format: .automatic)
+        let remaining = StatusItemController.detailLines(for: account, now: now, format: .remaining)
+
+        let session = try XCTUnwrap(remaining.first)
+        XCTAssertTrue(session.contains("Resets in 4h 52m"), session)
+        XCTAssertNotEqual(automatic, remaining)
+        // The tooltip beside it is built from the same choice, so the two agree.
+        let detail = try XCTUnwrap(summary([account], format: .remaining).entries.first?.detail)
+        XCTAssertTrue(detail.contains("4h 52m"), detail)
+    }
+
     // MARK: - What Settings chose
 
     /// Off is the icon every earlier version drew, whatever the readings say,
@@ -317,9 +335,22 @@ final class StatusItemSummaryTests: XCTestCase {
         XCTAssertNil(result.nextChange)
     }
 
-    func testTheCountdownRunsDownToUnderAMinute() throws {
+    func testTheCountdownRunsDownThroughTheLastMinuteInSeconds() throws {
         XCTAssertEqual(try XCTUnwrap(summary([claude(0.66, resetIn: 47 * minute + 50)]).entries.first).countdown, "47m")
-        XCTAssertEqual(try XCTUnwrap(summary([claude(0.93, resetIn: 42)]).entries.first).countdown, "<1m")
+        XCTAssertEqual(try XCTUnwrap(summary([claude(0.93, resetIn: 42)]).entries.first).countdown, "42s")
+    }
+
+    /// The last minute ticks every second, and a figure that changed width as
+    /// it fell would push every status item to its left along with it, once a
+    /// second. The item is as wide as what it says — see `StatusItemArtwork.size`
+    /// — so it may step once as "1m" becomes "59s", as it does whenever a
+    /// figure changes shape; through the seconds themselves it holds still.
+    func testTheItemHoldsOneWidthThroughTheLastMinute() throws {
+        let widths = [59, 42, 10, 9, 1].map { seconds in
+            StatusItemArtwork(summary: summary([claude(0.5, resetIn: TimeInterval(seconds))])).size.width
+        }
+        XCTAssertEqual(Set(widths).count, 1,
+                       "the item changes width as the last minute counts down: \(widths)")
     }
 
     /// A remembered reading is dimmed, as the notch dims its ring, and says
@@ -337,6 +368,17 @@ final class StatusItemSummaryTests: XCTestCase {
         let result = summary([claude(0.72, resetIn: 2 * hour + 18 * minute + 20),
                               codex(0.41, resetIn: 4 * hour + 5 * minute + 30)])
         XCTAssertEqual(result.nextChange, now.addingTimeInterval(20))
+    }
+
+    /// A wake-up scheduled a minute out may be a second late; the whole point of
+    /// one scheduled a second out is that it is not. A second of slack there let
+    /// the timer wake having already skipped the figure it woke up to show.
+    @MainActor
+    func testTheWakeUpTakesLessSlackWhenItIsCountingSeconds() {
+        XCTAssertEqual(StatusItemController.tolerance(untilChange: 60), 1)
+        XCTAssertEqual(StatusItemController.tolerance(untilChange: 20), 1)
+        XCTAssertLessThan(StatusItemController.tolerance(untilChange: 1), 1)
+        XCTAssertLessThan(StatusItemController.tolerance(untilChange: 0.2), 1)
     }
 
     // MARK: - Weekly ring
@@ -448,18 +490,105 @@ final class StatusItemSummaryTests: XCTestCase {
     /// The items to the left of this one shift whenever it changes width, so
     /// it keeps one width through the ordinary run of a window: single-digit
     /// shares, the last hour, the last minute, an unknown reset.
-    func testTheItemKeepsOneWidthAsTheFiguresMove() {
+    /// Replaces `testTheItemKeepsOneWidthAsTheFiguresMove`, deliberately and in
+    /// the other direction. That test guarded padding each figure to the widest
+    /// reading it could take, so the item held one width for a whole window.
+    /// The room that buys is empty whenever the figures are shorter, and there
+    /// is nowhere inside the item to put it that does not read as a hole. The
+    /// item is as wide as what it says instead; how often that moves is
+    /// measured in the test below, not assumed.
+    func testTheItemFollowsTheFiguresItPrints() {
         let font = NSFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
         func width(_ used: Double, _ resetIn: TimeInterval?) -> CGFloat {
             StatusItemArtwork(summary: summary([claude(used, resetIn: resetIn)]), font: font, height: 22).size.width
         }
-        let reference = width(0.72, 2 * hour + 18 * minute)
-        for (used, resetIn) in [(0.07, 2 * hour + 18 * minute), (0.0, 4 * hour + 59 * minute),
-                                (0.003, 3 * hour), (0.72, 47 * minute), (0.72, 8 * minute),
-                                (0.72, 30), (0.72, nil)] as [(Double, TimeInterval?)] {
-            XCTAssertEqual(width(used, resetIn), reference, "\(used) with \(String(describing: resetIn))s left")
+        // A digit fewer in either figure is a digit narrower in the item.
+        let digit = ("0" as NSString).size(withAttributes: [.font: font]).width
+        let reference = width(0.72, 2 * hour + 18 * minute)   // "72% · 2h 18m"
+        XCTAssertEqual(width(0.07, 2 * hour + 18 * minute),   // "7% · 2h 18m"
+                       reference - digit, accuracy: 1)
+        XCTAssertEqual(width(1.0, 2 * hour + 18 * minute),    // "100% · 2h 18m"
+                       reference + digit, accuracy: 1)
+        // The same figure in the same shape is the same width, whatever it
+        // reads — monospaced digits are the whole reason the width moves as
+        // rarely as it does.
+        for used in [0.07, 0.72, 0.99] {
+            XCTAssertEqual(width(used, 2 * hour + 18 * minute), width(used, 4 * hour + 5 * minute),
+                           "\(used): two countdowns of the same shape")
         }
         XCTAssertLessThan(width(0.72, nil), 150, "one reading should stay compact")
+    }
+
+    /// What the menu bar is actually given, rather than what the artwork
+    /// measures: the item is its artwork and nothing besides.
+    ///
+    /// An `NSStatusBarButton` left to size itself pads an image by 7pt a side.
+    /// That is what a lone icon wants; either end of a line of figures it is
+    /// dead space, and it lands against the next status item's own padding, so
+    /// a reading ended a clear 14pt before anything else began.
+    func testTheItemIsGivenExactlyItsArtworksWidth() throws {
+        let controller = StatusItemController(onOpenSettings: {})
+        controller.show()
+        defer { controller.hide() }
+        guard let item = controller.item, let button = item.button else {
+            throw XCTSkip("no status item on this host")
+        }
+        // Windows against the wall clock, because setting `snapshots` redraws
+        // the button against `Date()`.
+        let live = Date()
+        func reading(_ id: String, _ glyph: ProviderGlyph, _ used: Double,
+                     _ left: TimeInterval) -> ProviderSnapshot {
+            ProviderSnapshot(id: id, displayName: id, glyph: glyph, fidelity: .official,
+                             status: .ok,
+                             windows: [LimitWindow(id: "session", label: "Current session",
+                                                   usedFraction: used,
+                                                   resetsAt: live.addingTimeInterval(left),
+                                                   duration: 5 * hour)],
+                             headlineID: "session")
+        }
+        func length(_ snapshots: [ProviderSnapshot]) -> (given: CGFloat, drawn: CGFloat) {
+            controller.limits = MenuBarLimits(isOn: true, chosen: Set(snapshots.map(\.id)))
+            controller.snapshots = snapshots
+            return (item.length, button.image?.size.width ?? 0)
+        }
+        let long = length([reading("claude", .claude, 0.72, 2 * hour + 18 * minute),
+                           reading("codex", .openai, 0.41, 4 * hour + 5 * minute)])
+        XCTAssertEqual(long.given, long.drawn, "the item is the artwork, with nothing added")
+        // And it gives the room back as the reading gets shorter.
+        let short = length([reading("claude", .claude, 0.7, 8 * minute)])
+        XCTAssertEqual(short.given, short.drawn)
+        XCTAssertLessThan(short.given, long.given)
+    }
+
+    /// What following the figures actually costs the items beside it, counted
+    /// rather than guessed: a five-hour window walked minute by minute, filling
+    /// as it goes, and every width the item takes along the way.
+    ///
+    /// Monospaced digits mean the width can only move when a figure gains or
+    /// loses a *character*, not when it changes value. Over 300 minutes the
+    /// shapes a window passes through are 2/6 → 3/6 → 2/6 → 3/6 → 3/3 → 3/2
+    /// (percent characters over countdown characters): five steps, one an
+    /// hour. A second provider on its own schedule brings the pair to eleven,
+    /// about one every twenty-seven minutes.
+    func testTheItemChangesWidthOnlyAsTheFiguresChangeShape() {
+        let font = NSFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
+        func width(_ snapshots: [ProviderSnapshot]) -> CGFloat {
+            StatusItemArtwork(summary: summary(snapshots), font: font, height: 22).size.width
+        }
+        var alone: [CGFloat] = []
+        var paired: [CGFloat] = []
+        for minutesLeft in stride(from: 300, through: 1, by: -1) {
+            let filling = claude(Double(300 - minutesLeft) / 300,
+                                 resetIn: TimeInterval(minutesLeft) * minute)
+            // Half a window out of step, the way two providers actually are.
+            let other = ((minutesLeft + 150) % 300) + 1
+            alone.append(width([filling]))
+            paired.append(width([filling, codex(Double(300 - other) / 300,
+                                                resetIn: TimeInterval(other) * minute)]))
+        }
+        func steps(_ widths: [CGFloat]) -> Int { zip(widths, widths.dropFirst()).filter { $0 != $1 }.count }
+        XCTAssertEqual(steps(alone), 5, "one provider, across a whole window")
+        XCTAssertEqual(steps(paired), 11, "two providers, across a whole window")
     }
 
     /// A template, as the icon it stands in for is, so macOS tints it for

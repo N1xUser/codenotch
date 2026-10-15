@@ -29,10 +29,11 @@ final class NotchFleet {
     private var snapshots: [ProviderSnapshot] = []
     private(set) var thinkingModels: [String: Date] = [:]
     /// Per source, the way the view model keeps them: the Ollama relay and
-    /// the LM Studio log each replace their own readings wholesale.
+    /// each runtime's metrics replace their own readings wholesale, and a
+    /// second runtime reporting must not erase the first one's.
     private var performances: [String: [String: LocalModelPerformance]] = [:]
-    private var localActivities: [String: LocalModelActivity] = [:]
-    private var ledger = LocalTokenLedger()
+    private var localActivities: [String: [String: LocalModelActivity]] = [:]
+    private var ledgers: [String: LocalTokenLedger] = [:]
     private var localMetricsEnabled = false
 
     func setLocalMetricsEnabled(_ enabled: Bool) {
@@ -55,12 +56,15 @@ final class NotchFleet {
     private var watchLimit: Double = 0.50
     private var criticalLimit: Double = 0.70
     private var colorTransitionStyle: ColorTransitionStyle = .hardStep
+    private var busyIndicatorStyle: BusyIndicatorStyle = .arc
     /// One choice for the whole fleet, like the edge and the size: a weekly
     /// ring on one display and not another would read as a bug.
     private var weeklyRing: WeeklyRing = .off
     private var weeklyRingDashed: Bool = false
     private var showsNotchReadings: Bool = true
     private var weeklyReading: Bool = false
+    private var showsRemainingInNotch: Bool = false
+    private var shutRingsWhenSpent: Bool = true
     private var foldsForFullScreen = true
     private var surfaceStyle: NotchSurfaceStyle = .glass
     private var deepSeekPricingEnabled = true
@@ -75,6 +79,9 @@ final class NotchFleet {
 
     /// Hooked up by the app delegate; driven by the notch's own chrome.
     var onRefresh: (() -> Void)?
+    /// Every notch reports a look through the same closure: the store spaces
+    /// them, so two screens' notches opening together are one fetch.
+    var onLook: (() -> Void)?
     var onRefreshProvider: ((String) async -> Void)?
     var onOpenSettings: (() -> Void)?
     /// The notch's answer to an update it offered.
@@ -117,6 +124,7 @@ final class NotchFleet {
     /// What the fleet settled on, for tests that need to see panels come and
     /// go rather than take our word for it.
     var controllersForTesting: [NotchWindowController] { Array(controllers.values) }
+    var controllersByDisplayKeyForTesting: [NSNumber: NotchWindowController] { controllers }
 
     init(scope: NotchScreenScope, edge: NotchEdge) {
         self.scope = scope
@@ -223,6 +231,24 @@ final class NotchFleet {
         }
     }
 
+    func apply(showsRemainingInNotch: Bool) {
+        self.showsRemainingInNotch = showsRemainingInNotch
+        // Straight onto the model: only figures and sweeps change, so the
+        // window keeps its size and nothing relocates.
+        for controller in controllers.values {
+            controller.model.showsRemainingInNotch = showsRemainingInNotch
+        }
+    }
+
+    func apply(shutRingsWhenSpent: Bool) {
+        self.shutRingsWhenSpent = shutRingsWhenSpent
+        // Straight onto the model: only ring colours change, so the
+        // window keeps its size and nothing relocates.
+        for controller in controllers.values {
+            controller.model.shutRingsWhenSpent = shutRingsWhenSpent
+        }
+    }
+
     func apply(weeklyRingDashed: Bool) {
         self.weeklyRingDashed = weeklyRingDashed
         for model in models {
@@ -253,6 +279,13 @@ final class NotchFleet {
         self.colorTransitionStyle = colorTransitionStyle
         for controller in controllers.values {
             controller.model.colorTransitionStyle = colorTransitionStyle
+        }
+    }
+
+    func apply(busyIndicatorStyle: BusyIndicatorStyle) {
+        self.busyIndicatorStyle = busyIndicatorStyle
+        for controller in controllers.values {
+            controller.model.busyIndicatorStyle = busyIndicatorStyle
         }
     }
 
@@ -327,17 +360,27 @@ final class NotchFleet {
         }
     }
 
-    func setLocalActivities(_ activities: [String: LocalModelActivity]) {
-        localActivities = activities
+    func setLocalActivities(_ activities: [String: LocalModelActivity],
+                            source: String = LMStudioMetrics.providerID) {
+        localActivities[source] = activities
+        let merged = mergedLocalActivities
         for model in models {
-            model.localActivities = activities
+            model.localActivities = merged
         }
     }
 
-    func setLedger(_ ledger: LocalTokenLedger) {
-        self.ledger = ledger
+    /// Cell ids carry their provider's prefix, so a plain union never lets one
+    /// runtime's model shadow another's.
+    private var mergedLocalActivities: [String: LocalModelActivity] {
+        localActivities.values.reduce(into: [:]) { merged, activities in
+            merged.merge(activities) { current, _ in current }
+        }
+    }
+
+    func setLedger(_ ledger: LocalTokenLedger, source: String = LMStudioMetrics.providerID) {
+        ledgers[source] = ledger
         for model in models {
-            model.updateLedger(ledger)
+            model.updateLedger(ledger, source: source)
         }
     }
 
@@ -418,6 +461,10 @@ final class NotchFleet {
         reconcile(screens: NSScreen.screens)
     }
 
+    func reconcileForTesting(screens: [NSScreen]) {
+        reconcile(screens: screens)
+    }
+
     private func reconcile(screens: [NSScreen]) {
         let desired: [NSScreen]
         switch scope {
@@ -444,11 +491,21 @@ final class NotchFleet {
         // instead of tearing a panel down and building another.
         if scope == .mainDisplay, controllers.count == 1,
            let screen = desired.first, let controller = controllers.values.first {
+            controller.displayPreference = displayPreference
             controller.assignedScreen = screen
-            controller.relocate()
+            controller.relocate(on: screen)
             return
         }
         let plan = Self.planReconciliation(current: Set(controllers.keys), desired: keys)
+        let additions = Set(plan.add)
+        let removals = Set(plan.remove)
+        for (screen, id) in zip(desired, keys)
+        where !additions.contains(id) && !removals.contains(id) {
+            guard let controller = controllers[id] else { continue }
+            controller.displayPreference = displayPreference
+            controller.assignedScreen = screen
+            controller.relocate(on: screen)
+        }
         for id in plan.remove {
             controllers[id]?.retire()
             controllers[id] = nil
@@ -476,15 +533,19 @@ final class NotchFleet {
         controller.model.watchLimit = watchLimit
         controller.model.criticalLimit = criticalLimit
         controller.model.colorTransitionStyle = colorTransitionStyle
+        controller.model.busyIndicatorStyle = busyIndicatorStyle
         controller.model.weeklyRing = weeklyRing
         controller.model.weeklyRingDashed = weeklyRingDashed
         controller.model.showsNotchReadings = showsNotchReadings
         controller.model.weeklyReading = weeklyReading
+        controller.model.showsRemainingInNotch = showsRemainingInNotch
+        controller.model.shutRingsWhenSpent = shutRingsWhenSpent
         controller.model.surfaceStyle = surfaceStyle
         controller.model.deepSeekPricingEnabled = deepSeekPricingEnabled
         controller.model.deepSeekPricingSchedule = deepSeekPricingSchedule
 
         controller.onRefresh = onRefresh
+        controller.onLook = { [weak self] in self?.onLook?() }
         controller.onRefreshProvider = onRefreshProvider
         controller.onOpenSettings = onOpenSettings
         controller.model.onOpenSettings = onOpenSettings
@@ -497,12 +558,14 @@ final class NotchFleet {
         controller.signInItems = signInItems
         controller.model.updateSnapshots(snapshots)
         controller.model.thinkingModels = thinkingModels
-        controller.model.localActivities = localActivities
+        controller.model.localActivities = mergedLocalActivities
         controller.model.setLocalMetricsEnabled(localMetricsEnabled)
         for (source, measurements) in performances {
             controller.model.updatePerformances(measurements, source: source)
         }
-        controller.model.updateLedger(ledger)
+        for (source, ledger) in ledgers {
+            controller.model.updateLedger(ledger, source: source)
+        }
         controller.model.refreshing = refreshing
         controller.model.sessions = sessions
         controller.model.now = Date()

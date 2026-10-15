@@ -7,6 +7,9 @@ import os
 @MainActor
 final class Preferences: ObservableObject {
     static let showUsagePaceKey = "showUsagePace"
+    /// Beside `showUsagePaceKey` rather than inside `Keys`: the tooltip card
+    /// reads it straight from the store, and `Keys` is private.
+    static let showsRemainingInNotchKey = "showsRemainingInNotch"
 
     /// Provider IDs that currently have a ring. Stored as the ones that are
     /// on, so a provider added later stays off until someone switches it on —
@@ -56,11 +59,25 @@ final class Preferences: ObservableObject {
         didSet { defaults.set(lmstudioEndpoint, forKey: Keys.lmstudioEndpoint) }
     }
 
+    @Published var omlxEndpoint: String {
+        didSet { defaults.set(omlxEndpoint, forKey: Keys.omlxEndpoint) }
+    }
+
     /// User-configured custom OpenAI-compatible endpoints.
     @Published var customEndpoints: [CustomEndpoint] {
         didSet {
             if let data = try? JSONEncoder().encode(customEndpoints) {
                 defaults.set(data, forKey: Keys.customEndpoints)
+            }
+        }
+    }
+
+    /// User-configured coding accounts on other machines, reached over SSH.
+    @Published var remoteHosts: [RemoteHost] {
+        didSet {
+            if let data = try? JSONEncoder().encode(remoteHosts) {
+                defaults.set(data, forKey: Keys.remoteHosts)
+                defaults.removeObject(forKey: Keys.remoteClaudeHosts)
             }
         }
     }
@@ -206,6 +223,21 @@ final class Preferences: ObservableObject {
         didSet { defaults.set(showUsagePace, forKey: Self.showUsagePaceKey) }
     }
 
+    /// Whether pointing at a ring, or opening the menu bar's menu, refuses every
+    /// reading a provider is holding and asks the provider itself.
+    ///
+    /// Off by default, and it has to be: it is not strictly better. A look
+    /// already asks for a live reading, which is served from a cache only while
+    /// that cache is newer than a couple of minutes. This spends a request even
+    /// when the cache was written seconds ago — and on a provider that rate
+    /// limits, one request too many is answered with a back-off that then holds
+    /// a number older than the cache would have been. Worth having for somebody
+    /// comparing Codenotch against a vendor's own dashboard figure by figure;
+    /// not worth making everybody pay for.
+    @Published var asksProviderOnLook: Bool {
+        didSet { defaults.set(asksProviderOnLook, forKey: Keys.asksProviderOnLook) }
+    }
+
     /// Whether Claude's big ring shows the day's share of the weekly limit
     /// instead of the session. See `DailyPace`.
     @Published var claudeDailyPaceRing: Bool {
@@ -262,6 +294,52 @@ final class Preferences: ObservableObject {
         didSet { defaults.set(showsNotchReadings, forKey: Keys.showsNotchReadings) }
     }
 
+    /// Whether the notch reads what is left rather than what is spent: the
+    /// figure under each ring, the arcs' sweep, and the card's bars and
+    /// percentages.
+    ///
+    /// Off by default: used is what the notch has always drawn, and flipping
+    /// it changes what every meter means. Bands still judge by what is
+    /// spent — colour answers how bad, sweep answers how much — and the
+    /// usage pace still compares spent against elapsed, which is the only
+    /// comparison a deficit can be computed from.
+    @Published var showsRemainingInNotch: Bool {
+        didSet { defaults.set(showsRemainingInNotch, forKey: Self.showsRemainingInNotchKey) }
+    }
+
+    /// Whether a spent window shuts the rings beside it. A spent 5-hour with
+    /// a healthy week, or the reverse, leaves rings that read usable and are
+    /// not: with this on, both rings say shut instead — dark grey where the
+    /// notch reads what is left, the red 100% earns where it reads spent.
+    ///
+    /// On by default: a spent window pretending its rings are usable is the
+    /// worse surprise.
+    @Published var shutRingsWhenSpent: Bool {
+        didSet { defaults.set(shutRingsWhenSpent, forKey: Keys.shutRingsWhenSpent) }
+    }
+
+    /// Whether the notch sorts rings by what is left instead of the manual
+    /// order: most remaining first, by the window that leads each ring. A
+    /// high number that cannot be spent yet sinks below usable accounts but
+    /// stays above empty ones; the Accounts list keeps the manual order,
+    /// which breaks ties.
+    ///
+    /// Off by default: the manual arrangement is what dragging built, and
+    /// re-sorting unasked would strand it.
+    @Published var autoOrderByRemaining: Bool {
+        didSet { defaults.set(autoOrderByRemaining, forKey: Keys.autoOrderByRemaining) }
+    }
+
+    /// Whether accounts with nothing left to spend leave the notch: the
+    /// headline window or the weekly allowance at 0% remaining. Stale
+    /// readings stay — an old number is not proof the account is empty.
+    ///
+    /// Off by default: rings disappearing unasked would strand the manual
+    /// arrangement, and an empty ring is still information about the account.
+    @Published var hideDepletedAccounts: Bool {
+        didSet { defaults.set(hideDepletedAccounts, forKey: Keys.hideDepletedAccounts) }
+    }
+
     @Published var weeklyRingDashed: Bool {
         didSet { defaults.set(weeklyRingDashed, forKey: Keys.weeklyRingDashed) }
     }
@@ -306,6 +384,11 @@ final class Preferences: ObservableObject {
     /// Hard step or continuous ramp — see `ColorTransitionStyle`.
     @Published var colorTransitionStyle: ColorTransitionStyle {
         didSet { defaults.set(colorTransitionStyle.rawValue, forKey: Keys.colorTransitionStyle) }
+    }
+
+    /// Spinning arc or breathing disc — see `BusyIndicatorStyle`.
+    @Published var busyIndicatorStyle: BusyIndicatorStyle {
+        didSet { defaults.set(busyIndicatorStyle.rawValue, forKey: Keys.busyIndicatorStyle) }
     }
 
     /// The language the app itself speaks.
@@ -488,6 +571,10 @@ final class Preferences: ObservableObject {
         }
     }
 
+    @Published var qoderRegion: Sites.QoderRegion {
+        didSet { defaults.set(qoderRegion.rawValue, forKey: Keys.qoderRegion) }
+    }
+
     /// Which MiniMax console the Coding Plan is read from.
     ///
     /// International and China mainland are different hosts, and a key issued
@@ -529,6 +616,7 @@ final class Preferences: ObservableObject {
         static let phoneLinkPort = "phoneLinkPort"
 
         static let lmstudioEndpoint = "lmstudioEndpoint"
+        static let omlxEndpoint = "omlxEndpoint"
         static let introducedOllama = "introducedOllama"
         static let migratedOllamaID = "migratedOllamaLocalID"
         static let ollamaMetricsEnabled = "ollamaMetricsEnabled"
@@ -550,6 +638,7 @@ final class Preferences: ObservableObject {
         static let customSize = "customNotchScale"
         static let display = "notchDisplay"
         static let resetTimeFormat = "resetTimeFormat"
+        static let asksProviderOnLook = "asksProviderOnLook"
         static let scope = "notchScope"
         static let accentColor = "accentColor"
         // A new key, so there is nothing under the old app name to migrate.
@@ -557,13 +646,22 @@ final class Preferences: ObservableObject {
         static let weeklyRingDashed = "weeklyRingDashed"
         static let showsNotchReadings = "showsNotchReadings"
         static let weeklyReading = "weeklyReading"
+        static let shutRingsWhenSpent = "shutRingsWhenSpent"
+        static let autoOrderByRemaining = "autoOrderByRemaining"
+        static let hideDepletedAccounts = "hideDepletedAccounts"
         static let claudeDailyPaceRing = "claudeDailyPaceRing"
         static let weeklyHeadline = "weeklyHeadline"
         static let notchSurfaceStyle = "notchSurfaceStyle"
         static let watchLimit = "watchLimit"
         static let criticalLimit = "criticalLimit"
         static let colorTransitionStyle = "colorTransitionStyle"
+        static let busyIndicatorStyle = "busyIndicatorStyle"
         static let customEndpoints = "customEndpoints"
+        static let remoteHosts = "remoteHosts"
+        /// Entries written when remote hosts were Claude-only. Read once on
+        /// the way to the new key, then dropped — the shapes match, and kinds
+        /// default to Claude.
+        static let remoteClaudeHosts = "remoteClaudeHosts"
         static let lastSeenVersion = "lastSeenVersion"
         static let order = "providerOrder"
         static let announceSessionEnd = "announceSessionEnd"
@@ -581,6 +679,7 @@ final class Preferences: ObservableObject {
         /// A new key, so there is nothing under the old app name to migrate.
         static let geminiAPIMonthlyTokenBudget = "geminiAPIMonthlyTokenBudget"
         static let minimaxRegion = "minimaxRegion"
+        static let qoderRegion = "qoderRegion"
         static let antigravityHeadlineLimit = "antigravityHeadlineLimit"
         static let antigravityHeadlineModel = "antigravityHeadlineModel"
         static let deepSeekPricingEnabled = "deepSeekPricingEnabled"
@@ -688,6 +787,23 @@ final class Preferences: ObservableObject {
         if let data = try? JSONEncoder().encode(endpoints) {
             defaults.set(data, forKey: Keys.customEndpoints)
         }
+    }
+
+    /// Remote hosts read straight from disk, off the main actor.
+    ///
+    /// Copy that only has a provider id — the tooltip's sign-in guidance —
+    /// needs the `user@host` behind it, and `@Published` state is
+    /// main-actor-isolated where `UserDefaults` is thread-safe.
+    nonisolated static func storedRemoteHosts(
+        defaults: UserDefaults = .standard
+    ) -> [RemoteHost] {
+        for key in [Keys.remoteHosts, Keys.remoteClaudeHosts] {
+            if let data = defaults.data(forKey: key),
+               let hosts = try? JSONDecoder().decode([RemoteHost].self, from: data) {
+                return hosts
+            }
+        }
+        return []
     }
 
     /// The MiniMax region read straight from disk, off the main actor.
@@ -818,6 +934,10 @@ final class Preferences: ObservableObject {
             defaults.string(forKey: Keys.lmstudioEndpoint)
                 ?? LMStudioEndpoint.configuredAddress() ?? LMStudioEndpoint.defaultAddress
         ).absoluteString) ?? LMStudioEndpoint.defaultAddress
+        self.omlxEndpoint = (try? OMLXEndpoint.parse(
+            defaults.string(forKey: Keys.omlxEndpoint)
+                ?? OMLXEndpoint.configuredAddress() ?? OMLXEndpoint.defaultAddress
+        ).absoluteString) ?? OMLXEndpoint.defaultAddress
         self.mutedAlertProviders = Set(defaults.stringArray(forKey: Keys.mutedAlerts) ?? [])
         self.accountNicknames = defaults.dictionary(forKey: Keys.accountNicknames) as? [String: String] ?? [:]
         // Absent means never chosen, which is the hover behaviour the app was
@@ -868,6 +988,10 @@ final class Preferences: ObservableObject {
         self.resetTimeFormat = defaults.string(forKey: Keys.resetTimeFormat)
             .flatMap(ResetTimeFormat.init(rawValue:)) ?? .automatic
         self.showUsagePace = defaults.bool(forKey: Self.showUsagePaceKey)
+        // Off by default: see the property. A request spent on every look is a
+        // choice, and on a rate-limited provider it can cost freshness rather
+        // than buy it.
+        self.asksProviderOnLook = defaults.bool(forKey: Keys.asksProviderOnLook)
         // Off by default: it swaps what Claude's ring means, and that is a
         // choice for whoever budgets their week that way.
         self.claudeDailyPaceRing = defaults.bool(forKey: Keys.claudeDailyPaceRing)
@@ -896,6 +1020,12 @@ final class Preferences: ObservableObject {
         self.weeklyRingDashed = defaults.object(forKey: Keys.weeklyRingDashed) as? Bool ?? false
         self.showsNotchReadings = defaults.object(forKey: Keys.showsNotchReadings) as? Bool ?? true
         self.weeklyReading = defaults.object(forKey: Keys.weeklyReading) as? Bool ?? false
+        // Off by default: it swaps what every meter means, and that is a
+        // choice for whoever budgets from the other end.
+        self.showsRemainingInNotch = defaults.bool(forKey: Self.showsRemainingInNotchKey)
+        self.shutRingsWhenSpent = defaults.object(forKey: Keys.shutRingsWhenSpent) as? Bool ?? true
+        self.autoOrderByRemaining = defaults.bool(forKey: Keys.autoOrderByRemaining)
+        self.hideDepletedAccounts = defaults.bool(forKey: Keys.hideDepletedAccounts)
 
         self.weeklyRing = defaults.string(forKey: Keys.weeklyRing)
             .flatMap(WeeklyRing.init(rawValue:)) ?? .off
@@ -914,6 +1044,8 @@ final class Preferences: ObservableObject {
         self.watchLimit = min(max(storedWatchLimit, 0.01), critical - 0.01)
         self.colorTransitionStyle = defaults.string(forKey: Keys.colorTransitionStyle)
             .flatMap(ColorTransitionStyle.init(rawValue:)) ?? .hardStep
+        self.busyIndicatorStyle = defaults.string(forKey: Keys.busyIndicatorStyle)
+            .flatMap(BusyIndicatorStyle.init(rawValue:)) ?? .arc
         // Absent means never chosen, which is follow-the-Mac.
         self.language = defaults.string(forKey: L10n.languageDefaultsKey)
             .flatMap(AppLanguage.init(rawValue:)) ?? .system
@@ -944,12 +1076,14 @@ final class Preferences: ObservableObject {
             ?? SessionChime.defaultBlocked
         self.geminiAPIMonthlyTokenBudget = Self.storedGeminiAPIMonthlyTokenBudget(defaults: defaults)
         self.minimaxRegion = Self.storedMinimaxRegion(defaults: defaults)
+        self.qoderRegion = Sites.QoderRegion(rawValue: defaults.string(forKey: Keys.qoderRegion) ?? "") ?? .global
         if let data = defaults.data(forKey: Keys.customEndpoints),
            let list = try? JSONDecoder().decode([CustomEndpoint].self, from: data) {
             self.customEndpoints = Self.movingLegacyKeysToKeychain(list, defaults: defaults)
         } else {
             self.customEndpoints = []
         }
+        self.remoteHosts = Self.storedRemoteHosts(defaults: defaults)
         // Read from the system rather than from our own store: the user can turn
         // this off in System Settings, and a remembered `true` would then be a lie.
         self.launchAtLogin = Self.isRegisteredForLogin
@@ -1007,6 +1141,29 @@ final class Preferences: ObservableObject {
             }
         }
         customEndpoints.removeAll { $0.id == id }
+    }
+
+    // MARK: Remote hosts
+
+    func addRemoteHost(_ host: RemoteHost) {
+        remoteHosts.append(host)
+        if host.isEnabled {
+            setConnected(true, for: host.providerID)
+        }
+    }
+
+    func updateRemoteHost(_ host: RemoteHost) {
+        if let idx = remoteHosts.firstIndex(where: { $0.id == host.id }) {
+            remoteHosts[idx] = host
+            setConnected(host.isEnabled, for: host.providerID)
+        }
+    }
+
+    func removeRemoteHost(id: String) {
+        if let host = remoteHosts.first(where: { $0.id == id }) {
+            setConnected(false, for: host.providerID)
+        }
+        remoteHosts.removeAll { $0.id == id }
     }
 
     // MARK: Account names

@@ -13,10 +13,11 @@ documented behaviour and the wire formats.
 
 | Cell | Source | How it reads it |
 |---|---|---|
-| **Claude** | `GET https://api.anthropic.com/api/oauth/usage` with the token Claude Code keeps in `~/.claude/.credentials.json` | Session / weekly windows, 429 back-off with a persisted deadline, stale readings dimmed with their age. Renews that token by running the standalone `claude -p` shortly before it expires (Claude Code inside the desktop app never writes this file), and never sends an expired one. A thin arc spins inside the ring while a Claude session is working, and pulses amber when one is waiting on you (Claude Code hooks + transcript watcher, desktop app included). |
+| **Claude** | `GET https://api.anthropic.com/api/oauth/usage` with the token Claude Code keeps in `~/.claude/.credentials.json` | Session / weekly windows with a five-minute request-attempt floor per account, including manual refresh. 429 back-off honours the full Retry-After (seconds or HTTP-date), with per-account deadlines persisted across restarts; stale readings dimmed with their age. Renews that token by running the standalone `claude -p` shortly before it expires (Claude Code inside the desktop app never writes this file), and never sends an expired one. A thin arc spins inside the ring while a Claude session is working, and pulses amber when one is waiting on you (Claude Code hooks + transcript watcher, desktop app included). |
 | **Codex** | The local Codex sign-in in `~/.codex/auth.json` (read only, never refreshed), falling back to the newest session snapshot | Live primary/secondary windows (5h + weekly on paid plans, a monthly window on free) while Codex is signed in; Spark and Code review appear on the hover card when Codex reports them; otherwise the last snapshot, marked stale by its own timestamp. |
 | **Cursor** | The editor's own session from `state.vscdb` → `cursor.com/api/usage-summary` | Included usage / API usage / on-demand, reset at billing-cycle end. Nothing to sign into: it borrows the editor's session, so there is only ever one account. |
 | **Grok** | The Grok CLI's own session in `~/.grok/auth.json` (read only, never refreshed) → `cli-chat-proxy.grok.com/v1/billing?format=credits`, the endpoint that CLI's own `/usage` asks | The weekly Grok Build allowance, with the account on the hover card. Only a session minted by `auth.x.ai` is used — the file can also hold a customer IdP token meant for that customer's private proxy. A fresh weekly period reads 0 %, not "unmetered". |
+| **GitHub Copilot** | The GitHub CLI's own session, read only: `GH_TOKEN`/`GITHUB_TOKEN` when set, else `oauth_token` in `%APPDATA%\GitHub CLI\hosts.yml`, else `gh auth token` run hidden (the token may live in Credential Manager) → `api.github.com/copilot_internal/user`, the quota endpoint GitHub's own editors ask | Premium requests on the ring, with chat requests and completions on the hover card; all reset on the first of the month. An `unlimited` quota, or one with no entitlement, draws nothing. The account and plan are named on the card. Sign in with `gh auth login`; Codenotch never starts a sign-in itself. |
 | **OpenCode** | OpenCode's own sign-in, read only: the `opencode-go` key in `~/.local/share/opencode/auth.json` → `opencode.ai/zen/go/v1/usage`, or — since OpenCode 1.18 — the OAuth sign-in in `opencode.db` (`credential` table) → `opencode.ai/inference/go/v1/usage` | The Go plan's 5-hour, weekly and monthly windows. A sign-in without a Go plan shows "No OpenCode Go subscription" instead of a ring; Zen pay-as-you-go credit has no balance or usage API, so it is not shown. |
 | **Antigravity** | Official `agy` CLI `/usage` print when installed; otherwise the existing local `language_server` bridge, Google Cloud Code API, or transcript model count | Official four quota rows (Gemini & Claude/GPT 5h/weekly) without running the full IDE. When CLI is absent, falls back to legacy local bridge/API. |
 | **OpenCode Go** | `GET https://opencode.ai/zen/go/v1/usage` | Reads the `opencode-go` key in OpenCode's `auth.json`, or `OPENCODE_APIKEY` when set. The environment key takes precedence. Shows rolling 5-hour, weekly and monthly usage. This is a separate subscription from the Z.ai GLM Coding Plan; its key must not be sent to Z.ai's monitor endpoint. |
@@ -62,6 +63,28 @@ The optional `cargo test --release --locked codex::tests::live_native_quota -- -
 checks the actual native transport against an already signed-in local client;
 it prints no account credentials or quota values and is not run by CI.
 
+### Reset cards
+
+The Windows app can show a short card when any active provider — Claude,
+Codex, Cursor, GLM, OpenCode, Grok, Antigravity — renews a quota window it was
+using. Each provider's own windows are watched independently and by their own
+id, not by a fixed duration, so this needs no per-provider list to stay
+current. Each window needs at least 10% usage before its reset counts, and a
+fresh reading must confirm the change, so the card can appear on the next
+poll rather than instantly. Saved, stale and first-launch readings do not
+trigger a card, and a provider's own cooldown after firing keeps a jittery
+reading from reporting the same reset twice.
+
+The card uses the notch's appearance and follows its configured screen, edge,
+size and theme, positioned from the notch's own measured on-screen rectangle
+rather than an assumed offset — a taskbar docked to that edge, or the notch
+dragged along it, cannot leave the card off by itself. It also appears when
+the notch is set to **Hide**, without changing that setting. General →
+Notifications has one switch for every provider's reset cards (on by
+default), a switch for the notification sound, and a **Preview card** button.
+When more than one window renews together, their cards appear one after the
+other. The Windows app must be running to observe and show a reset.
+
 ### Claude sign-in
 
 When Claude is signed out, its card offers **Sign in**, which opens the standalone
@@ -78,6 +101,22 @@ or expose tokens through UI IPC. The interactive child has a 15-minute timeout.
 To read Claude again, click its ring or choose **Refresh now** from the notch's
 right-click menu. HTTP 403 is reported as an access/network refusal rather than claiming
 that a still-valid login has expired. Existing automatic renewal is unchanged.
+Manual refresh respects the five-minute per-account attempt floor and any
+rate-limit deadline. A newly crossed reset boundary permits one earlier attempt;
+credential renewal still runs on the existing 60-second active loop.
+
+Browser approval is only one part of sign-in: wait for the CLI terminal to report
+`Login successful`. If it reports 403 afterwards, do not interpret that as a
+successful login or repeatedly delete credentials. Check the CLI error and the
+network/account access used by that CLI; browser and terminal connectivity can
+differ. Keep authorization codes, tokens and raw debug logs out of issue reports.
+
+The Claude quota arcs and headline require a fresh successful reading whose
+reported reset has not passed. On sign-out or a stale/error response they show
+no quota arc instead of presenting a cached percentage as current. The hover
+card can retain the last known values, explicitly labelled as historical, with
+their last reported reset time. A successful refresh restores the live reading;
+this display rule does not bypass HTTP 403 or change OAuth, polling or backoff.
 
 ### Antigravity
 
@@ -102,17 +141,18 @@ first time with *Windows protected your PC*: choose **More info**, then **Run an
 ### Updates
 
 Codenotch looks for a newer release about twenty seconds after it starts, and again whenever
-**Check for updates** is pressed in Settings → General. The feed is `latest.json` on the newest
-release, written by the Windows Package workflow beside the installer it describes, so publishing
-a release is the whole of shipping an update.
+**Check for updates** is pressed in Settings → General. It compares the installed version with
+GitHub's latest release and confirms that release carries a Windows installer. When the maintainer
+has published a signed `latest.json` feed for that same version, **Update** downloads and installs
+it through Tauri. Otherwise **Download installer** opens the official GitHub asset for you to run.
 
-Nothing about this nags. A check that fails — no network, an unreachable feed — leaves the app
-as it was and says so only next to the version. There is no dialogue and no badge.
+Nothing about this nags. A check that fails — no network or no Windows installer yet — leaves the
+app as it was and says so next to the version. Before the first completed check, the page makes
+no "Up to date" claim. There is no dialogue and no badge.
 
-The download is a minisign-signed archive, and the signature is checked against the public key in
-`tauri.conf.json` before anything is run. This is what stands in for code signing here: the
-installer itself is unsigned, so SmartScreen still warns on a first manual install, but an update
-delivered to an already-installed copy is verified.
+Automatic updates use a minisign-signed archive; Tauri checks its signature against the public
+key in `tauri.conf.json` before running it. The manually downloaded installer is unsigned, so
+SmartScreen may warn, as it does for a first installation.
 
 Before the first signed release, the key has to exist:
 
@@ -123,9 +163,9 @@ npx --yes @tauri-apps/cli@2.11.4 signer generate -w $env:USERPROFILE\.tauri\code
 Put the **private** key in the repository secret `TAURI_SIGNING_PRIVATE_KEY` and its password in
 `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, and paste the **public** key into `plugins.updater.pubkey`
 in `codenotch/tauri.conf.json`, replacing `REPLACE_WITH_TAURI_PUBLIC_KEY`. Until that is done the
-app skips the check entirely rather than reporting a failure nobody can act on; the packaging job
-builds an ordinary installer and warns that it made no feed, and a `v*` release fails loudly rather
-than going out with an update path nobody can use.
+app still checks GitHub releases and offers the manual installer. The packaging job builds an
+ordinary installer without a signed feed, and a `v*` release job fails to flag the missing signing
+configuration to the maintainer.
 
 Keep the private key. Losing it means no installed copy can be updated again, because every one of
 them checks against the public key it shipped with — they would all have to reinstall by hand.
@@ -149,6 +189,46 @@ npx @tauri-apps/cli@2 build --config tauri.bundle.conf.json
 # → ..\target\release\bundle\nsis\Codenotch_<version>_x64-setup.exe
 ```
 
+### Linux
+
+The same crate builds and runs on Linux; the Win32 pieces already sat behind `cfg(windows)`,
+and the rest of the port is portable Rust. Prerequisites on a Debian or Ubuntu machine:
+
+```sh
+sudo apt install build-essential pkg-config libssl-dev libwebkit2gtk-4.1-dev \
+                 libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+cargo build --release -p codenotch
+./scripts/run-linux.sh          # pill appears on the right edge
+./scripts/run-linux.sh doctor   # self-diagnosis, same as on Windows
+```
+
+`scripts/run-linux.sh` exists because of two things the desktop does not do by itself.
+**Wayland does not let a client place its own windows**, and the notch has to sit on a
+screen edge, so it runs as an X11 client under XWayland. And a shell started from a
+**snap** — Ubuntu's VS Code, for one — exports that snap's library paths, which make a
+binary built against the system glibc die with
+`symbol lookup error: … undefined symbol: __libc_pthread_init`. The script unsets those
+and sets `GDK_BACKEND=x11`; launched from the desktop rather than such a shell, the
+binary runs on its own.
+
+The tray needs GNOME's *AppIndicator Support* extension, as every Tauri tray does there.
+The data folder follows the XDG directories (`~/.config/codenotch`), and providers are
+found at their Linux paths: `~/.claude`, `~/.codex`, `~/.grok`,
+`~/.config/Cursor/User/globalStorage/state.vscdb`.
+
+What does not work yet, and degrades quietly rather than misbehaving:
+
+| Feature | Why |
+|---|---|
+| Dragging the pill along its edge | Follows the mouse through `GetAsyncKeyState`; needs an X11 pointer query. |
+| Seen-clears-it, and jumping back to the terminal | `focus.rs` reads the foreground window and the process tree through Toolhelp; `/proc` plus a window-manager call would replace it. |
+| Antigravity | Its credential is read from the Windows Credential Manager; libsecret is the equivalent. |
+| App icons taken from an installed `.exe` | The built-in provider SVGs cover every provider, so little is lost. |
+
+Everything else — all providers, the hover card, the settings window, the tray menu, hooks,
+start at sign-in (an XDG autostart entry rather than a registry value) — behaves as it does
+on Windows.
+
 Tray menu: the readings themselves — a line per provider with its headline figure, and under it
 one line per limit window — then **Refresh all**, **Settings…** and **Quit Codenotch**. Clicking a
 provider's line re-reads that provider. Everything else is in the settings window: which rings the
@@ -158,21 +238,22 @@ position, and the data folder (`%APPDATA%\codenotch` — logs, persisted reading
 
 Notch: clicking a ring re-reads that provider, as on the Mac. Right-clicking the notch or its card
 offers **Refresh now**, the provider's usage page (**Open claude.ai**, **Open chatgpt.com**, …) and
-**Quit Codenotch**. Neither click, nor the tray, asks Claude again while its rate-limit wait runs.
+**Quit Codenotch**. Neither click nor the tray bypasses Claude's five-minute
+per-account attempt floor or its rate-limit wait.
 
 ### Where the notch sits
 
-The notch pins to one edge of one screen. The arc above the pill carries it: hold it, and the four
-places it can go are outlined on the screen; release on one and the notch lands there, centred.
-**Appearance → Show move handle** hides that arc. **Appearance → Edge** picks left, right, top or bottom:
-it stands upright on the left and right edges with the hover card opening sideways, and lies flat
-on the top and bottom ones with the card opening below or above. **Appearance → Screen** appears
-once more than one monitor is attached.
+The notch pins to one edge of one screen. Six dots come out beside the settings button while the
+pointer is on it: hold them (or hold Alt anywhere on the notch) and drag, and the notch follows the
+pointer round the screen's border — along an edge, and round each corner — and lands where it is
+let go.
+**Appearance → Edge** picks left, right, top or bottom: it stands upright on the left and right
+edges with the hover card opening sideways, and lies flat on the top and bottom ones with the card
+opening below or above. **Appearance → Screen** appears once more than one monitor is attached.
 
-Dragging does both at once: pick the pill up, drop it anywhere, and it snaps to the nearest edge
-of the screen it was dropped on — across monitors, and across a change of DPI between them. The
-choice is stored as `notch_edge`, `notch_monitor` (the device name, e.g. `\\.\DISPLAY2`) and
-`notch_y` (the position along the edge, 0–1) in `config.json`. A monitor that is no longer
+Carried well onto another monitor, 150 px past the one it is on, the notch goes there, across a
+change of DPI between them too. The choice is stored as `notch_edge`, `notch_monitor` (the device
+name, e.g. `\\.\DISPLAY2`) and `notch_along` (where along each edge, 0–1) in `config.json`. A monitor that is no longer
 attached falls back to the primary one, so unplugging a screen cannot strand the notch off-screen;
 **Recentre** centres it on the edge it is on, or on the primary screen's right-hand edge when the screen it was on is gone.
 
@@ -183,6 +264,12 @@ light over a dark backdrop, black over a light one, the way the iPhone's home in
 which, Codenotch reads a thin strip of the screen beside the pill twice a second while it is folded,
 and keeps only its average brightness, which is never stored or sent. With the switch off, the notch
 open, or Show set to Always show, nothing is read.
+
+**Appearance → Fold for full-screen apps**, on unless switched off, folds the notch to its pill while
+a full-screen app — a video, a game, a slideshow — is in front on its screen, whatever Show says, as
+the Mac's does. Hovering the pill still opens it, and leaving the app unfolds it again. Switch on or
+off, the notch moves to the screen's very edge meanwhile, into the room the taskbar has made for the
+app, and back when the taskbar returns.
 
 ### Icons
 

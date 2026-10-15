@@ -14,8 +14,10 @@ enum TooltipGlassContrast {
 
     static func dim(surfaceStyle: NotchSurfaceStyle, colorScheme: ColorScheme,
                     reduceTransparency: Bool = false) -> Color? {
-        if surfaceStyle.effective == .darkGlass {
-            return Palette.darkGlassTooltipDim
+        switch surfaceStyle.effective {
+        case .darkGlass: return Palette.darkGlassTooltipDim
+        case .dock: return Palette.dockCardDim
+        case .glass, .solid: break
         }
         return needsReadableDim(surfaceStyle: surfaceStyle, colorScheme: colorScheme,
                                 reduceTransparency: reduceTransparency)
@@ -171,7 +173,7 @@ private struct TooltipShell<Content: View>: View {
     @ViewBuilder let content: Content
 
     @Environment(\.codenotchReduceTransparency) private var reduceTransparency
-    @Environment(\.notchSurfaceStyle) private var surfaceStyle
+    @Environment(\.notchCardSurfaceStyle) private var surfaceStyle
     @Environment(\.colorScheme) private var colorScheme
 
     /// Reduce transparency means "no see-through chrome", which for this card
@@ -430,8 +432,37 @@ private struct StatusRing: View {
 
 // MARK: - Providers
 
+/// The tick's leading edge for a 0...1 position along a track, kept on the
+/// track: at either end the tick stops against the edge instead of hanging
+/// halfway off it. Internal so the tests can pin the ends.
+func paceMarkerX(position: Double, trackWidth: CGFloat, markerWidth: CGFloat) -> CGFloat {
+    min(max(CGFloat(position) * trackWidth - markerWidth / 2, 0),
+        max(trackWidth - markerWidth, 0))
+}
+
+/// The tick on a window's bar marking the share of the cycle elapsed — where
+/// the fill *should* be, so a glance says whether the burn is ahead of the
+/// clock or behind it. Slightly taller than the bar, so its ends land on the
+/// card's own background where the contrast holds whatever the fill colour is.
+/// Hidden from VoiceOver: the pace line below the bar already says it in words.
+private struct PaceMarker: View {
+    /// 0...1 from the leading edge, on the bar's own terms — see
+    /// `LimitWindow.paceMarkerFraction`.
+    let position: Double
+    let trackWidth: CGFloat
+    private var width: CGFloat { Design.px(2) }
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: width / 2, style: .continuous)
+            .fill(Palette.textPrimary)
+            .frame(width: width, height: NotchLayout.barHeight + Design.px(6))
+            .offset(x: paceMarkerX(position: position, trackWidth: trackWidth, markerWidth: width))
+            .accessibilityHidden(true)
+    }
+}
+
 /// One metered window: label and reset copy on a line, a track bar, then the
-/// percentage burned.
+/// percentage burned — or what is left, when the notch is set that way.
 private struct LimitWindowRow: View {
     let window: LimitWindow
     var inset: CGFloat = 0
@@ -442,6 +473,7 @@ private struct LimitWindowRow: View {
     /// Whether the reset says when it lands as well as how long there is.
     /// Decided for the whole card — see `ProviderLimitsContent`.
     var showsResetStamp: Bool = false
+    var showsRemaining: Bool = false
     @Environment(\.codenotchAccentColor) private var accentColor
     @Environment(\.usageWatchLimit) private var watchLimit
     @Environment(\.usageCriticalLimit) private var criticalLimit
@@ -463,7 +495,8 @@ private struct LimitWindowRow: View {
     }
     private var trackWidth: CGFloat { detailWidth - inset }
     private var fillWidth: CGFloat {
-        let fraction = CGFloat(min(max(window.usedFraction ?? 0, 0), 1))
+        let fraction = CGFloat(min(max(Percent.metered(window.usedFraction ?? 0,
+                                                       showingRemaining: showsRemaining), 0), 1))
         return max(NotchLayout.barHeight, trackWidth * fraction)
     }
 
@@ -491,7 +524,10 @@ private struct LimitWindowRow: View {
 
     var body: some View {
         if let money = window.money {
-            MoneyBreakdownView(title: window.label, money: money, fidelity: fidelity)
+            MoneyBreakdownView(title: window.label, money: money, fidelity: fidelity,
+                               resetText: window.resetsAt == nil ? nil : resetText,
+                               projection: window.usageProjection(now: now),
+                               showsRemaining: showsRemaining)
         } else if isCountRow {
             SplitRow(leading: window.label, trailing: window.detail ?? window.usedText ?? "\(window.used ?? 0)")
         } else {
@@ -504,12 +540,16 @@ private struct LimitWindowRow: View {
                     ZStack(alignment: .leading) {
                         Capsule().fill(Palette.barTrack)
                         Capsule().fill(barColor).frame(width: fillWidth)
+                        if showsUsagePace,
+                           let marker = window.paceMarkerFraction(now: now, showingRemaining: showsRemaining) {
+                            PaceMarker(position: marker, trackWidth: trackWidth)
+                        }
                     }
                     .frame(width: trackWidth, height: NotchLayout.barHeight)
                     .padding(.top, NotchLayout.labelToBar)
                 }
 
-                Text("\(window.usedFraction == nil ? "" : fidelity.qualifier)\(window.detail ?? window.summary)\(paceText)")
+                Text("\(window.usedFraction == nil ? "" : fidelity.qualifier)\(window.detail ?? window.summary(showingRemaining: showsRemaining))\(paceText)")
                     .font(Typography.cardBody)
                     .foregroundStyle(Palette.textPrimary)
                     .lineLimit(1)
@@ -524,13 +564,24 @@ private struct MoneyBreakdownView: View {
     let title: String
     let money: UsageMoneyBreakdown
     let fidelity: Fidelity
+    /// Nil for a balance with no period, which gets no line for it.
+    var resetText: String? = nil
+    var projection: UsageProjection? = nil
+    var showsRemaining: Bool = false
     @Environment(\.codenotchAccentColor) private var accentColor
     @Environment(\.usageWatchLimit) private var watchLimit
     @Environment(\.usageCriticalLimit) private var criticalLimit
     @Environment(\.providerDetailWidth) private var detailWidth
     @Environment(\.colorTransitionStyle) private var colorTransitionStyle
+    @Environment(\.tooltipSecondaryInk) private var secondaryInk
 
     private var barColor: Color {
+        // Amber while the balance is still low but the pace says it will not
+        // last the month — the point at which slowing down still helps.
+        if projection?.runsOut == true,
+           UsageBand.band(for: money.spentFraction, watchLimit: watchLimit, criticalLimit: criticalLimit) == .ample {
+            return UsageBand.watch.color(accent: accentColor)
+        }
         guard colorTransitionStyle == .ramp else {
             return UsageBand.band(for: money.spentFraction, watchLimit: watchLimit, criticalLimit: criticalLimit)
                 .color(accent: accentColor)
@@ -554,12 +605,13 @@ private struct MoneyBreakdownView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             SplitRow(leading: title,
-                     trailing: "\(fidelity.qualifier)\(Percent.text(for: money.spentFraction))% used")
+                     trailing: "\(fidelity.qualifier)\(money.headlineText(showingRemaining: showsRemaining))")
             GeometryReader { proxy in
                 HStack(spacing: 0) {
                     Rectangle()
                         .fill(barColor)
-                        .frame(width: proxy.size.width * CGFloat(money.spentFraction))
+                        .frame(width: proxy.size.width * CGFloat(Percent.metered(money.spentFraction,
+                                                                                 showingRemaining: showsRemaining)))
                     Rectangle().fill(Palette.barTrack)
                 }
             }
@@ -574,7 +626,36 @@ private struct MoneyBreakdownView: View {
             }
             .frame(width: detailWidth)
             .padding(.top, NotchLayout.moneyBarToStats)
+
+            // A line each rather than one shared: in German the countdown alone
+            // takes most of the card's width.
+            if let resetText {
+                moneyLine(resetText, color: secondaryInk)
+            }
+            if let projection {
+                moneyLine(projectionText(projection),
+                          color: projection.runsOut ? .orange : secondaryInk)
+            }
         }
+    }
+
+    private func moneyLine(_ text: String, color: Color) -> some View {
+        Text(text)
+            .font(Typography.cardBody)
+            .foregroundStyle(color)
+            .lineLimit(1)
+            .frame(width: NotchLayout.cardTextWidth, alignment: .leading)
+            .padding(.top, NotchLayout.moneyStatGap)
+    }
+
+    private func projectionText(_ projection: UsageProjection) -> String {
+        if let reachedAt = projection.limitReachedAt {
+            let formatter = DateFormatter()
+            formatter.locale = L10n.locale
+            formatter.setLocalizedDateFormatFromTemplate("MMMd")
+            return L10n.t("On pace to run out \(formatter.string(from: reachedAt))")
+        }
+        return L10n.t("On pace for \(amount(money.funded * projection.fractionAtReset))")
     }
 }
 
@@ -608,6 +689,7 @@ struct ProviderLimitsContent: View {
     let now: Date
     var resetTimeFormat: ResetTimeFormat = .automatic
     var showUsagePace: Bool = false
+    var showsRemaining: Bool = false
     /// Drawn at the end of the header line — see `TooltipHeader.accessory`.
     var headerAccessory: AnyView?
     @Environment(\.tooltipSecondaryInk) private var secondaryInk
@@ -713,7 +795,7 @@ struct ProviderLimitsContent: View {
 
                                 VStack(alignment: .leading, spacing: NotchLayout.blockSpacing) {
                                     ForEach(Array(group.windows.enumerated()), id: \.element.id) { windowIndex, window in
-                                        LimitWindowRow(window: window, inset: 2 * Design.px(16), fidelity: snapshot.fidelity, now: now, resetTimeFormat: resetTimeFormat, showsUsagePace: showUsagePace, showsResetStamp: stamps)
+                                        LimitWindowRow(window: window, inset: 2 * Design.px(16), fidelity: snapshot.fidelity, now: now, resetTimeFormat: resetTimeFormat, showsUsagePace: showUsagePace, showsResetStamp: stamps, showsRemaining: showsRemaining)
                                             .padding(.top, windowIndex == 0 ? 0 : NotchLayout.blockSpacing)
                                     }
                                 }
@@ -726,7 +808,7 @@ struct ProviderLimitsContent: View {
                             .padding(.top, groupIndex == 0 ? NotchLayout.headerToBlock : Design.px(28))
                         } else {
                             ForEach(Array(group.windows.enumerated()), id: \.element.id) { windowIndex, window in
-                                LimitWindowRow(window: window, fidelity: snapshot.fidelity, now: now, resetTimeFormat: resetTimeFormat, showsUsagePace: showUsagePace, showsResetStamp: stamps)
+                                LimitWindowRow(window: window, fidelity: snapshot.fidelity, now: now, resetTimeFormat: resetTimeFormat, showsUsagePace: showUsagePace, showsResetStamp: stamps, showsRemaining: showsRemaining)
                                     .padding(.top, (groupIndex == 0 && windowIndex == 0) ? NotchLayout.headerToBlock : NotchLayout.blockSpacing)
                             }
                         }
@@ -949,14 +1031,10 @@ private struct UsageResetCreditsSection: View {
     /// Same date templates `ResetCopy` uses past the hour, so this line and
     /// the quota rows agree on what "soon" looks like.
     private static func stamp(for date: Date, now: Date, calendar: Calendar = .current) -> String {
-        let formatter = ResetCopy.formatter(for: calendar)
-        formatter.locale = L10n.locale
-        if ResetCopy.daysApart(from: now, to: date, calendar: calendar) >= 7 {
-            formatter.setLocalizedDateFormatFromTemplate("MMM d")
-        } else {
-            formatter.setLocalizedDateFormatFromTemplate("E j:mm")
-        }
-        return formatter.string(from: date)
+        let template = ResetCopy.daysApart(from: now, to: date, calendar: calendar) >= 7
+            ? "MMM d" : "E j:mm"
+        return ResetCopy.formatter(template: template, calendar: calendar,
+                                   locale: L10n.locale).string(from: date)
     }
 }
 
@@ -1179,6 +1257,8 @@ struct ProviderDetailContent: View {
     /// notch solves this from the display it is on, a scrolling panel has no
     /// such ceiling.
     var sessionCap: Int = NotchLayout.defaultSessionCap
+    /// Project rows the cost section may list, as the view model solved it.
+    var costRows: Int = 0
     var resetTimeFormat: ResetTimeFormat = .automatic
     var deepSeekPricingEnabled: Bool = true
     var deepSeekPricingSchedule: DeepSeekPricing.Schedule = .current
@@ -1200,6 +1280,7 @@ struct ProviderDetailContent: View {
     /// beside the provider it belongs to rather than somewhere above the card.
     var headerAccessory: AnyView?
     @AppStorage(Preferences.showUsagePaceKey) private var showUsagePace = false
+    @AppStorage(Preferences.showsRemainingInNotchKey) private var showsRemaining = false
 
     /// Enough rows that nothing is ever counted instead of drawn — for a
     /// surface that scrolls rather than clips.
@@ -1216,6 +1297,7 @@ struct ProviderDetailContent: View {
         VStack(alignment: .leading, spacing: 0) {
             ProviderLimitsContent(activityNote: localActivityNote, snapshot: snapshot, now: now,
                                   resetTimeFormat: resetTimeFormat, showUsagePace: showUsagePace,
+                                  showsRemaining: showsRemaining,
                                   headerAccessory: headerAccessory)
             if showsExtendedDetail {
                 if let resetCredits = snapshot.availableResetCredits(at: now) {
@@ -1234,6 +1316,9 @@ struct ProviderDetailContent: View {
                 if let activity, snapshot.localModel == nil {
                     SessionList(summary: activity, now: now, cap: sessionCap,
                                 onFocus: onFocusSession)
+                }
+                if costRows > 0, let model = CostModels.model(for: snapshot.id) {
+                    CostSection(model: model, rows: costRows)
                 }
             }
         }
@@ -1270,6 +1355,8 @@ struct TooltipCard: View {
     /// How many sessions this screen has room to list. Solved from the display
     /// rather than fixed, so a big screen hides nothing.
     var sessionCap: Int = NotchLayout.defaultSessionCap
+    /// Project rows the cost section may list, as the view model solved it.
+    var costRows: Int = 0
     var resetTimeFormat: ResetTimeFormat = .automatic
     var deepSeekPricingEnabled: Bool = true
     var deepSeekPricingSchedule: DeepSeekPricing.Schedule = .current
@@ -1285,6 +1372,8 @@ struct TooltipCard: View {
             windowCount: snapshot.windows.count,
             groupCount: snapshot.windowGroupCount,
             moneyWindowCount: snapshot.windows.filter { $0.money != nil }.count,
+            moneyResetCount: snapshot.windows.filter { $0.money != nil && $0.resetsAt != nil }.count,
+            moneyProjectionCount: snapshot.windows.filter { $0.money != nil && $0.usageProjection(now: now) != nil }.count,
             usageDetailGroupCount: snapshot.usageDetail?.visibleGroups.count ?? 0,
             sessionCount: snapshot.localModel == nil ? (activity?.sessions.count ?? 0) : 0,
             sessionCap: sessionCap,
@@ -1297,7 +1386,8 @@ struct TooltipCard: View {
             showsLocalPerformance: snapshot.showsLocalPerformance,
                 localLedgerRows: snapshot.localLedgerRowCount,
             compactRowCount: snapshot.compactRowCount,
-            showsDeepSeekPricing: deepSeekPricingEnabled
+            showsDeepSeekPricing: deepSeekPricingEnabled,
+            costRows: costRows
         )
     }
 
@@ -1309,7 +1399,8 @@ struct TooltipCard: View {
             // drifts while the card resizes around them.
             ZStack(alignment: .topLeading) {
                 ProviderDetailContent(snapshot: snapshot, activity: activity, now: now,
-                                      sessionCap: sessionCap, resetTimeFormat: resetTimeFormat,
+                                      sessionCap: sessionCap, costRows: costRows,
+                                      resetTimeFormat: resetTimeFormat,
                                       deepSeekPricingEnabled: deepSeekPricingEnabled,
                                       deepSeekPricingSchedule: deepSeekPricingSchedule,
                                       onFocusSession: onFocusSession)
