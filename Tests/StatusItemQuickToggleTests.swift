@@ -194,4 +194,3 @@ final class StatusItemQuickToggleTests: XCTestCase {
         XCTAssertTrue(controller.finishedSinceLastDraw.isEmpty)
     }
 }
-
