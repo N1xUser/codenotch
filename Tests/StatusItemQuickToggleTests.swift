@@ -140,4 +140,25 @@ final class StatusItemQuickToggleTests: XCTestCase {
         controller.setActivity(providerID: "claude", sessions: [])
         XCTAssertTrue(controller.activeProviderIDs.isEmpty)
     }
+
+    func testAWaitingSessionMarksItsProviderWhateverElseItIsDoing() {
+        let controller = StatusItemController(onOpenSettings: {})
+
+        controller.setActivity(providerID: "claude", sessions: [session(.waiting, id: "claude-ask")])
+        XCTAssertEqual(controller.waitingProviderIDs, ["claude"])
+        XCTAssertTrue(controller.activeProviderIDs.isEmpty, "waiting is not work")
+
+        // Another session of the same provider at work does not hide the wait.
+        controller.setActivity(providerID: "claude", sessions: [session(.waiting, id: "claude-ask"),
+                                                                session(.busy, id: "claude-run")])
+        XCTAssertEqual(controller.waitingProviderIDs, ["claude"])
+        XCTAssertEqual(controller.activeProviderIDs, ["claude"])
+
+        controller.setActivity(providerID: "claude", sessions: [session(.busy, id: "claude-run")])
+        XCTAssertTrue(controller.waitingProviderIDs.isEmpty, "answered")
+        controller.setActivity(providerID: "claude", sessions: [])
+        XCTAssertTrue(controller.waitingProviderIDs.isEmpty)
+        XCTAssertTrue(controller.activeProviderIDs.isEmpty)
+    }
 }
+
