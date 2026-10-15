@@ -42,7 +42,13 @@ final class MenuCommandRowView: NSView {
     // share one centre, not one left edge — and the modifiers end a fixed step
     // before that centre.
     static let height: CGFloat = 24
-    private static let titleInset: CGFloat = 30
+    /// Where AppKit starts a title: past the state column when the menu has
+    /// one, at the leading margin when it does not. AppKit drops the column
+    /// from a menu in which no item is ticked — here, whenever "Show limit
+    /// information in menu bar" is off — and every title moves 14pt left. A
+    /// fixed inset left this row behind, indented on its own.
+    static let titleInsetWithStateColumn: CGFloat = 30
+    static let titleInsetWithoutStateColumn: CGFloat = 16
     private static let keyCentreInset: CGFloat = 22.3
     private static let modifierGap: CGFloat = 6.5
     private static let selectionInset: CGFloat = 5
@@ -79,6 +85,20 @@ final class MenuCommandRowView: NSView {
 
     private var showsSelection: Bool { isHighlighted && !isBusy }
 
+    /// Read off the menu as it is now, at draw time: an item's state can
+    /// change between one opening and the next.
+    var titleInset: CGFloat {
+        Self.titleInset(for: enclosingMenuItem?.menu)
+    }
+
+    /// Whether a menu draws AppKit's state column, as AppKit decides it: only
+    /// when it is allowed one and some item in it carries a state.
+    static func titleInset(for menu: NSMenu?) -> CGFloat {
+        guard let menu else { return titleInsetWithStateColumn }
+        let hasColumn = menu.showsStateColumn && menu.items.contains { $0.state != .off }
+        return hasColumn ? titleInsetWithStateColumn : titleInsetWithoutStateColumn
+    }
+
     private func restyle() {
         selection.isHidden = !showsSelection
         ink.needsDisplay = true
@@ -105,7 +125,7 @@ final class MenuCommandRowView: NSView {
 
         let text = NSAttributedString(string: isBusy ? busyTitle : title,
                                       attributes: [.font: font, .foregroundColor: titleInk])
-        text.draw(at: NSPoint(x: Self.titleInset, y: top))
+        text.draw(at: NSPoint(x: titleInset, y: top))
 
         guard !keyEquivalent.isEmpty else { return }
         let key = NSAttributedString(string: keyEquivalent.uppercased(),

@@ -731,4 +731,29 @@ final class MenuUsageCardTests: XCTestCase {
         let step = try render(card(.hardStep)).tiffRepresentation
         XCTAssertNotEqual(ramp, step, "the menu ignored the colour transition")
     }
+
+    // MARK: - Refresh all lines up with the rows around it
+
+    /// AppKit drops the state column from a menu with nothing ticked, and every
+    /// title moves left. Refresh all draws its own title, so it has to follow:
+    /// with "Show limit information in menu bar" off it stood 14pt to the
+    /// right of Activity… and Settings… below it.
+    func testRefreshAllFollowsTheStateColumnInAndOut() throws {
+        let controller = StatusItemController(onOpenSettings: {})
+        controller.snapshots = Fixtures.snapshots()
+        let menu = NSMenu()
+
+        controller.limits = MenuBarLimits(isOn: true, chosen: nil)
+        controller.rebuild(menu: menu, now: Date())
+        XCTAssertTrue(menu.items.contains { $0.state == .on }, "the limits tick is what keeps the column")
+        XCTAssertEqual(try refreshRow(in: menu).titleInset, MenuCommandRowView.titleInsetWithStateColumn)
+
+        controller.limits = .off
+        controller.rebuild(menu: menu, now: Date())
+        XCTAssertFalse(menu.items.contains { $0.state != .off })
+        XCTAssertEqual(try refreshRow(in: menu).titleInset, MenuCommandRowView.titleInsetWithoutStateColumn)
+        XCTAssertEqual(MenuCommandRowView.titleInsetWithStateColumn
+                       - MenuCommandRowView.titleInsetWithoutStateColumn, 14,
+                       "the width AppKit's titles move by, measured on macOS 27")
+    }
 }
