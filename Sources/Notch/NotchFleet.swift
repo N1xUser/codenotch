@@ -275,10 +275,12 @@ final class NotchFleet {
         }
     }
 
+    /// Fanned to `models` like the band limits above it, so the menu's cards
+    /// and the notch's colour a bar by the same rule.
     func apply(colorTransitionStyle: ColorTransitionStyle) {
         self.colorTransitionStyle = colorTransitionStyle
-        for controller in controllers.values {
-            controller.model.colorTransitionStyle = colorTransitionStyle
+        for model in models {
+            model.colorTransitionStyle = colorTransitionStyle
         }
     }
 

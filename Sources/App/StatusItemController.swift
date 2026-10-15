@@ -618,6 +618,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             accentColor: (model?.accentColor ?? .system).color,
             watchLimit: model?.watchLimit ?? 0.50,
             criticalLimit: model?.criticalLimit ?? 0.70,
+            colorTransitionStyle: model?.colorTransitionStyle ?? .hardStep,
             isExpanded: expandedDetail.contains(snapshot.id),
             onToggle: { [weak self] in self?.toggleDetail(for: snapshot.id) },
             // The card reports where its switch landed; the view hosting it

@@ -704,4 +704,31 @@ final class MenuUsageCardTests: XCTestCase {
         }
         XCTAssertEqual(differing, 0, "the header is drawn somewhere else until the item is re-measured")
     }
+
+    // MARK: - One colour rule for both surfaces
+
+    /// Settings' **Colour transition** is one choice, and the menu's cards are
+    /// coloured by it exactly as the notch is. The fleet used to hand it to
+    /// the notches alone, so the menu stayed on Hard step whatever was chosen.
+    func testTheColourTransitionReachesTheMenu() throws {
+        let fleet = NotchFleet(scope: .mainDisplay, edge: .right)
+        fleet.apply(colorTransitionStyle: .ramp)
+        XCTAssertEqual(fleet.menuModel.colorTransitionStyle, .ramp)
+
+        // And the card draws with it: a ramp and a hard step give a bar at 62%
+        // two different colours, so the two renders cannot match.
+        func card(_ style: ColorTransitionStyle) -> some View {
+            MenuUsageCardItem.root(snapshot: claude(), activity: nil, now: Date(),
+                                   resetTimeFormat: .automatic,
+                                   deepSeekPricingEnabled: true, deepSeekPricingSchedule: .current,
+                                   sessionCap: 4, accentColor: .blue,
+                                   watchLimit: 0.5, criticalLimit: 0.7,
+                                   colorTransitionStyle: style,
+                                   isExpanded: false, onToggle: nil)
+                .frame(width: MenuUsageCard.width + 2 * MenuUsageCard.gutter, height: 400)
+        }
+        let ramp = try render(card(.ramp)).tiffRepresentation
+        let step = try render(card(.hardStep)).tiffRepresentation
+        XCTAssertNotEqual(ramp, step, "the menu ignored the colour transition")
+    }
 }

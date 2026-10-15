@@ -195,7 +195,7 @@ enum MenuUsageCardItem {
     /// The card with its environment on it, type-erased so a hosting view can
     /// be handed a new one without changing type.
     ///
-    /// The three environment values are the ones the notch root also sets,
+    /// The environment values are the ones the notch root also sets,
     /// taken from the same model, so a percentage is coloured by one rule and
     /// a reset worded by one setting whichever surface is being read.
     static func root(snapshot: ProviderSnapshot, activity: ActivitySummary?, now: Date,
@@ -206,6 +206,7 @@ enum MenuUsageCardItem {
                      accentColor: Color,
                      watchLimit: Double,
                      criticalLimit: Double,
+                     colorTransitionStyle: ColorTransitionStyle = .hardStep,
                      isExpanded: Bool,
                      onToggle: (() -> Void)?,
                      onSwitchFrame: ((CGRect) -> Void)? = nil) -> AnyView {
@@ -221,6 +222,7 @@ enum MenuUsageCardItem {
                 .environment(\.codenotchAccentColor, accentColor)
                 .environment(\.usageWatchLimit, watchLimit)
                 .environment(\.usageCriticalLimit, criticalLimit)
+                .environment(\.colorTransitionStyle, colorTransitionStyle)
                 .tint(accentColor)
                 // Pinned to the top of the item, and never taller than it.
                 //
