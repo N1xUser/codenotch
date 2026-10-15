@@ -4,9 +4,9 @@ import SwiftUI
 /// One provider's limits, as the menu bar's menu draws them.
 ///
 /// The card is `ProviderLimitsContent` — the same view the notch's tooltip
-/// starts from, given the same snapshot from the same model — on a plain
-/// rounded surface. Nothing about a provider is worked out here; this file is
-/// the container and only the container.
+/// starts from, given the same snapshot from the same model — on a rounded
+/// wash that lets the menu's glass show through. Nothing about a provider is
+/// worked out here; this file is the container and only the container.
 ///
 /// The notch's own silhouette is deliberately left behind: the tail, the glass
 /// and the circular corner cut are drawn for a screen bezel and mean nothing in
@@ -58,6 +58,7 @@ struct MenuUsageCard: View {
                               showsExtendedDetail: isExpanded,
                               headerAccessory: onToggle.map { AnyView(detailSwitch(onToggle: $0)) })
             .environment(\.providerDetailWidth, Self.contentWidth)
+            .environment(\.tooltipSecondaryInk, Palette.menuTextSecondary)
             // Always the height the content asks for, never what the item
             // happens to offer. Offered less — the frame AppKit still holds
             // from before a switch, say — SwiftUI squeezes whatever gives, and
@@ -67,12 +68,12 @@ struct MenuUsageCard: View {
             .padding(NotchLayout.cardPadding)
             .frame(width: Self.width, alignment: .topLeading)
             .background(
-                RoundedRectangle(cornerRadius: NotchLayout.cardCorner, style: .circular)
-                    .fill(Color(nsColor: .controlBackgroundColor))
+                RoundedRectangle(cornerRadius: NotchLayout.cardCorner, style: .continuous)
+                    .fill(Palette.menuCardSurface)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: NotchLayout.cardCorner, style: .circular)
-                    .strokeBorder(Palette.ringTrack, lineWidth: NotchLayout.hairline / 2)
+                RoundedRectangle(cornerRadius: NotchLayout.cardCorner, style: .continuous)
+                    .strokeBorder(Palette.menuCardStroke, lineWidth: 1)
             )
             .padding(.horizontal, Self.gutter)
             .padding(.vertical, Self.gutter / 2)
