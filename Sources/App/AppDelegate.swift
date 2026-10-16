@@ -540,6 +540,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             statusItem.showsWeeklyLimit = preferences.showsWeeklyLimitInMenuBar
             statusItem.showsRemaining = preferences.showsRemainingInNotch
             statusItem.hidesDepleted = preferences.hideDepletedAccounts
+            statusItem.autoOrders = preferences.autoOrderByRemaining
             statusItem.reading = preferences.menuBarReading
             statusItem.activityStyle = preferences.menuBarActivityStyle
 
@@ -586,6 +587,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 .removeDuplicates()
                 .receive(on: DispatchQueue.main)
                 .sink { [weak statusItem] in statusItem?.hidesDepleted = $0 }
+                .store(in: &cancellables)
+
+            preferences.$autoOrderByRemaining
+                .removeDuplicates()
+                .receive(on: DispatchQueue.main)
+                .sink { [weak statusItem] in statusItem?.autoOrders = $0 }
                 .store(in: &cancellables)
 
             preferences.$menuBarReading

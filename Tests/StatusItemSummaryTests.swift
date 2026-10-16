@@ -60,12 +60,14 @@ final class StatusItemSummaryTests: XCTestCase {
                          weekly: Bool = false,
                          remaining: Bool = false,
                          hideDepleted: Bool = false,
-                         reading: MenuBarReading = .automatic) -> StatusItemSummary {
+                         reading: MenuBarReading = .automatic,
+                         autoOrder: Bool = false) -> StatusItemSummary {
         StatusItemSummary.make(
             from: snapshots,
             showing: limits ?? MenuBarLimits(isOn: true, chosen: Set(snapshots.map(\.id))),
             now: now, format: format, showingWeeklyLimit: weekly,
-            showingRemaining: remaining, hidingDepleted: hideDepleted, reading: reading)
+            showingRemaining: remaining, hidingDepleted: hideDepleted, reading: reading,
+            autoOrdering: autoOrder)
     }
 
     private func on(_ chosen: Set<String>?) -> MenuBarLimits {
@@ -661,6 +663,51 @@ final class StatusItemSummaryTests: XCTestCase {
         XCTAssertEqual(result.entries.map(\.id), ["claude", "codex", "glm", "kimi"])
         XCTAssertTrue(result.isCompact)
         XCTAssertFalse(summary(Array(many.prefix(2))).isCompact)
+    }
+
+    // MARK: - Which readings get the room
+
+    /// Off, the bar keeps the order Accounts was dragged into.
+    func testTheBarKeepsTheManualOrderUntilAutoOrderIsOn() {
+        let snapshots = [claude(0.80, resetIn: hour), codex(0.10, resetIn: hour)]
+        XCTAssertEqual(summary(snapshots).entries.map(\.id), ["claude", "codex"])
+        XCTAssertEqual(summary(snapshots, autoOrder: true).entries.map(\.id), ["codex", "claude"])
+    }
+
+    /// The order is taken before the four places are, so auto-order decides
+    /// who is on the bar at all and not merely where.
+    func testAutoOrderDecidesWhichFourAreOnTheBar() {
+        let crowded = [claude(0.99, resetIn: hour, id: "claude-1"),
+                       claude(0.98, resetIn: hour, id: "claude-2"),
+                       claude(0.97, resetIn: hour, id: "claude-3"),
+                       claude(0.96, resetIn: hour, id: "claude-4"),
+                       claude(0.05, resetIn: hour, id: "claude-5")]
+        XCTAssertFalse(summary(crowded).entries.map(\.id).contains("claude-5"),
+                       "the manual order leaves the emptiest account out")
+        XCTAssertEqual(summary(crowded, autoOrder: true).entries.first?.id, "claude-5")
+        XCTAssertEqual(summary(crowded, autoOrder: true).entries.count, 4)
+    }
+
+    /// And before the countdowns, which only the first readings carry.
+    func testAutoOrderDecidesWhoKeepsTheCountdown() throws {
+        let three = [claude(0.90, resetIn: hour, id: "claude-1"),
+                     claude(0.80, resetIn: 2 * hour, id: "claude-2"),
+                     claude(0.10, resetIn: 3 * hour, id: "claude-3")]
+        let ordered = summary(three, autoOrder: true)
+        XCTAssertEqual(ordered.entries.map(\.id), ["claude-3", "claude-2", "claude-1"])
+        XCTAssertTrue(ordered.isCompact, "three readings still drop the countdowns from the face")
+        XCTAssertFalse(summary(Array(three.prefix(2)), autoOrder: true).isCompact)
+    }
+
+    /// The bar sorts by the window it prints, not by the one leading the
+    /// notch's ring — see `ProviderOrderTests` for the rule itself.
+    func testTheBarSortsByTheWindowItPrints() {
+        var weeklyLed = claude(0.90, resetIn: hour, id: "claude-week")
+        weeklyLed.headlineID = "weekly_all"
+        weeklyLed.weeklyID = "session"
+        let other = claude(0.50, resetIn: hour, id: "claude-plain")
+        XCTAssertEqual(summary([weeklyLed, other], autoOrder: true).entries.map(\.id),
+                       ["claude-plain", "claude-week"])
     }
 
     // MARK: - How much of each reading is printed

@@ -767,7 +767,7 @@ struct SettingsView: View {
             Section(L10n.t("Connected")) {
                 if needsSetup { setupNote }
                 Toggle(L10n.t("Auto-order based on remaining usage"), isOn: $preferences.autoOrderByRemaining)
-                Text(L10n.t("The notch sorts rings by what is left of the window that leads each ring, most first. A high number that cannot be spent yet sinks below usable accounts but stays above empty ones. This list keeps your manual order, which breaks ties."))
+                Text(L10n.t("The notch sorts rings by what is left of the window that leads each ring, most first, and the menu bar sorts its readings by what is left of the five-hour window it prints. A high number that cannot be spent yet sinks below usable accounts but stays above empty ones. This list keeps your manual order, which breaks ties."))
                     .font(.caption)
                     .foregroundStyle(.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -790,7 +790,7 @@ struct SettingsView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 } else if !connected.isEmpty {
                     Text(preferences.autoOrderByRemaining
-                         ? L10n.t("Auto-order is on: the notch sorts these by remaining usage. Dragging still sets the order ties break in.")
+                         ? L10n.t("Auto-order is on: the notch and the menu bar sort these by remaining usage. Dragging still sets the order ties break in.")
                          : L10n.t("The notch draws these in this order. Drag one by its handle to move it."))
                         .font(.caption)
                         .foregroundStyle(.tertiary)

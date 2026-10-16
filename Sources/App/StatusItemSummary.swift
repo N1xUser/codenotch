@@ -73,8 +73,8 @@ struct StatusItemSummary: Equatable {
     /// them. None at all while the feature is off — or when nothing chosen has
     /// a limit to show — which gives the item its icon back.
     ///
-    /// `reading` decides how much of each one is printed; `showingRemaining`
-    /// and `hidingDepleted` are the notch's own switches,
+    /// `reading` decides how much of each one is printed; `autoOrdering`,
+    /// `showingRemaining` and `hidingDepleted` are the notch's own switches,
     /// answered here for the same reason the cards in the menu below already
     /// answer the first: one account must not read two ways in one app.
     /// Depleted accounts are dropped before the count, so an empty one never
@@ -85,12 +85,18 @@ struct StatusItemSummary: Equatable {
                      showingWeeklyLimit: Bool = false,
                      showingRemaining: Bool = false,
                      hidingDepleted: Bool = false,
-                     reading: MenuBarReading = .automatic) -> StatusItemSummary {
+                     reading: MenuBarReading = .automatic,
+                     autoOrdering: Bool = false) -> StatusItemSummary {
         guard limits.isOn else { return StatusItemSummary(entries: [], nextChange: nil) }
-        let summarised = snapshots.filter { snapshot in
+        let chosen = snapshots.filter { snapshot in
             canSummarise(snapshot) && limits.isChosen(snapshot.id)
                 && !(hidingDepleted && snapshot.isDepleted)
-        }.prefix(entryLimit)
+        }
+        // Before the four are taken, not after: on a bar this short the order
+        // decides who is on it at all, which is the whole of what auto-order
+        // is for here.
+        let summarised = (autoOrdering ? ProviderOrder.byRemainingFiveHour(chosen) : chosen)
+            .prefix(entryLimit)
         var marks: [ProviderGlyph: Int] = [:]
         for snapshot in summarised { marks[snapshot.glyph, default: 0] += 1 }
         let entries = summarised.map { snapshot in
