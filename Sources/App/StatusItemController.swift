@@ -88,6 +88,14 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             updateButton()
         }
     }
+    /// How much of each reading the face prints, from Settings. Presentation
+    /// only, like everything beside it: the same readings, shorter or longer.
+    var reading: MenuBarReading = .automatic {
+        didSet {
+            guard reading != oldValue else { return }
+            updateButton()
+        }
+    }
     /// Pulse, a still dot, or nothing at all while an agent works. Reduce
     /// Motion still has the last word over the pulse.
     var activityStyle: MenuBarActivityStyle = .pulse {
@@ -243,7 +251,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
                                           format: resetTimeFormat,
                                           showingWeeklyLimit: showsWeeklyLimit,
                                           showingRemaining: showsRemaining,
-                                          hidingDepleted: hidesDepleted)
+                                          hidingDepleted: hidesDepleted,
+                                          reading: reading)
         scheduleCountdown(at: next.nextChange)
         guard next != summary else { return }
         summary = next
