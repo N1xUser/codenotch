@@ -61324,6 +61324,391 @@
           }
         }
       }
+    },
+    "Menu": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menü"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menü"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menu"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メニュー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메뉴"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "菜单"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選單"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menu"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Меню"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Меню"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menyu"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menu"
+          }
+        }
+      }
+    },
+    "A click on the item": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simgeye tıklayınca"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Klick auf das Objekt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un clic sur l'élément"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目をクリックしたとき"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "항목을 클릭하면"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击该项目时"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊該項目時"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um clique no item"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажатие на значок"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натискання на значок"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elementga bosilganda"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik pada item"
+          }
+        }
+      }
+    },
+    "A click opens the menu: every account's card, Refresh all, Activity and Settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tıklayınca menü açılır: her hesabın kartı, Tümünü yenile, Etkinlik ve Ayarlar."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Klick öffnet das Menü: die Karte jedes Kontos, Alle aktualisieren, Aktivität und Einstellungen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un clic ouvre le menu : la carte de chaque compte, Tout actualiser, Activité et Réglages."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クリックでメニューが開きます。各アカウントのカード、すべて更新、アクティビティ、設定。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클릭하면 메뉴가 열립니다. 각 계정의 카드, 모두 새로 고침, 활동, 설정."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击打开菜单：每个账户的卡片、全部刷新、活动和设置。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊開啟選單：每個帳戶的卡片、全部重新整理、活動和設定。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um clique abre o menu: o cartão de cada conta, Atualizar tudo, Atividade e Ajustes."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажатие открывает меню: карточка каждого аккаунта, «Обновить все», «Активность» и «Настройки»."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натискання відкриває меню: картка кожного облікового запису, «Оновити все», «Активність» і «Налаштування»."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bosilganda menyu ochiladi: har bir hisobning kartasi, Hammasini yangilash, Faollik va Sozlamalar."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik membuka menu: kartu setiap akun, Segarkan semua, Aktivitas, dan Pengaturan."
+          }
+        }
+      }
+    },
+    "A click asks every provider for a fresh reading. The menu is a right-click away, or a ⌃-click.": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tıklayınca her sağlayıcıdan taze okuma istenir. Menü sağ tıkla ya da ⌃-tıkla açılır."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Klick fordert von jedem Anbieter einen frischen Wert an. Das Menü ist einen Rechtsklick entfernt, oder einen ⌃-Klick."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un clic demande un relevé frais à chaque fournisseur. Le menu est à un clic droit, ou un ⌃-clic."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クリックで各プロバイダに最新の値を要求します。メニューは右クリック、または ⌃ クリックで開きます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클릭하면 모든 제공자에 새 값을 요청합니다. 메뉴는 오른쪽 클릭 또는 ⌃ 클릭으로 열립니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击向每个服务方请求最新读数。菜单改用右键点击，或 ⌃ 点击。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊向每個服務商請求最新讀數。選單改用右鍵點擊，或 ⌃ 點擊。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um clique pede a cada provedor uma leitura nova. O menu fica a um clique com o botão direito, ou um ⌃-clique."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажатие запрашивает свежие показания у всех провайдеров. Меню — по правому клику или ⌃-клику."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натискання запитує свіжі показання в усіх провайдерів. Меню — за правим кліком або ⌃-кліком."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bosilganda har bir provayderdan yangi ko'rsatkich so'raladi. Menyu o'ng tugma yoki ⌃-bosish bilan ochiladi."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik meminta bacaan baru dari setiap penyedia. Menunya sejauh satu klik kanan, atau ⌃-klik."
+          }
+        }
+      }
+    },
+    "A click opens the Activity window. The menu is a right-click away, or a ⌃-click.": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tıklayınca Etkinlik penceresi açılır. Menü sağ tıkla ya da ⌃-tıkla açılır."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Klick öffnet das Aktivitätsfenster. Das Menü ist einen Rechtsklick entfernt, oder einen ⌃-Klick."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un clic ouvre la fenêtre Activité. Le menu est à un clic droit, ou un ⌃-clic."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クリックでアクティビティウインドウが開きます。メニューは右クリック、または ⌃ クリックで開きます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클릭하면 활동 창이 열립니다. 메뉴는 오른쪽 클릭 또는 ⌃ 클릭으로 열립니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击打开活动窗口。菜单改用右键点击，或 ⌃ 点击。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊開啟活動視窗。選單改用右鍵點擊，或 ⌃ 點擊。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um clique abre a janela Atividade. O menu fica a um clique com o botão direito, ou um ⌃-clique."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажатие открывает окно «Активность». Меню — по правому клику или ⌃-клику."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натискання відкриває вікно «Активність». Меню — за правим кліком або ⌃-кліком."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bosilganda Faollik oynasi ochiladi. Menyu o'ng tugma yoki ⌃-bosish bilan ochiladi."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik membuka jendela Aktivitas. Menunya sejauh satu klik kanan, atau ⌃-klik."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

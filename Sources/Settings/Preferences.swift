@@ -427,6 +427,13 @@ final class Preferences: ObservableObject {
         didSet { defaults.set(showsWeeklyLimitInMenuBar, forKey: Keys.showsWeeklyLimitInMenuBar) }
     }
 
+    /// What a plain click on the item does. `.menu` is what it has always
+    /// done, and the menu stays a right-click away whatever is chosen: with
+    /// the app out of the Dock the menu is the only way to Settings and Quit.
+    @Published var menuBarClickAction: MenuBarClickAction {
+        didSet { defaults.set(menuBarClickAction.rawValue, forKey: Keys.menuBarClickAction) }
+    }
+
     /// How much of each reading the item prints. `.automatic` is the rule it
     /// has always followed — two readings with countdowns, shares alone past
     /// that — now answerable by whoever has to live with the width.
@@ -616,6 +623,7 @@ final class Preferences: ObservableObject {
         static let showsWeeklyLimitInMenuBar = "showsWeeklyLimitInMenuBar"
         static let menuBarActivityStyle = "menuBarActivityStyle"
         static let menuBarReading = "menuBarReading"
+        static let menuBarClickAction = "menuBarClickAction"
         static let menuBarProviders = "menuBarProviders"
         static let edge = "notchEdge"
         // A new key, so there is nothing under the old app name to migrate.
@@ -953,6 +961,8 @@ final class Preferences: ObservableObject {
             .flatMap(MenuBarActivityStyle.init(rawValue:)) ?? .pulse
         self.menuBarReading = defaults.string(forKey: Keys.menuBarReading)
             .flatMap(MenuBarReading.init(rawValue:)) ?? .automatic
+        self.menuBarClickAction = defaults.string(forKey: Keys.menuBarClickAction)
+            .flatMap(MenuBarClickAction.init(rawValue:)) ?? .menu
         // Absent is kept distinct from empty: never chosen is not choosing none.
         self.menuBarProviders = defaults.stringArray(forKey: Keys.menuBarProviders).map(Set.init)
         // The right edge is where the notch has always been, and it is the one

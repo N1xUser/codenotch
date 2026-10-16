@@ -1252,6 +1252,18 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
+            // Before the two that are about what the item looks like: this
+            // one is about what it is for.
+            Picker(L10n.t("A click on the item"), selection: $preferences.menuBarClickAction) {
+                ForEach(MenuBarClickAction.allCases) { Text($0.title).tag($0) }
+            }
+            .pickerStyle(.segmented)
+
+            Text(preferences.menuBarClickAction.explanation)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
             // Above the provider rows, because it decides what each of them
             // costs in width — and width is what anyone ticking a fourth
             // provider is actually spending.
