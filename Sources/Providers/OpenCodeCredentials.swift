@@ -4,16 +4,20 @@ import SQLite3
 /// The credential OpenCode itself signed in with, borrowed — never written.
 ///
 /// OpenCode 1.18 moved its sign-in into SQLite, and with OpenCode 2.x on the
-/// machine the `auth.json` this used to read is simply gone. Three sources, in
-/// the order that keeps the account steady:
+/// machine the `auth.json` this used to read is simply gone. Two files, the
+/// database first — it is the store OpenCode itself consults, and the only one
+/// it keeps current:
 ///
-/// 1. `auth.json` → `opencode-go` (`{"type":"api","key":…}`), the Go plan's own
-///    API key and what OpenCode wrote before 1.18;
-/// 2. `opencode.db` → the `credential` table, which is where the sign-in lives
-///    now — either that same Go key, or an `opencode` OAuth sign-in
-///    (`{"type":"oauth","access":…,"expires":…,"metadata":{"server":…,"orgID":…}}`);
-/// 3. `auth.json` → the `opencode` OAuth entry, only a fallback: OpenCode stops
-///    updating the file once the database holds the sign-in.
+/// 1. `opencode.db` → the `credential` table — either the Go plan's own API key
+///    (`{"type":"api","key":…}`, a fresh `oc_sk_…` one once 2.x starts rotating
+///    keys) or an `opencode` sign-in (`{"type":"oauth","access":…,"expires":…,
+///    "metadata":{"server":…,"orgID":…}}`, or 2.x's plain-key shape of it);
+/// 2. `auth.json` → the same two entries, both fallbacks now. OpenCode stopped
+///    writing the file once the database held the sign-in, and 2.x leaves the
+///    Go key it wrote before that **dead** — it answers 401 while the database
+///    row answers 200 — so the file must never shadow a database that has a
+///    row. It only serves machines whose database cannot be opened or holds no
+///    sign-in at all.
 ///
 /// Which one is found decides the usage endpoint, because each route refuses the
 /// other's credential — see `OpenCodeProvider`. Only OpenCode's own two ids are
@@ -58,31 +62,36 @@ enum OpenCodeCredentials {
         }
     }
 
-    /// The three sources above, in order. `nil` means OpenCode is installed but
-    /// has no sign-in we may claim.
+    /// The two files above, database first. The order is the fix for OpenCode
+    /// 2.x: it rotates the Go key into the database and leaves the key the
+    /// pre-rotation `auth.json` holds answering 401, so a file-first order
+    /// would keep sending a credential OpenCode itself has retired — a signed-in
+    /// app reading as signed out. The file is only asked when the database has
+    /// no answer: missing, unreadable, or carrying no OpenCode row.
     static func load(in directory: URL = dataDirectory) -> Credential? {
-        let auth = directory.appendingPathComponent("auth.json")
-        if let go = loadGoKey(from: auth) { return go }
         if let stored = loadFromDatabase(directory.appendingPathComponent("opencode.db")) {
             return stored
         }
+        let auth = directory.appendingPathComponent("auth.json")
+        if let go = loadGoKey(from: auth) { return go }
         return loadOAuth(from: auth)
     }
 
     // MARK: - Sources
 
-    /// Source 1 and the `opencode-go` half of source 3's file: the Go plan's own
-    /// API key. Kept as its own entry point because the tests pin it, and
-    /// because "the key this account was given" is the one shape that has never
-    /// moved.
+    /// The `opencode-go` half of `auth.json`: the Go plan's own API key, what
+    /// OpenCode wrote before 1.18. Kept as its own entry point because the
+    /// tests pin it, and because "the key this account was given" is the one
+    /// shape that has never moved.
     static func loadGoKey(from url: URL = authURL) -> Credential? {
         guard let root = readJSON(at: url), let entry = root["opencode-go"] else { return nil }
         return credential(from: entry, source: "OpenCode")
     }
 
-    /// Source 3: the OAuth sign-in mirrored into `auth.json`. A fallback only —
-    /// OpenCode stops writing it once the database holds the sign-in, so this
-    /// covers a machine whose `opencode.db` cannot be opened, and nothing else.
+    /// The `opencode` half of `auth.json`: the OAuth sign-in mirrored into the
+    /// file. A fallback only — OpenCode stops writing it once the database
+    /// holds the sign-in, so this covers a machine whose `opencode.db` cannot
+    /// be opened, and nothing else.
     static func loadOAuth(from url: URL = authURL) -> Credential? {
         guard let root = readJSON(at: url),
               let entry = root["opencode"],
@@ -91,9 +100,10 @@ enum OpenCodeCredentials {
         return credential(from: entry, source: "OpenCode")
     }
 
-    /// Source 2. Read-only, and never `immutable` while OpenCode is running:
-    /// that would ignore the write-ahead log and serve a token OpenCode has
-    /// already rotated. `SQLiteStore` opens `mode=ro` first for that reason.
+    /// The database. Read-only, and never `immutable` while OpenCode is
+    /// running: that would ignore the write-ahead log and serve a token
+    /// OpenCode has already rotated. `SQLiteStore` opens `mode=ro` first for
+    /// that reason.
     static func loadFromDatabase(_ url: URL = databaseURL) -> Credential? {
         guard let db = SQLiteStore.open(url) else { return nil }
         defer { sqlite3_close(db) }

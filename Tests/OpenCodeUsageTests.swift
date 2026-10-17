@@ -202,6 +202,64 @@ final class OpenCodeCredentialsTests: XCTestCase {
         XCTAssertEqual(OpenCodeCredentials.load(in: directory)?.token, "st_new")
     }
 
+    // MARK: - Which source wins
+
+    /// The case OpenCode 2.x made common: a key left in `auth.json` by a
+    /// pre-rotation OpenCode, and a fresh one in the database. The file's key
+    /// answers 401 once OpenCode rotates past it, while the database's answers
+    /// 200 — so the file must never shadow a database that has a row, however
+    /// much older the file's habit of being read first is.
+    func testTheDatabaseBeatsAStaleFileKey() throws {
+        let directory = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("opencode-home-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        try #"{"opencode-go":{"type":"api","key":"sk-stale"}}"#
+            .write(to: directory.appendingPathComponent("auth.json"), atomically: true,
+                   encoding: .utf8)
+        let db = try database([("opencode-go", #"{"type":"api","key":"oc_sk_live"}"#, 1, 3)])
+        defer { try? FileManager.default.removeItem(at: db) }
+        try FileManager.default.copyItem(at: db, to: directory.appendingPathComponent("opencode.db"))
+
+        XCTAssertEqual(OpenCodeCredentials.load(in: directory)?.token, "oc_sk_live")
+    }
+
+    /// A file with no database behind it — the pre-1.18 machine, or one whose
+    /// database cannot be opened — still reads. The reorder must not trade the
+    /// 2.x fix for this one.
+    func testTheFileStillServesWhenTheDatabaseIsMissing() throws {
+        let directory = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("opencode-home-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        try #"{"opencode-go":{"type":"api","key":"sk-file-only"}}"#
+            .write(to: directory.appendingPathComponent("auth.json"), atomically: true,
+                   encoding: .utf8)
+
+        XCTAssertEqual(OpenCodeCredentials.load(in: directory)?.token, "sk-file-only")
+    }
+
+    /// A database carrying no OpenCode row — signed out in the app, say — does
+    /// not hide a legacy sign-in the file still holds: with no answer of its
+    /// own, the database is only ever allowed to pass the question to the file.
+    func testADatabaseWithoutASignInFallsBackToTheFile() throws {
+        let directory = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("opencode-home-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        try #"{"opencode-go":{"type":"api","key":"sk-legacy"}}"#
+            .write(to: directory.appendingPathComponent("auth.json"), atomically: true,
+                   encoding: .utf8)
+        let db = try database([("openrouter", #"{"type":"api","key":"sk-or"}"#, 1, 3)])
+        defer { try? FileManager.default.removeItem(at: db) }
+        try FileManager.default.copyItem(at: db, to: directory.appendingPathComponent("opencode.db"))
+
+        XCTAssertEqual(OpenCodeCredentials.load(in: directory)?.token, "sk-legacy")
+    }
+
     func testTheDatabaseNeverClaimsAnotherVendorsRow() throws {
         let db = try database([("openrouter", #"{"type":"api","key":"sk-or"}"#, nil, 5)])
         defer { try? FileManager.default.removeItem(at: db) }
