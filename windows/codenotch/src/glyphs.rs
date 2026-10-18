@@ -8,7 +8,7 @@
 //!
 //! None of those → the page falls back to a letter.
 //! SVGs are inlined into the DOM as text (`fill="currentColor"` follows the CSS white/dimmed state);
-//! PNGs and app icons go through <img>. Ids match the page and upstream: claude / codex / cursor / grok / copilot / gemini / opencode.
+//! PNGs and app icons go through <img>. Ids match the page and upstream: claude / codex / cursor / grok / copilot / gemini / opencode / deepseek.
 
 use serde::Serialize;
 use std::collections::HashMap;
@@ -26,10 +26,10 @@ pub struct Glyph {
     pub source: String,
 }
 
-pub const IDS: [&str; 7] = ["claude", "codex", "cursor", "grok", "copilot", "gemini", "opencode"];
+pub const IDS: [&str; 8] = ["claude", "codex", "cursor", "grok", "copilot", "gemini", "opencode", "deepseek"];
 
 /// Built-in artwork (@lobehub/icons-static-svg, MIT): the OpenAI mark for codex (matching upstream's glyph choice), the Antigravity mark for gemini
-const BUILTIN: [(&str, &str); 7] = [
+const BUILTIN: [(&str, &str); 8] = [
     ("claude", include_str!("../glyphs/claude.svg")),
     ("codex", include_str!("../glyphs/codex.svg")),
     ("cursor", include_str!("../glyphs/cursor.svg")),
@@ -37,6 +37,7 @@ const BUILTIN: [(&str, &str); 7] = [
     ("copilot", include_str!("../glyphs/copilot.svg")),
     ("gemini", include_str!("../glyphs/gemini.svg")),
     ("opencode", include_str!("../glyphs/opencode.svg")),
+    ("deepseek", include_str!("../glyphs/deepseek.svg")),
 ];
 
 /// Minimal SVG sanitising before inlining into the DOM: drop <script> blocks and on*="…" event
