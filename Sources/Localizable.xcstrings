@@ -13705,6 +13705,12 @@
             "state": "translated",
             "value": "Dua penyedia baru, dan paket akun langsung yang sebelumnya terlewat."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dos proveedores más, y un plan de cuenta activo que se perdía sin avisar."
+          }
         }
       }
     },
@@ -13769,6 +13775,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Grok hadir sebagai ring baru"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grok es un nuevo anillo"
           }
         }
       }
@@ -13835,6 +13847,12 @@
             "state": "translated",
             "value": "Kuota mingguan Grok Build dari SuperGrok, dibaca dari endpoint penagihan yang sama dengan CLI, dengan sesi di ~/.grok/auth.json."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La asignación semanal de Grok Build de SuperGrok, leída del mismo endpoint de facturación que usa la CLI, con la sesión en ~/.grok/auth.json."
+          }
         }
       }
     },
@@ -13899,6 +13917,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Paket Go dari OpenCode hadir sebagai ring baru"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El plan Go de OpenCode es un nuevo anillo"
           }
         }
       }
@@ -13965,6 +13989,12 @@
             "state": "translated",
             "value": "Membaca endpoint penggunaan resmi paket Go dengan kunci yang disimpan OpenCode saat masuk — tanpa perlu masuk dua kali."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lee el endpoint oficial de uso del plan Go con la clave que el propio OpenCode guarda al iniciar sesión, sin tener que iniciar sesión otra vez."
+          }
         }
       }
     },
@@ -14029,6 +14059,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Akun Codex nyata sebelumnya tidak terukur"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una cuenta real de Codex quedaba sin medir"
           }
         }
       }
@@ -14095,6 +14131,12 @@
             "state": "translated",
             "value": "Pembacaan langsung Codex sebelumnya hanya mengenali jendela 5 jam dan 7 hari. Batas sebenarnya untuk akun gratis adalah 30 hari, yang terlewat dan ditampilkan sebagai belum terukur padahal sebenarnya dilacak."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La lectura en directo de Codex solo reconocía un periodo de 5 horas y otro de 7 días. El límite real de una cuenta del plan gratuito era de 30 días, que pasaba desapercibido y se mostraba como si no hubiera nada que medir en una cuenta que sí se estaba siguiendo."
+          }
         }
       }
     },
@@ -14159,6 +14201,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mematikan penyedia kini benar-benar menghentikannya"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactivar un proveedor ahora lo detiene de verdad"
           }
         }
       }
@@ -14225,6 +14273,12 @@
             "state": "translated",
             "value": "Membuka Pengaturan sebelumnya masih bisa membaca akun penyedia yang dimatikan, dan balasan yang sedang berlangsung bisa memunculkan kembali data yang baru saja Anda hapus."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Ajustes aún podía leer la cuenta de un proveedor desactivado, y una respuesta que ya estaba en camino podía recuperar una lectura que acababas de pedir que olvidara."
+          }
         }
       }
     },
@@ -14289,6 +14343,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kontributor dapat membangun tanpa sertifikat"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los colaboradores pueden compilar sin certificado"
           }
         }
       }
@@ -14355,6 +14415,12 @@
             "state": "translated",
             "value": "make build dan make test kini menandatangani sendiri secara otomatis jika Developer ID pengelola tidak ada — tidak memerlukan akun Apple untuk berkontribusi."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "make build y make test ahora se firman solos cuando no está el Developer ID del mantenedor; no necesitas una cuenta de Apple para colaborar."
+          }
         }
       }
     },
@@ -14420,6 +14486,12 @@
             "state": "translated",
             "value": "Membangunkan Mac dari mode tidur tidak lagi menghapus data pembacaan."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir del reposo ya no borra una lectura."
+          }
         }
       }
     },
@@ -14484,6 +14556,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ring tetap bertahan saat Mac dibangunkan"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un anillo sobrevive al despertar tu Mac"
           }
         }
       }
@@ -14556,6 +14634,12 @@
             "state": "translated",
             "value": "Uyku modundan hemen sonra macOS'un henüz anahtar zinciri sorusuna izin vermediği kısa bir an, çıkış yapılmış gibi algılanıyordu — bu da veriyi siliyor ve ekranda “ilk veri bekleniyor” yazısını bırakıyordu. Artık rakam atılmak yerine eskimiş olarak işaretleniyor ve kendiliğinden kaldığı yerden devam ediyor."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un breve instante justo después del reposo, en el que macOS aún no permite un aviso del llavero, se confundía con haber cerrado sesión, lo que borraba la lectura y dejaba \"Esperando la primera lectura\" en pantalla. Ahora el número se marca como desactualizado en lugar de descartarse, y la lectura se retoma sola."
+          }
         }
       }
     },
@@ -14620,6 +14704,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dua akun tambahan, empat perbaikan komunitas, dan penanganan duplikasi yang tepat."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dos cuentas más, cuatro correcciones de la comunidad y duplicados honestos."
           }
         }
       }
@@ -14686,6 +14776,12 @@
             "state": "translated",
             "value": "Beberapa akun Claude Code"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Varias cuentas de Claude Code"
+          }
         }
       }
     },
@@ -14750,6 +14846,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Memisahkan login kantor dengan CLAUDE_CONFIG_DIR? Kini akun tersebut memiliki ring, batas, dan baris pengaturan sendiri di samping akun pribadi Anda."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Mantienes una cuenta del trabajo aparte con CLAUDE_CONFIG_DIR? Ahora tiene su propio anillo, sus propios límites y su propia fila en Ajustes, junto a tu cuenta personal."
           }
         }
       }
@@ -14816,6 +14918,12 @@
             "state": "translated",
             "value": "GLM ditambahkan"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se añade GLM"
+          }
         }
       }
     },
@@ -14880,6 +14988,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Coding Plan Z.ai kini juga dibaca secara langsung, dengan kunci yang diambil dari alat yang sudah menyimpannya."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El Coding Plan de Z.ai ahora también se lee en directo, con una clave tomada de la herramienta que ya tenga una."
           }
         }
       }
@@ -14946,6 +15060,12 @@
             "state": "translated",
             "value": "Ring Claude yang macet akan pulih secara mandiri"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un anillo de Claude atascado se recupera solo"
+          }
         }
       }
     },
@@ -15011,6 +15131,12 @@
             "state": "translated",
             "value": "Kegagalan sesaat — paling sering saat Mac bangun dari tidur — sebelumnya mengunci ring hingga aplikasi dimulai ulang. Sekarang ring akan pulih secara mandiri pada pemeriksaan berikutnya."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un fallo momentáneo (casi siempre al despertar el Mac) bloqueaba el anillo hasta reiniciar la app. Ahora se desbloquea solo en la siguiente comprobación."
+          }
         }
       }
     },
@@ -15075,6 +15201,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sesi Cursor berhenti melaporkan pekerjaan yang sudah selesai"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las sesiones de Cursor dejan de informar trabajo que ya terminó"
           }
         }
       }
@@ -15147,6 +15279,12 @@
             "state": "translated",
             "value": "Çöken veya yarıda bırakılan bir sohbet bir gün ya da daha uzun süre “hâlâ çalışıyor” görünebiliyordu. Artık yazmanın gerçekten durduğunu fark ediyor."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un chat que se había bloqueado o abandonado podía aparecer como \"aún trabajando\" durante un día o más. Ahora detecta cuándo se ha dejado de escribir de verdad."
+          }
         }
       }
     },
@@ -15211,6 +15349,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kredensial duplikat lama tidak lagi digunakan"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un duplicado de hace meses ya no puede ganar"
           }
         }
       }
@@ -15283,6 +15427,12 @@
             "state": "translated",
             "value": "Claude Code her token yenilemesinde yeni bir anahtar zinciri kaydı oluşturur. Bir süredir giriş yapılmış bir hesap rastgele eski, süresi dolmuş bir kaydı seçip sonsuza dek “ilk veri bekleniyor” gösterebiliyordu."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude Code crea una nueva entrada en el llavero cada vez que rota el token. Una cuenta con la sesión iniciada desde hacía tiempo podía elegir al azar una antigua y caducada, y mostrar \"Esperando la primera lectura\" para siempre."
+          }
         }
       }
     },
@@ -15347,6 +15497,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Klik yang tidak disengaja tidak lagi menyematkan notch dalam keadaan terbuka"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un clic accidental ya no deja el notch abierto"
           }
         }
       }
@@ -15413,6 +15569,12 @@
             "state": "translated",
             "value": "Mengeklik di dekat tepi layar sebelum notch terbuka sebelumnya bisa membuatnya tersangkut terbuka tanpa penjelasan."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hacer clic cerca del borde de la pantalla antes de que el notch se abriera podía dejarlo atascado abierto, sin nada en pantalla que explicara por qué."
+          }
         }
       }
     },
@@ -15477,6 +15639,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Codex dibaca secara langsung, dan Selalu tampilkan tetap aktif."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codex se lee en directo, y Mostrar siempre se mantiene activado."
           }
         }
       }
@@ -15543,6 +15711,12 @@
             "state": "translated",
             "value": "Codex dibaca langsung dan bukan dari file log"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codex se lee en directo en lugar de desde un registro"
+          }
         }
       }
     },
@@ -15607,6 +15781,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Angka sebelumnya berasal dari file yang ditulis Codex saat giliran interaksi, sehingga nilainya setua saat terakhir kali digunakan — bisa usang hingga tiga hari. Codenotch kini meminta data langsung ke Codex, sesuai dengan panel resminya."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La cifra venía de un archivo que Codex escribe durante un turno, así que era tan antigua como la última vez que lo usaste: en un caso, tres días desactualizada. Ahora Codenotch se lo pregunta al propio Codex, y coincide con su panel."
           }
         }
       }
@@ -15673,6 +15853,12 @@
             "state": "translated",
             "value": "Ring Codex mendeteksi aplikasi desktop"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El anillo de Codex detecta la app de escritorio"
+          }
         }
       }
     },
@@ -15737,6 +15923,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sebelumnya hanya memantau file yang ditulis oleh CLI dan ekstensi VS Code, sehingga pekerjaan di aplikasi desktop tidak pernah memicu perputaran ring."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo vigilaba los archivos que escriben la CLI y la extensión de VS Code, así que el trabajo hecho en la app de escritorio nunca lo hacía girar."
           }
         }
       }
@@ -15803,6 +15995,12 @@
             "state": "translated",
             "value": "Selalu tampilkan tidak lagi mati dengan sendirinya"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar siempre ya no se desactiva solo"
+          }
         }
       }
     },
@@ -15867,6 +16065,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mengeklik notch sebelumnya mengganti pengaturan yang sama, sehingga klik yang tak disengaja bisa mengembalikannya ke mode tampil saat hover."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hacer clic en el notch cambiaba el mismo indicador que usaba el ajuste, así que un clic accidental lo devolvía sin avisar a Al pasar el cursor."
           }
         }
       }
@@ -15933,6 +16137,12 @@
             "state": "translated",
             "value": "Jauh lebih sedikit dialog keychain"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muchos menos avisos del llavero"
+          }
         }
       }
     },
@@ -15997,6 +16207,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Setelah token kedaluwarsa, setiap pemeriksaan sebelumnya meminta ke keychain — satu dialog per menit. Sekarang rahasia hanya dibaca saat aplikasi pemilik mengubahnya, dan penolakan tidak diulang secara berkala."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuando un token caducaba, cada comprobación volvía al llavero: un aviso por minuto. Ahora el secreto solo se lee cuando la app propietaria lo ha cambiado, y un rechazo nunca se reintenta con un temporizador."
           }
         }
       }
@@ -16063,6 +16279,12 @@
             "state": "translated",
             "value": "Batas yang dijeda ditampilkan sebagai dijeda"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un límite en pausa se muestra en pausa"
+          }
         }
       }
     },
@@ -16127,6 +16349,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Beberapa batas telah tercapai saat tajuk masih menunjukkan ruang. Ring akan terbaca sebagai habis dan memberitahukan kapan akan dibuka kembali."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algunos límites se alcanzan mientras la cifra principal aún muestra margen. El anillo aparece como agotado e indica cuándo se libera."
           }
         }
       }
@@ -16193,6 +16421,12 @@
             "state": "translated",
             "value": "Pesan panjang tidak lagi terpotong"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los mensajes largos ya no se cortan"
+          }
         }
       }
     },
@@ -16257,6 +16491,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tooltip dengan penjelasan sebelumnya hanya menyediakan satu baris tidak peduli seberapa panjang isinya."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una etiqueta con algo que explicar le reservaba una sola línea, por mucho que dijera."
           }
         }
       }
@@ -16323,6 +16563,12 @@
             "state": "translated",
             "value": "Setiap sesi, dan tooltip yang pas di layar."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas las sesiones, y una tarjeta que cabe en la pantalla."
+          }
         }
       }
     },
@@ -16387,6 +16633,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tooltip tidak lagi terpotong"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las tarjetas ya no se cortan"
           }
         }
       }
@@ -16453,6 +16705,12 @@
             "state": "translated",
             "value": "Kartu dipusatkan pada ring miliknya, sehingga penyedia pertama dan terakhir sebelumnya terdorong keluar dari tepi panel — dan yang terpotong adalah judulnya. Panel kini menyediakan ruang yang cukup."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una tarjeta se centra en el anillo al que pertenece, así que con el primer y el último proveedor la mitad quedaba fuera del panel, y lo que se perdía era el título. Ahora el panel le deja espacio."
+          }
         }
       }
     },
@@ -16517,6 +16775,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sesi sebanyak yang dapat dimuat layar Anda"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tantas sesiones como quepan en tu pantalla"
           }
         }
       }
@@ -16589,6 +16853,12 @@
             "state": "translated",
             "value": "Liste, hangi ekranda çalışırsanız çalışın dörtle sınırlıydı. Artık ekrana göre hesaplanıyor: büyük bir ekranda on tane, “ve N tane daha” ise yalnızca geri kalanlara gerçekten yer olmadığında."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La lista tenía un máximo de cuatro, fuera cual fuera tu pantalla. Ahora se calcula según la pantalla: diez en una grande, y \"y N más\" solo cuando de verdad no queda sitio para el resto."
+          }
         }
       }
     },
@@ -16653,6 +16923,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Yang membutuhkan Anda ditampilkan lebih dulu"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primero las que te necesitan"
           }
         }
       }
@@ -16719,6 +16995,12 @@
             "state": "translated",
             "value": "Menunggu, lalu sibuk, kemudian siaga — sehingga jika ada yang diringkas, itu adalah hal yang paling tidak mendesak."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esperando, luego ocupadas, luego inactivas, así que si algo se resume, es lo que menos importa."
+          }
         }
       }
     },
@@ -16783,6 +17065,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Angka kuota riil Antigravity, dan sakelar yang tetap mati."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las cifras reales de Antigravity, y un interruptor que se queda apagado."
           }
         }
       }
@@ -16849,6 +17137,12 @@
             "state": "translated",
             "value": "Antigravity menampilkan kuota sebenarnya"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antigravity muestra su cuota real"
+          }
         }
       }
     },
@@ -16914,6 +17208,12 @@
             "state": "translated",
             "value": "Google tidak merespons Codenotch secara langsung, sehingga aplikasi meminta ke language server Antigravity sendiri — tempat panel penggunaan Antigravity memperoleh datanya."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google no responde directamente a Codenotch, así que se lo pregunta al propio servidor de lenguaje de Antigravity, el mismo sitio del que saca su cifra el panel de uso de Antigravity."
+          }
         }
       }
     },
@@ -16978,6 +17278,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Penggunaan terbaca dari dua arah"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El uso se lee en ambos sentidos"
           }
         }
       }
@@ -17050,6 +17356,12 @@
             "state": "translated",
             "value": "“%12 kullanıldı · %88 kaldı” — böylece veri, sağlayıcınız hangi ucu gösteriyorsa onunla uyuşur."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"12% usado · 88% restante\", para que una lectura coincida con el extremo que muestre tu proveedor."
+          }
         }
       }
     },
@@ -17114,6 +17426,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cara kembali dari dialog keychain yang ditolak"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una salida tras rechazar un aviso del llavero"
           }
         }
       }
@@ -17180,6 +17498,12 @@
             "state": "translated",
             "value": "Menolak tidak lagi dianggap keluar, dan Izinkan akses… akan meminta izin ke macOS lagi."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechazarlo ya no parece un cierre de sesión, y Permitir acceso… vuelve a preguntar a macOS."
+          }
         }
       }
     },
@@ -17244,6 +17568,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mematikan penyedia kini tersimpan dengan benar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactivar un proveedor ahora es definitivo"
           }
         }
       }
@@ -17310,6 +17640,12 @@
             "state": "translated",
             "value": "Sebelumnya berhenti dibaca tetapi data terakhirnya tetap disimpan, sehingga ring muncul kembali saat peluncuran berikutnya."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dejaba de leerse, pero se conservaba su última lectura, así que el anillo volvía en el siguiente inicio."
+          }
         }
       }
     },
@@ -17374,6 +17710,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reset yang masih lama menampilkan tanggal"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las renovaciones lejanas muestran una fecha"
           }
         }
       }
@@ -17446,6 +17788,12 @@
             "state": "translated",
             "value": "Dört hafta sonra yenilenecek bir limit “Pzt” diyordu ve bu, bu pazartesi gibi okunuyordu. Artık “28 Eyl” diyor."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un límite que se renovaba en cuatro semanas decía \"lun\", que se leía como este lunes. Ahora dice \"28 sept\"."
+          }
         }
       }
     },
@@ -17510,6 +17858,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rilis perdana."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La primera versión."
           }
         }
       }
@@ -17576,6 +17930,12 @@
             "state": "translated",
             "value": "Tempatkan notch di mana saja"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pon el notch donde quieras"
+          }
         }
       }
     },
@@ -17640,6 +18000,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kanan, kiri, atas, atau bawah. Posisi notch menghindari Dock dan bilah menu, serta otomatis menyesuaikan saat Dock dipindahkan."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Derecha, izquierda, arriba o abajo. Se mantiene alejado del Dock y de la barra de menús, y lo sigue cuando el Dock se mueve."
           }
         }
       }
@@ -17706,6 +18072,12 @@
             "state": "translated",
             "value": "Menyatu dengan notch bawaan Mac Anda"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se une al notch de tu Mac"
+          }
         }
       }
     },
@@ -17770,6 +18142,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Di tepi atas, notch mengikuti kontur perangkat keras sehingga keduanya tampak menyatu dan bukan bilah yang menempel di bawahnya."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En el borde superior adopta la forma del hardware, para que ambos se vean como uno solo y no como una barra aparcada debajo."
           }
         }
       }
@@ -17836,6 +18214,12 @@
             "state": "translated",
             "value": "Claude, Cursor, Codex, dan Gemini"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude, Cursor, Codex y Gemini"
+          }
         }
       }
     },
@@ -17900,6 +18284,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Masing-masing dibaca dari alat yang sudah masuk di Mac ini. Codenotch tidak pernah meminta kata sandi Anda."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada uno se lee de la herramienta que ya tiene la sesión iniciada en este Mac. Codenotch nunca pide una contraseña."
           }
         }
       }
@@ -17966,6 +18356,12 @@
             "state": "translated",
             "value": "Pilih tempat Codenotch ditampilkan"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige dónde aparece Codenotch"
+          }
         }
       }
     },
@@ -18030,6 +18426,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Di Dock, di bilah menu, atau tidak di mana pun."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En el Dock, en la barra de menús o en ningún sitio."
           }
         }
       }
@@ -24653,6 +25055,12 @@
             "state": "translated",
             "value": "Atur ulang ring, pilih layar, dan dapatkan pemberitahuan saat batas hampir habis."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reordena los anillos, elige una pantalla y recibe un aviso cuando un límite esté cerca."
+          }
         }
       }
     },
@@ -24717,6 +25125,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tarik untuk mengatur ulang ring"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrastra para reordenar los anillos"
           }
         }
       }
@@ -24783,6 +25197,12 @@
             "state": "translated",
             "value": "Pengaturan dibagi menjadi Terhubung dan Tidak terhubung; tarik baris terhubung pada pegangannya untuk mengubah urutan tampilannya di notch."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustes se divide en Conectado y No conectado; arrastra una fila conectada por su tirador para cambiar el orden en que el notch los dibuja."
+          }
         }
       }
     },
@@ -24847,6 +25267,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sematkan notch ke satu layar, atau tampilkan di semua layar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fija el notch en una pantalla, o muéstralo en todas"
           }
         }
       }
@@ -24913,6 +25339,12 @@
             "state": "translated",
             "value": "Pemilih Layar di Tampilan menawarkan opsi layar utama atau semua layar; pemilih kedua menyematkan satu notch ke layar tertentu."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un selector de Pantallas en Apariencia ofrece la pantalla principal o todas; un segundo selector fija un único notch en una pantalla concreta."
+          }
         }
       }
     },
@@ -24977,6 +25409,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ring memberi tahu saat melampaui 80% dan 100%"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un anillo avisa cuando supera el 80% y el 100%"
           }
         }
       }
@@ -25043,6 +25481,12 @@
             "state": "translated",
             "value": "Pemberitahuan sistem sekali setiap batas terlampaui, dapat dibisukan per penyedia dari baris pengaturannya masing-masing."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una notificación del sistema cada vez que se supera, que puedes silenciar por proveedor desde su propia fila de ajustes."
+          }
         }
       }
     },
@@ -25107,6 +25551,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "GitHub Copilot hadir sebagai ring baru"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub Copilot es un nuevo anillo"
           }
         }
       }
@@ -25173,6 +25623,12 @@
             "state": "translated",
             "value": "Membaca endpoint kuota Copilot GitHub menggunakan sesi GitHub CLI yang sudah ada di Mac."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lee el endpoint de cuota de Copilot de GitHub con la sesión de GitHub CLI que ya hay en el Mac."
+          }
         }
       }
     },
@@ -25237,6 +25693,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Beri tahu saat sesi berakhir"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avisa cuando termina una sesión"
           }
         }
       }
@@ -25303,6 +25765,12 @@
             "state": "translated",
             "value": "Notch akan terbuka selama beberapa detik dan membunyikan dentang saat agen berhenti bekerja atau mulai menunggu masukan Anda; klik untuk membukanya."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El notch se abre solo unos segundos y suena un aviso cuando un agente deja de trabajar o empieza a esperar tu respuesta; un clic te lleva a él."
+          }
         }
       }
     },
@@ -25367,6 +25835,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "⌥-tarik pil di sepanjang tepinya"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrastra la cápsula con ⌥ a lo largo de su borde"
           }
         }
       }
@@ -25433,6 +25907,12 @@
             "state": "translated",
             "value": "Geser posisinya agar tidak bertumpukan dengan aplikasi bilah menu lain di tempat yang sama; posisi diingat untuk setiap tepi."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apártala de otra app de la barra de menús anclada en el mismo sitio; se recuerda para cada borde."
+          }
         }
       }
     },
@@ -25497,6 +25977,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pilih warna aksen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige un color de acento"
           }
         }
       }
@@ -25563,6 +26049,12 @@
             "state": "translated",
             "value": "Warna aksen perangkat secara default, atau warna tetap untuk status normal ring — warna peringatan kuning dan merah tetap konsisten."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El acento del dispositivo por defecto, o un color fijo para el estado positivo del anillo; los colores de advertencia ámbar y rojo se mantienen fijos en cualquier caso."
+          }
         }
       }
     },
@@ -25627,6 +26119,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hitung mundur sebagai pengganti tanggal reset"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una cuenta atrás en lugar de una fecha de renovación"
           }
         }
       }
@@ -25699,6 +26197,12 @@
             "state": "translated",
             "value": "Görünüm'deki Sıfırlanma zamanı seçicisi, tarih ve saat yerine “3 sa 20 dk içinde sıfırlanır” gösterebilir."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El selector Hora de renovación de Apariencia puede mostrar \"Se renueva en 3h 20m\" en lugar de una fecha y una hora."
+          }
         }
       }
     },
@@ -25763,6 +26267,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Membaca Cursor dari cursor-agent, dan paket enterprise dengan benar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cursor se lee desde cursor-agent, y los planes Enterprise se leen bien"
           }
         }
       }
@@ -25829,6 +26339,12 @@
             "state": "translated",
             "value": "Login Cursor berbasis CLI kini mendapatkan ring, dan paket enterprise/tim membaca penggunaan sebenarnya alih-alih melaporkan tidak ada kuota."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una sesión de Cursor iniciada solo en la CLI ahora tiene anillo, y los planes Enterprise/Team leen su uso real en lugar de indicar que no hay nada que medir."
+          }
         }
       }
     },
@@ -25893,6 +26409,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lebih sedikit dialog keychain untuk Claude dan Antigravity"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menos avisos del llavero para Claude y Antigravity"
           }
         }
       }
@@ -25959,6 +26481,12 @@
             "state": "translated",
             "value": "Claude membaca /usage milik CLI terlebih dahulu, mengakses keychain hanya sebagai cadangan; language server Antigravity diminta sebelum mengaksesnya."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude lee primero el /usage de su propia CLI y solo recurre al llavero como alternativa; al servidor de lenguaje de Antigravity se le pregunta antes que a él."
+          }
         }
       }
     },
@@ -26023,6 +26551,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Penggunaan di bawah 1% tidak lagi terbaca sebagai 0%"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un uso por debajo del 1% ya no aparece como 0%"
           }
         }
       }
@@ -26095,6 +26629,12 @@
             "state": "translated",
             "value": "Yüzde birin altındaki bir veri, hiçliğe yuvarlanmak yerine onda birini gösterir (“<0.1%”)."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una lectura por debajo del uno por ciento muestra una décima (\"<0.1%\") en lugar de redondearse a nada."
+          }
         }
       }
     },
@@ -26160,6 +26700,12 @@
             "state": "translated",
             "value": "Kontributor dapat membangun tanpa penandatanganan Xcode"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los colaboradores pueden compilar sin la firma de Xcode"
+          }
         }
       }
     },
@@ -26224,6 +26770,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "make build dan make test menandatangani sendiri secara otomatis saat sertifikat pengelola tidak ada, dan CI kini menjalankan pengujian pada setiap push dan pull request."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "make build y make test se firman solos cuando no está el certificado del mantenedor, y la CI ahora ejecuta las pruebas en cada push y pull request."
           }
         }
       }
@@ -30307,6 +30859,12 @@
             "state": "translated",
             "value": "Ring kedua untuk mingguan, Liquid Glass, Bahasa Prancis, dan Claude Desktop dibaca langsung dari cache miliknya."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un segundo anillo para la semana, Liquid Glass, francés, y Claude Desktop leído directamente de su propia caché."
+          }
         }
       }
     },
@@ -30359,6 +30917,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Batas mingguan kini memiliki ring tersendiri"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La semana tiene su propio anillo"
           }
         }
       }
@@ -30413,6 +30977,12 @@
             "state": "translated",
             "value": "Busur kedua, di dalam atau di luar ring utama, untuk penyedia yang menerbitkan batas mingguan serta sesi. Nonaktif secara default; Pengaturan tampilan menyediakan sakelarnya."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un segundo arco, dentro o fuera del anillo principal, para los proveedores que publican un límite semanal además del de sesión. Desactivado por defecto; el interruptor está en Apariencia."
+          }
         }
       }
     },
@@ -30466,6 +31036,12 @@
             "state": "translated",
             "value": "Notch yang terbuka, tooltip, dan bola pengaturan mengadopsi material kaca sistem, sehingga membiaskan apa yang ada di belakangnya. Opsi Kurangi Transparansi akan menjadikannya solid."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El notch abierto, su tarjeta y la esfera de ajustes usan la superficie de vidrio del propio sistema, así que refractan lo que hay detrás en vez de quedar encima. Reducir transparencia lo vuelve opaco."
+          }
         }
       }
     },
@@ -30515,6 +31091,12 @@
           }
         },
         "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Français"
+          }
+        },
+        "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Français"
@@ -30572,6 +31154,12 @@
             "state": "translated",
             "value": "Bahasa ketiga di Tampilan, berdampingan dengan English dan 简体中文."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un tercer idioma en Apariencia, junto a English y 简体中文."
+          }
         }
       }
     },
@@ -30624,6 +31212,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Penggunaan Claude Desktop, dibaca langsung dari cache-nya"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uso de Claude Desktop, leído de su propia caché"
           }
         }
       }
@@ -30678,6 +31272,12 @@
             "state": "translated",
             "value": "Cara ketiga untuk membaca akun Claude, digunakan saat CLI dan token tidak dapat merespons. Tidak ada data yang dikirim ke mana pun: cache berada di Mac ini dan hanya didekompresi."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una tercera forma de leer una cuenta de Claude, que se usa cuando ni la CLI ni el token pueden responder. No se envía nada a ningún sitio: la caché está en este Mac y solo se descomprime."
+          }
         }
       }
     },
@@ -30730,6 +31330,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Claude Code ditemukan di lokasi instalasi npm"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude Code se encuentra donde npm lo instala"
           }
         }
       }
@@ -30784,6 +31390,12 @@
             "state": "translated",
             "value": "Instalasi di bawah nvm, Volta, atau pnpm kini terdeteksi secara otomatis, yang juga memulihkan pembaruan login latar belakang untuk konfigurasi tersebut."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una instalación con nvm, Volta o pnpm se detecta como cualquier otra, lo que además recupera la renovación del inicio de sesión en segundo plano en esas configuraciones."
+          }
         }
       }
     },
@@ -30836,6 +31448,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tidak ada lagi folder transkrip yang tertinggal"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se acabaron las carpetas de transcripciones abandonadas"
           }
         }
       }
@@ -30890,6 +31508,12 @@
             "state": "translated",
             "value": "Membaca penggunaan Claude sebelumnya dijalankan di direktori baru setiap polling, dan Claude Code membuat folder transkrip untuk masing-masing direktori tersebut. Sekarang aplikasi berjalan dari satu tempat dalam mode cetak tanpa menulis sesi sama sekali."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leer el uso de Claude se ejecutaba en un directorio nuevo en cada consulta, y Claude Code creaba una carpeta de transcripción para cada una. Ahora se ejecuta desde un único sitio, en modo print, sin escribir ninguna sesión."
+          }
         }
       }
     },
@@ -30942,6 +31566,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Waktu reset mengikuti jam Mac"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las horas de renovación siguen el reloj del Mac"
           }
         }
       }
@@ -30996,6 +31626,12 @@
             "state": "translated",
             "value": "Mac dengan format 24 jam kini menampilkan waktu reset 24 jam alih-alih AM dan PM."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un Mac con formato de 24 horas muestra las horas de renovación en 24 horas en lugar de AM y PM."
+          }
         }
       }
     },
@@ -31048,6 +31684,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sesi yang selesai akan menampilkan status selesai"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una sesión terminada lo indica"
           }
         }
       }
@@ -31102,6 +31744,12 @@
             "state": "translated",
             "value": "Sesi agen kini memiliki status keberhasilan, sehingga tugas yang telah selesai terbaca berbeda dari yang masih berjalan."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las sesiones de agentes tienen un estado de éxito, así que una ejecución completada se ve distinta de una que sigue en marcha."
+          }
         }
       }
     },
@@ -31154,6 +31802,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Antigravity: pilih batas utama"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antigravity: elige qué límite manda"
           }
         }
       }
@@ -31208,6 +31862,12 @@
             "state": "translated",
             "value": "Ring utama dapat mengikuti batas tertentu alih-alih selalu mengikuti batas yang paling ketat, dan instalasi berbasis CLI dihitung sebagai akun nyata."
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El anillo principal puede seguir un límite concreto en lugar del que esté más ajustado en cada momento, y una instalación solo de la CLI cuenta como una cuenta real."
+          }
         }
       }
     },
@@ -31261,6 +31921,12 @@
             "state": "translated",
             "value": "Hanya notch perangkat keras yang mengaktifkan notch yang menyatu"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo el notch del hardware despierta un notch unido a él"
+          }
         }
       }
     },
@@ -31313,6 +31979,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Notch yang menyatu dengan notch kamera tidak lagi terbuka hanya karena kursor berada di sembarang tempat di sepanjang tepi atas."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un notch fusionado con el alojamiento de la cámara ya no se despierta con el puntero en cualquier punto del borde superior."
           }
         }
       }
@@ -47547,6 +48219,12 @@
             "state": "translated",
             "value": "修好了中文 Mac 上的崩潰，鑰匙串詢問裡選「拒絕」現在就是拒絕。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corrige un cierre inesperado en Macs en chino, y Denegar en la pregunta del llavero ahora significa no."
+          }
         }
       }
     },
@@ -47587,6 +48265,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "简体中文下不再崩潰"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se acabaron los cierres inesperados en chino simplificado"
           }
         }
       }
@@ -47629,6 +48313,12 @@
             "state": "translated",
             "value": "App 設為简体中文時，只要有服務超過 80%，Codenotch 會在啟動幾秒後崩潰。現在每條翻譯都會檢查這個問題。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con la app en 简体中文, un proveedor por encima del 80% hacía que Codenotch se cerrara unos segundos después de abrirse. Ahora se comprueba esto en todas las traducciones."
+          }
         }
       }
     },
@@ -47669,6 +48359,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "「拒絕」就是拒絕"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denegar significa no"
           }
         }
       }
@@ -47711,6 +48407,12 @@
             "state": "translated",
             "value": "macOS 詢問已儲存的登入時如果選了「拒絕」，Codenotch 就不會再從任何來源讀取該帳號，直到你再次選擇「允許取用…」。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Responder Denegar cuando macOS pregunta por un inicio de sesión guardado ahora impide que Codenotch lea esa cuenta desde cualquier fuente, hasta que vuelvas a elegir Permitir acceso…"
+          }
         }
       }
     },
@@ -47751,6 +48453,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "檔案取用提示更少了"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menos avisos de acceso a archivos"
           }
         }
       }
@@ -47793,6 +48501,12 @@
             "state": "translated",
             "value": "續期 Claude 登入不再啟動你的 MCP 伺服器和鉤子，比對 Kimi 工作階段也不再翻看資料夾，因此 macOS 不會再替 Codenotch 詢問「文件」「桌面」或網路卷宗。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renovar el inicio de sesión de Claude ya no arranca tus servidores MCP ni tus hooks, y las sesiones de Kimi se identifican sin mirar dentro de tus carpetas, así que macOS ya no pregunta por Documentos, Escritorio o volúmenes de red en nombre de Codenotch."
+          }
         }
       }
     },
@@ -47833,6 +48547,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "較小的修復"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correcciones menores"
           }
         }
       }
@@ -47875,6 +48595,12 @@
             "state": "translated",
             "value": "Kiro 能從較新的 kiro-cli 讀取用量，GLM Start Plan 會說明為什麼沒有用量，沒有公佈額度的 Claude 帳號會直接說明，而不再一直等待，Windows 上卡住的等待卡片過一天會清掉。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiro lee el uso de las versiones más recientes de kiro-cli, GLM Start Plan explica por qué no tiene uso, una cuenta de Claude sin límites publicados lo indica en lugar de quedarse esperando, y el notch de Windows quita una tarjeta de espera atascada al cabo de un día."
+          }
         }
       }
     },
@@ -47915,6 +48641,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "對電池輕得多，Windows 上有了 Grok 和任意螢幕邊緣，設定視窗也能再次開啟。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mucho más ligero con tu batería, Grok y bordes de pantalla en Windows, y una ventana de Ajustes en Windows que vuelve a abrirse."
           }
         }
       }
@@ -47957,6 +48689,12 @@
             "state": "translated",
             "value": "對電池更輕"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menos consumo de batería"
+          }
         }
       }
     },
@@ -47997,6 +48735,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "閒置時 CPU 只佔原來的一小部分，移動指標的開銷也不到一半。工作中的轉圈改由系統繪製，不再每幀重畫瀏海，全螢幕 App 改為每兩秒檢查一次，而不是每次移動都查。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codenotch consume en reposo una fracción de la CPU que usaba, y mover el puntero cuesta menos de la mitad. El indicador de actividad lo dibuja el sistema en lugar de redibujar el notch en cada fotograma, y las apps a pantalla completa se comprueban cada dos segundos en vez de con cada movimiento."
           }
         }
       }
@@ -48039,6 +48783,12 @@
             "state": "translated",
             "value": "Windows 設定又能開啟了"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los Ajustes de Windows vuelven a abrirse"
+          }
         }
       }
     },
@@ -48079,6 +48829,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "1.12.0 裡 Windows 的設定視窗會開啟成空白。已經修好，並且加了檢查，避免這類錯誤再送出去。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En la 1.12.0, la ventana de Ajustes en Windows se abría vacía. Ya está corregido, y una comprobación evita ahora que ese tipo de error llegue a publicarse."
           }
         }
       }
@@ -48121,6 +48877,12 @@
             "state": "translated",
             "value": "Windows 上的 Grok、任意螢幕邊緣，以及系統匣裡的讀數"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grok, cualquier borde de la pantalla y lecturas en la bandeja en Windows"
+          }
         }
       }
     },
@@ -48161,6 +48923,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Grok 進了 Windows 的瀏海，瀏海可以放在任意顯示器的任意一邊，系統匣選單會顯示每家服務的讀數。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grok llega al notch de Windows, el notch puede colocarse en cualquier borde de cualquier monitor y el menú de la bandeja muestra las lecturas de cada proveedor."
           }
         }
       }
@@ -48203,6 +48971,12 @@
             "state": "translated",
             "value": "Ghostty 分頁"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pestañas de Ghostty"
+          }
         }
       }
     },
@@ -48243,6 +49017,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "點按正在 Ghostty 裡執行的工作階段，會選中它所在的分頁，而不只是把 Ghostty 調到前面。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al hacer clic en una sesión que se ejecuta en Ghostty, se selecciona su pestaña en lugar de solo traer Ghostty al frente."
           }
         }
       }
@@ -48285,6 +49065,12 @@
             "state": "translated",
             "value": "Codex 工作階段改為從檔案末尾讀取，而不再讀完整份；Codex 卡片會藏起空的重置點數欄；Windows 上續期失敗的 Claude 權杖會重試，而不再把卡片卡住。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las sesiones de Codex se leen desde el final del archivo en vez de entero, la tarjeta de Codex oculta la sección de créditos de renovación cuando está vacía, y un token de Claude en Windows que no logra renovarse se reintenta en lugar de congelar la tarjeta."
+          }
         }
       }
     },
@@ -48325,6 +49111,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Windows 安裝程式、烏克蘭語、深色玻璃，以及你自己定的閾值。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un instalador para Windows, ucraniano, Vidrio oscuro y límites que defines tú."
           }
         }
       }
@@ -48367,6 +49159,12 @@
             "state": "translated",
             "value": "Windows 版 Codenotch 可以安裝了"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codenotch para Windows, ahora con instalador"
+          }
         }
       }
     },
@@ -48408,6 +49206,12 @@
             "state": "translated",
             "value": "每個版本現在都帶 Codenotch-Setup.exe，不用管理員權限就能給目前使用者安裝。它還沒有簽章，所以 Windows 會問一次。這個移植也有了 Mac 上的設定視窗、小中大三種尺寸、每週額度圓環，以及中文、日文、韓文和烏克蘭文。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada versión incluye ahora Codenotch-Setup.exe, que se instala para el usuario actual sin permisos de administrador. Todavía no está firmado, así que Windows te lo pregunta una vez. La versión para Windows también incorpora la ventana de ajustes del Mac, los tamaños Pequeño, Mediano y Grande, un anillo para el límite semanal, y chino, japonés, coreano y ucraniano."
+          }
         }
       }
     },
@@ -48445,6 +49249,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Українська"
+          }
+        },
+        "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Українська"
@@ -48490,6 +49300,12 @@
             "state": "translated",
             "value": "第七種語言，Mac 和 Windows 上都有。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un séptimo idioma, en el Mac y en Windows."
+          }
         }
       }
     },
@@ -48530,6 +49346,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "瀏海的第三種表面：無論 Mac 外觀怎麼設，它都是深色。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una tercera superficie para el notch, oscura sea cual sea la apariencia configurada en el Mac."
           }
         }
       }
@@ -48572,6 +49394,12 @@
             "state": "translated",
             "value": "關注閾值和危急閾值由你來定"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus propios límites de aviso y crítico"
+          }
         }
       }
     },
@@ -48612,6 +49440,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "圓環變黃、變紅的位置可以自己調，每週圓環也可以畫成虛線。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora decides en qué puntos un anillo se vuelve ámbar y rojo, y el anillo semanal puede mostrarse discontinuo."
           }
         }
       }
@@ -48654,6 +49488,12 @@
             "state": "translated",
             "value": "在背景裡更安靜"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más discreto en segundo plano"
+          }
         }
       }
     },
@@ -48694,6 +49534,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "關掉的服務完全不再監視，工作階段從檔案末尾讀取而不再讀整份，全螢幕收合關掉之後，懸停也不會再把瀏海收起來。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un proveedor que hayas desactivado ya no se vigila en absoluto, las sesiones se leen desde el final del archivo en lugar de entero, y el notch ya no se pliega al pasar el cursor cuando el plegado para apps a pantalla completa está desactivado."
           }
         }
       }
@@ -48736,6 +49582,12 @@
             "state": "translated",
             "value": "Windows 保住了 Claude 的讀數"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows conserva su lectura de Claude"
+          }
         }
       }
     },
@@ -48776,6 +49628,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "過期的權杖會續期，而不再被當成速率限制；瀏海不再搶走焦點；Windows 關掉動畫效果時，它也會保持不動。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un token caducado se renueva en lugar de interpretarse como un límite de frecuencia, el notch ya no roba el foco y se queda quieto cuando los efectos de animación de Windows están desactivados."
           }
         }
       }
@@ -48818,6 +49676,12 @@
             "state": "translated",
             "value": "日文已經補全"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Japonés, completo"
+          }
         }
       }
     },
@@ -48858,6 +49722,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "App 裡的每句文案現在都有日文，新功能落下的五十五句也補上了。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos los textos de la app tienen ya traducción al japonés, incluidos cincuenta y cinco textos de funciones nuevas que nunca se habían traducido."
           }
         }
       }
@@ -48900,6 +49770,12 @@
             "state": "translated",
             "value": "Kiro 和 MiniMax、德文、Claude 的每日節奏圓環，以及全螢幕 App 時收合的開關。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiro y MiniMax, alemán, un anillo de ritmo diario para Claude y un interruptor para plegarse sobre apps a pantalla completa."
+          }
         }
       }
     },
@@ -48940,6 +49816,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kiro 和 MiniMax"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiro y MiniMax"
           }
         }
       }
@@ -48982,6 +49864,12 @@
             "state": "translated",
             "value": "Kiro 讀取這部 Mac 上已有的 kiro-cli 登入。MiniMax 從 Codenotch 登入，可選國際或中國區域。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiro lee la sesión de kiro-cli ya iniciada en este Mac. MiniMax inicia sesión desde Codenotch, con la opción de elegir la región internacional o China."
+          }
         }
       }
     },
@@ -49019,6 +49907,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deutsch"
+          }
+        },
+        "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Deutsch"
@@ -49064,6 +49958,12 @@
             "state": "translated",
             "value": "德文加入了 App 的語言，額度和重置通知現在也有简体中文。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El alemán se suma a los idiomas de la app, y las notificaciones de límite y de renovación ya también están en chino simplificado."
+          }
         }
       }
     },
@@ -49104,6 +50004,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Claude 的每日節奏圓環"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un anillo de ritmo diario para Claude"
           }
         }
       }
@@ -49146,6 +50052,12 @@
             "state": "translated",
             "value": "可以讓 Claude 的主圓環顯示今天在每週額度裡的份額，一天七分之一，工作階段則挪到細圓環上。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De forma opcional, el anillo principal de Claude muestra la parte del límite semanal que corresponde a hoy, una séptima parte por día, y la sesión pasa al anillo fino."
+          }
         }
       }
     },
@@ -49186,6 +50098,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Codex 的額外額度"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los límites adicionales de Codex"
           }
         }
       }
@@ -49228,6 +50146,12 @@
             "state": "translated",
             "value": "帳號有 Spark 和程式碼審查時，懸停卡片會列出它們，外觀裡可以隱藏。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La tarjeta muestra Spark y la revisión de código cuando tu cuenta los tiene, y puedes ocultarlos desde Apariencia."
+          }
         }
       }
     },
@@ -49268,6 +50192,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "全螢幕 App 時自動收合現在可以關掉，給那些最大化視窗老把瀏海收起來的人。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El plegado automático sobre apps a pantalla completa ya se puede desactivar, para quienes veían cómo sus ventanas maximizadas plegaban el notch una y otra vez."
           }
         }
       }
@@ -49310,6 +50240,12 @@
             "state": "translated",
             "value": "DeepSeek 的計價時段"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Franjas de precios de DeepSeek"
+          }
         }
       }
     },
@@ -49350,6 +50286,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "高峰和閒時可以完全自己配，登入也能更可靠地接上 DeepSeek 的登入狀態。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las horas pico y fuera de horas pico se pueden configurar por completo, y al iniciar sesión se detecta el acceso a DeepSeek de forma más fiable."
           }
         }
       }
@@ -49392,6 +50334,12 @@
             "state": "translated",
             "value": "提醒準時到達"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avisos a tiempo"
+          }
         }
       }
     },
@@ -49432,6 +50380,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "額度視窗一滾動，用量就立刻重新整理，所以重置和用盡提醒會在發生時到達，即使螢幕上沒有瀏海。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El uso se actualiza en cuanto un periodo de límite se renueva, así que los avisos de renovación y de límite llegan en el momento, incluso sin un notch en pantalla."
           }
         }
       }
@@ -49474,6 +50428,12 @@
             "state": "translated",
             "value": "新服務在你開啟之前保持關閉，重新置中的回饋更清楚，按住 Option 拖動時會忽略懸停，Codex 完成提示音會記住設定，Windows 的圓環和懸停卡片也與 Mac 一致。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los proveedores nuevos permanecen desactivados hasta que los activas, el botón de recentrar da una respuesta más clara, se ignora el paso del cursor mientras arrastras con Opción, el sonido de finalización de Codex conserva su ajuste, y los anillos y la tarjeta de Windows coinciden con los del Mac."
+          }
         }
       }
     },
@@ -49514,6 +50474,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "額度重置或用盡時會告訴你，會說俄文，也能讀取 Kimi。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Te avisa cuando un límite se renueva o se agota, habla ruso y lee Kimi."
           }
         }
       }
@@ -49556,6 +50522,12 @@
             "state": "translated",
             "value": "額度重置時一張卡片，用盡時再來一張"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una tarjeta cuando un límite se renueva y cuando se agota"
+          }
         }
       }
     },
@@ -49597,6 +50569,12 @@
             "state": "translated",
             "value": "某家服務的額度視窗一滾動，瀏海就滑出一張卡片；工作階段或每週額度到達 100% 時再來一次。設定裡的通知可以選擇要哪幾種，提示音可選。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El notch despliega una tarjeta en el momento en que el límite de un proveedor se renueva, y de nuevo cuando un límite de sesión o semanal llega al 100%. En Notificaciones, dentro de Ajustes, eliges cuáles quieres, con un sonido opcional."
+          }
         }
       }
     },
@@ -49634,6 +50612,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kimi"
+          }
+        },
+        "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Kimi"
@@ -49679,6 +50663,12 @@
             "state": "translated",
             "value": "它的每週額度和 5 小時額度、正在跑的工作階段，點按一條現在會喚起它所在的那個終端分頁，而不只是把 App 調到前面。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sus límites semanal y de 5 horas, las sesiones que está ejecutando, y al hacer clic en una ahora se trae al frente la pestaña exacta del terminal en la que está, no solo la app."
+          }
         }
       }
     },
@@ -49716,6 +50706,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Русский"
+          }
+        },
+        "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Русский"
@@ -49761,6 +50757,12 @@
             "state": "translated",
             "value": "第五種語言，Mac 和 Windows 上都有。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un quinto idioma, en el Mac y en Windows."
+          }
         }
       }
     },
@@ -49801,6 +50803,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "從設定裡結束"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir desde Ajustes"
           }
         }
       }
@@ -49843,6 +50851,12 @@
             "state": "translated",
             "value": "設定側邊欄裡可以結束，給關掉選單列圖示的時候用。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una acción para salir en la barra lateral de Ajustes, para cuando el icono de la barra de menús está desactivado."
+          }
         }
       }
     },
@@ -49883,6 +50897,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "網頁到不了 Codenotch 的本機伺服器"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una página web no puede acceder a los servidores locales de Codenotch"
           }
         }
       }
@@ -49925,6 +50945,12 @@
             "state": "translated",
             "value": "Ollama 轉送和 Windows 事件伺服器現在會拒絕其他網站發來的瀏覽器請求，原始回應也不再寫進系統日誌。讀取 DeepSeek 時還會精確核對頁面位址，以前仿冒網域有可能混過去。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El relé de Ollama y el servidor de eventos de Windows rechazan ahora las solicitudes del navegador procedentes de otros sitios, y las respuestas sin procesar no se guardan en el registro del sistema. La lectura de DeepSeek también comprueba exactamente la dirección de la página, donde antes podía colarse un dominio parecido."
+          }
         }
       }
     },
@@ -49962,6 +50988,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows"
+          }
+        },
+        "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Windows"
@@ -50007,6 +51039,12 @@
             "state": "translated",
             "value": "診斷輸出的是值的形狀而不是值本身，敏感內容不會進報告，這個移植的建置也會在每次改動時檢查。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los diagnósticos muestran la forma de un valor en lugar del valor en sí, para que nada sensible acabe en un informe, y la compilación de la versión para Windows se comprueba con cada cambio."
+          }
         }
       }
     },
@@ -50047,6 +51085,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "移動握把與相機外殼對齊，設定裡更多文案有了简体中文。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El tirador para mover queda alineado con el alojamiento de la cámara, y una parte mayor de Ajustes está traducida al chino simplificado."
           }
         }
       }
@@ -50089,6 +51133,12 @@
             "state": "translated",
             "value": "LM Studio、DeepSeek 和 Devin，日文和葡萄牙文，鑰匙串密碼也不會再定時彈回來。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LM Studio, DeepSeek y Devin, japonés y portugués, y se acabó la contraseña del llavero cada cierto tiempo."
+          }
         }
       }
     },
@@ -50126,6 +51176,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LM Studio"
+          }
+        },
+        "es": {
           "stringUnit": {
             "state": "translated",
             "value": "LM Studio"
@@ -50171,6 +51227,12 @@
             "state": "translated",
             "value": "已載入的模型、各自是在思考還是在排隊、產生速度、上下文有多滿，以及每天用掉的 token 帳本。從這部 Mac 上的 LM Studio 讀取。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los modelos cargados, si cada uno está pensando o en cola, la velocidad de generación, cuánto contexto lleva ocupado y un registro diario de los tokens que ha usado. Todo se lee de LM Studio en este Mac."
+          }
         }
       }
     },
@@ -50211,6 +51273,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "DeepSeek 和 Devin"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DeepSeek y Devin"
           }
         }
       }
@@ -50253,6 +51321,12 @@
             "state": "translated",
             "value": "DeepSeek 平台上的餘額和花費，附一張每日用量卡片，以及 Devin 的用量。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El saldo y el gasto de la plataforma de DeepSeek, con una tarjeta de uso diario, y el uso de Devin."
+          }
         }
       }
     },
@@ -50293,6 +51367,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "日本語 and Português (Brasil)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日本語 y Português (Brasil)"
           }
         }
       }
@@ -50335,6 +51415,12 @@
             "state": "translated",
             "value": "又多了兩種語言，語言選擇改成了選單，才放得下。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dos idiomas más, y el selector de idioma ahora es un menú para que quepan todos."
+          }
         }
       }
     },
@@ -50375,6 +51461,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "鑰匙串密碼不再反覆出現"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La contraseña del llavero deja de volver"
           }
         }
       }
@@ -50417,6 +51509,12 @@
             "state": "translated",
             "value": "Claude Code 和 Antigravity 會以 macOS 不讓「始終允許」一直有效的方式重建已儲存的登入，所以密碼對話框總是回來。背景重新整理現在完全不再彈出；設定裡的「允許取用」是它還可能出現的唯一地方。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude Code y Antigravity recrean sus inicios de sesión guardados de una forma que macOS no deja que sobreviva a un «Permitir siempre», así que el cuadro de diálogo de la contraseña volvía una y otra vez. Las actualizaciones en segundo plano ya no lo muestran nunca; Permitir acceso, en Ajustes, es el único lugar donde aún puede aparecer."
+          }
         }
       }
     },
@@ -50457,6 +51555,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "把瀏海帶到另一邊"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lleva el notch a otro borde"
           }
         }
       }
@@ -50499,6 +51603,12 @@
             "state": "translated",
             "value": "按住瀏海上方的弧線，把它放到任意一邊。不想看見這條弧線的話，可以在外觀裡隱藏。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantén pulsado el arco sobre el notch y suéltalo en cualquier borde. Desde Apariencia puedes ocultar el arco si prefieres no verlo."
+          }
         }
       }
     },
@@ -50539,6 +51649,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "懸停卡片上的內容更多了"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más información en la tarjeta"
           }
         }
       }
@@ -50581,6 +51697,12 @@
             "state": "translated",
             "value": "標題下面是帳號的方案，還有你還沒用過的 Codex 速率限制重置。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El plan de la cuenta bajo el título, y las renovaciones del límite de frecuencia de Codex que aún no has usado."
+          }
         }
       }
     },
@@ -50621,6 +51743,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "被 Claude Code 清空的登入仍保留讀數"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un inicio de sesión de Claude que Claude Code vacía conserva su lectura"
           }
         }
       }
@@ -50663,6 +51791,12 @@
             "state": "translated",
             "value": "Claude Code 更新自己之後，可能一次清掉每個設定檔裡儲存的登入。最後的數字現在會留下來、變暗，而不再消失。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuando Claude Code se actualiza, puede borrar a la vez el inicio de sesión guardado de todos los perfiles. Ahora las últimas cifras se mantienen, atenuadas, en lugar de desaparecer."
+          }
         }
       }
     },
@@ -50703,6 +51837,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Antigravity 從每個來源讀到的都是同一組數字"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antigravity lee las mismas cifras de todas las fuentes"
           }
         }
       }
@@ -50745,6 +51885,12 @@
             "state": "translated",
             "value": "它的本機伺服器和 Google 自己的端點用同一套解析來讀，圓環不會因為是誰回答的而變。自動模式下，只有每一項額度都用盡時，用盡的那項才會打頭。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Su servidor local y el propio endpoint de Google se leen con un mismo analizador, así que el anillo no cambia según cuál haya respondido. En modo automático, un límite agotado solo pasa al frente cuando todos los límites están agotados."
+          }
         }
       }
     },
@@ -50785,6 +51931,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gemini API 會計入 OpenCode 和 Hermes"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemini API cuenta OpenCode y Hermes"
           }
         }
       }
@@ -50827,6 +51979,12 @@
             "state": "translated",
             "value": "經 OpenCode 和 Hermes 發出的回合，現在會計入 Gemini API 圓環。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los turnos hechos a través de OpenCode y Hermes cuentan ahora para el anillo de Gemini API."
+          }
         }
       }
     },
@@ -50867,6 +52025,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "重新置中會立刻移動瀏海；全螢幕自動收合會算上相機外殼；等待速率限制不再多耗一整次重新整理。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recentrar mueve el notch al instante; el plegado automático a pantalla completa tiene en cuenta el alojamiento de la cámara; y una espera por límite de frecuencia ya no cuesta una actualización extra entera."
           }
         }
       }
@@ -50909,6 +52073,12 @@
             "state": "translated",
             "value": "會說中文，能看著本機模型思考，並且牢牢貼在邊緣上。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Habla chino, ve pensar a los modelos locales y se queda pegado al borde."
+          }
         }
       }
     },
@@ -50946,6 +52116,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "简体中文"
+          }
+        },
+        "es": {
           "stringUnit": {
             "state": "translated",
             "value": "简体中文"
@@ -50991,6 +52167,12 @@
             "state": "translated",
             "value": "外觀裡有了語言選擇：跟隨 Mac，或者不管 Mac 怎麼設，都把 App 固定成英文或简体中文。翻譯寫完之後新加的文案會回到英文，而不會變成空白。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un selector de Idioma en Apariencia: sigue al Mac o fija la app en inglés o chino simplificado, sea cual sea el idioma del Mac. Los textos añadidos después de hacer la traducción se muestran en inglés en lugar de quedar en blanco."
+          }
         }
       }
     },
@@ -51031,6 +52213,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ollama 模型會顯示思考和產生速度"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los modelos de Ollama muestran cuándo piensan y su velocidad de generación"
           }
         }
       }
@@ -51073,6 +52261,12 @@
             "state": "translated",
             "value": "每個已載入的模型有自己的一格，顯示上次回覆的每秒 token，思考時會有標記。測量在本機完成，提示的任何內容都不會離開這部機器。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada modelo cargado tiene su propia celda, con los tokens por segundo de su última respuesta y una marca mientras está pensando. La medición se hace en local y nada de un prompt sale del equipo."
+          }
         }
       }
     },
@@ -51113,6 +52307,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "從桌面 App 啟動的 Claude Code 工作階段也會計入"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se cuentan las sesiones de Claude Code iniciadas desde la app de escritorio"
           }
         }
       }
@@ -51155,6 +52355,12 @@
             "state": "translated",
             "value": "從 Claude for Mac 啟動的工作階段現在也會像其他工作階段一樣出現在瀏海上。登入也會在背景自己續期，圓環不會再用了一週就變舊。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una sesión lanzada desde Claude para Mac llega ahora al notch como cualquier otra. El inicio de sesión también se renueva solo en segundo plano, así que un anillo ya no se queda desactualizado tras una semana de uso."
+          }
         }
       }
     },
@@ -51195,6 +52401,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "瀏海焊在螢幕邊緣上"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El notch queda pegado al borde de la pantalla"
           }
         }
       }
@@ -51237,6 +52449,12 @@
             "state": "translated",
             "value": "任何尺寸下，它後面都不再露出一條桌布細縫；拖動尺寸滑桿時它保持錨定，而不是先漂開、最後再追上。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ni una línea de fondo de pantalla detrás, a cualquier tamaño, y se mantiene anclado mientras arrastras el regulador de tamaño en lugar de desplazarse y ponerse al día al final."
+          }
         }
       }
     },
@@ -51277,6 +52495,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "尺寸既能用預設，也能用滑桿"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige el tamaño con un regulador además de con valores predefinidos"
           }
         }
       }
@@ -51319,6 +52543,12 @@
             "state": "translated",
             "value": "三種有名字的尺寸，適合不想自己拿主意的時候；心裡有個特定尺寸，就用滑桿。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tres tamaños con nombre si prefieres que se decida por ti, o un regulador cuando tienes en mente un tamaño concreto."
+          }
         }
       }
     },
@@ -51359,6 +52589,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "全螢幕 App 時瀏海會收合"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El notch se pliega ante una app a pantalla completa"
           }
         }
       }
@@ -51401,6 +52637,12 @@
             "state": "translated",
             "value": "目前最前的全螢幕 App 獨佔整塊螢幕；離開之後瀏海會回來。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo que esté al frente y a pantalla completa ocupa toda la pantalla; el notch vuelve cuando sales de ello."
+          }
         }
       }
     },
@@ -51441,6 +52683,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定齒輪是一個開關"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El engranaje de ajustes funciona como interruptor"
           }
         }
       }
@@ -51483,6 +52731,12 @@
             "state": "translated",
             "value": "點按時它會轉動並按下去，再點一次會關掉設定，而不再沒有反應。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gira y se hunde al hacer clic, y un segundo clic cierra Ajustes en lugar de no hacer nada."
+          }
         }
       }
     },
@@ -51523,6 +52777,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cursor 不再顯示幾個月前已經結束的工作"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cursor deja de mostrar trabajo que terminó hace meses"
           }
         }
       }
@@ -51565,6 +52825,12 @@
             "state": "translated",
             "value": "已經結束的背景智能體曾讓圓環一直停在黃色。現在只有真正、目前的對話才算等待。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los agentes en segundo plano ya terminados dejaban el anillo en ámbar indefinidamente. Ahora solo cuenta como esperando un chat real y actual."
+          }
         }
       }
     },
@@ -51605,6 +52871,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Antigravity 能讀取只有 CLI 的安裝"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antigravity lee una instalación solo con CLI"
           }
         }
       }
@@ -51647,6 +52919,12 @@
             "state": "translated",
             "value": "沒有桌面 App 的安裝也是一個真實帳號，而不再算缺失，每日配額會直接讀取。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una instalación sin app de escritorio es una cuenta real y no una que falta, y su cuota diaria se lee directamente."
+          }
         }
       }
     },
@@ -51688,6 +52966,12 @@
             "state": "translated",
             "value": "下載就能用，不需要 Xcode"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una descarga lista para usar, sin necesidad de Xcode"
+          }
         }
       }
     },
@@ -51728,6 +53012,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "每次建置都會產出可以直接執行的 App 套件，試用 Codenotch 不必再從開發環境搭起。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada compilación genera ahora un paquete de app que puedes ejecutar, así que probar Codenotch ya no empieza con una configuración de desarrollador."
           }
         }
       }
@@ -55942,6 +57232,12 @@
             "state": "translated",
             "value": "Windows 會自己更新，選單列裡有 5 小時額度，瀏海也可以收合。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows se actualiza solo, límites de cinco horas en la barra de menús y un notch que puedes plegar."
+          }
         }
       }
     },
@@ -55976,6 +57272,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "選單列裡的 5 小時額度"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Límites de cinco horas en la barra de menús"
           }
         }
       }
@@ -56012,6 +57314,12 @@
             "state": "translated",
             "value": "你不開啟它就保持關閉：選好要顯示的帳號，選單列會放上它們的工作階段占比和倒計時，跟瀏海一起，而不是取代瀏海。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactivado hasta que lo pidas: elige qué cuentas mostrar y la barra de menús indica su porcentaje de sesión y la cuenta atrás, junto al notch y no en su lugar."
+          }
         }
       }
     },
@@ -56046,6 +57354,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "每一個 Antigravity 帳號"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas las cuentas de Antigravity"
           }
         }
       }
@@ -56082,6 +57396,12 @@
             "state": "translated",
             "value": "現在可以讀取多個 Antigravity 設定檔，每個有自己的圓環，鑰匙串提示也各自回答。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora se lee más de un perfil de Antigravity, cada uno con su propio anillo y su propia respuesta a la solicitud del llavero."
+          }
         }
       }
     },
@@ -56116,6 +57436,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "玻璃更清楚"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vidrio más nítido"
           }
         }
       }
@@ -56152,6 +57478,12 @@
             "state": "translated",
             "value": "深色模式下，液態玻璃上的提示文字站得住了。以前後面是淺色桌面時，次要的那幾行會被洗掉。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El texto de la tarjeta se mantiene legible sobre Liquid Glass en modo oscuro, donde antes un escritorio claro detrás desvanecía las líneas secundarias."
+          }
         }
       }
     },
@@ -56186,6 +57518,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Windows 會自己保持最新"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows se mantiene actualizado"
           }
         }
       }
@@ -56222,6 +57560,12 @@
             "state": "translated",
             "value": "啟動後不久它會尋找新版本，並可以幫你安裝，下載前會先核對簽章。在此之前，Windows 安裝會一直停在當初裝上的那個建置。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busca una versión nueva poco después de iniciarse y puede instalarla por ti, comprobando primero la firma de la descarga. Hasta ahora, una instalación de Windows se quedaba en la compilación con la que se instaló."
+          }
         }
       }
     },
@@ -56256,6 +57600,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Windows 上的瀏海可以移動了"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un notch de Windows que se mueve"
           }
         }
       }
@@ -56292,6 +57642,12 @@
             "state": "translated",
             "value": "用握把把它帶到別的顯示器，按住 Alt 沿邊緣滑動，不用時收成一顆膠囊，就像 Mac 上的「懸停時顯示」。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Llévalo de un monitor a otro con su tirador, deslízalo por un borde manteniendo pulsada Alt y pliégalo en una cápsula cuando no lo uses, como hace Al pasar el cursor en el Mac."
+          }
         }
       }
     },
@@ -56326,6 +57682,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Windows 上的 Z.AI，以及每一個 Claude 帳號"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Z.AI y todas las cuentas de Claude en Windows"
           }
         }
       }
@@ -56362,6 +57724,12 @@
             "state": "translated",
             "value": "Z.AI Coding Plan 有了圓環，每個 Claude 帳號各有一個，而不再只有預設帳號，Claude 也可以從卡片上登入。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un anillo para el Z.AI Coding Plan, uno por cada cuenta de Claude en lugar de solo la predeterminada, e inicio de sesión de Claude desde la propia tarjeta."
+          }
         }
       }
     },
@@ -56397,6 +57765,12 @@
             "state": "translated",
             "value": "日本語，以及俄文的瀏海位置"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日本語 y ubicación del notch en ruso"
+          }
         }
       }
     },
@@ -56431,6 +57805,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "更新說明可以讀日文，Windows 上的瀏海位置設定可以讀俄文。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las novedades se pueden leer en japonés, y los ajustes de ubicación del notch de Windows, en ruso."
           }
         }
       }
@@ -56473,6 +57853,12 @@
             "state": "translated",
             "value": "QianwenAI 又能讀取了，誤報更少，Windows 上的瀏海也更穩。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QianwenAI vuelve a leerse, menos avisos falsos y un notch de Windows más estable."
+          }
         }
       }
     },
@@ -56513,6 +57899,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "QianwenAI 又能讀取了"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QianwenAI vuelve a leerse"
           }
         }
       }
@@ -56555,6 +57947,12 @@
             "state": "translated",
             "value": "只有真正的重置"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo renovaciones reales"
+          }
         }
       }
     },
@@ -56595,6 +57993,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "倒計時漂了幾秒不再當成重置來通知，真正的重置仍會通知。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una cuenta atrás que se desvía unos segundos ya no anuncia una renovación, mientras que una real sí lo sigue haciendo."
           }
         }
       }
@@ -56637,6 +58041,12 @@
             "state": "translated",
             "value": "Grok，即使沒有視窗"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grok, incluso sin ventana"
+          }
         }
       }
     },
@@ -56677,6 +58087,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "grok -p 執行時 Grok 也會顯示為工作中，而不只是在它自己的視窗裡。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grok aparece como trabajando durante las ejecuciones de grok -p, no solo en su propia ventana."
           }
         }
       }
@@ -56719,6 +58135,12 @@
             "state": "translated",
             "value": "Windows 上的瀏海會避開工作列"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El notch de Windows no tapa la barra de tareas"
+          }
         }
       }
     },
@@ -56759,6 +58181,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "它待在工作區內，工作列挪走之後會重新找到邊緣；讀數變舊時圓環會變暗，末端是圓的，和 Mac 上一樣。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se coloca dentro del área de trabajo y vuelve a encontrar su borde cuando se mueve la barra de tareas, y sus anillos se atenúan cuando una lectura está desactualizada, con extremos redondeados, como en el Mac."
           }
         }
       }
@@ -56801,6 +58229,12 @@
             "state": "translated",
             "value": "新的設定、QianwenAI、繁體中文，以及可以帶到任意一邊的 Windows 瀏海。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustes renovados, QianwenAI, chino tradicional y un notch en Windows que puedes llevar a cualquier borde."
+          }
         }
       }
     },
@@ -56841,6 +58275,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "新的設定"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustes renovados"
           }
         }
       }
@@ -56883,6 +58323,12 @@
             "state": "translated",
             "value": "深色、安靜，每一欄都有標題，服務用自己的標誌，DeepSeek、Ollama 和 LM Studio 收進帳號下面。所有東西都會回應指標，有新版本時，版本號旁邊會出現更新按鈕。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oscuros y discretos, con un título en cada panel, los logotipos de cada proveedor y DeepSeek, Ollama y LM Studio agrupados en Cuentas. Todo responde al puntero, y aparece un botón Actualizar junto a la versión cuando hay una nueva."
+          }
         }
       }
     },
@@ -56920,6 +58366,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QianwenAI"
+          }
+        },
+        "es": {
           "stringUnit": {
             "state": "translated",
             "value": "QianwenAI"
@@ -56965,6 +58417,12 @@
             "state": "translated",
             "value": "QianwenAI 的 Token Plan 有了圓環，從 Codenotch 登入。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un anillo para el Token Plan de QianwenAI, con la sesión iniciada desde Codenotch."
+          }
         }
       }
     },
@@ -57005,6 +58463,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "繁體中文，並且每種語言都補全了"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "繁體中文 y todos los idiomas completos"
           }
         }
       }
@@ -57047,6 +58511,12 @@
             "state": "translated",
             "value": "Mac 和 Windows 上都有繁體中文，在台灣和香港會自動用上；简体中文和烏克蘭文現在覆蓋每一句文案。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chino tradicional en Mac y Windows, que se activa automáticamente en Taiwán y Hong Kong; además, el chino simplificado y el ucraniano ya cubren todos los textos."
+          }
         }
       }
     },
@@ -57087,6 +58557,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Windows 上的瀏海，可以帶到任何地方"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El notch de Windows, donde quieras"
           }
         }
       }
@@ -57129,6 +58605,12 @@
             "state": "translated",
             "value": "用握把把它拖到任意一邊，從圓標開啟設定，點按圓環再讀一次，或按右鍵看更多，懸停卡片會避開工作列。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrástralo por su tirador a cualquier borde, abre Ajustes desde su esfera, haz clic en un anillo para volver a leerlo o clic derecho para ver más opciones; además, la tarjeta ya no tapa la barra de tareas."
+          }
         }
       }
     },
@@ -57170,6 +58652,12 @@
             "state": "translated",
             "value": "新的標誌"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logotipos nuevos"
+          }
         }
       }
     },
@@ -57210,6 +58698,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "MiniMax、QianwenAI、Z.ai、Kimi、OpenCode 和 Command Code 現在顯示自己的標誌。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MiniMax, QianwenAI, Z.ai, Kimi, OpenCode y Command Code ahora muestran sus propios logotipos."
           }
         }
       }
@@ -57305,6 +58799,12 @@
             "state": "translated",
             "value": "圓環不再在每次重新整理時都回答「HTTP 0」；QianwenAI 拒絕請求時，也會明白地說出來。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El anillo ya no muestra \"HTTP 0\" en cada actualización y lo indica con claridad cuando QianwenAI rechaza una solicitud."
+          }
         }
       }
     },
@@ -57345,6 +58845,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "檢查更新不會再停在「正在檢查…」上，很小的上下文讀數仍會畫出一段弧，Claude 的帳號檔案只在變化時重讀，繁體中文用的是台灣自己的說法。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La búsqueda de actualizaciones ya no puede quedarse colgada en \"Comprobando…\", una lectura de contexto pequeña sigue dibujando un arco, el archivo de cuenta de Claude solo se vuelve a leer cuando cambia y el chino tradicional usa el vocabulario propio de Taiwán."
           }
         }
       }
@@ -57475,6 +58981,12 @@
             "state": "translated",
             "value": "你自己的端點、한국어 和 Oʻzbekcha，以及知道帳號是誰的瀏海。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus propios endpoints, 한국어 y Oʻzbekcha, y un notch que sabe de quién es cada cuenta."
+          }
         }
       }
     },
@@ -57509,6 +59021,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "你自己的端點"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus propios endpoints"
           }
         }
       }
@@ -57545,6 +59063,12 @@
             "state": "translated",
             "value": "新增任何相容 OpenAI 的端點並給它一個圓環：名稱、圖示、顏色、以美元或 token 計的每月預算，以及一次現場檢查，看它是不是真的在回應。金鑰進鑰匙串。掃描會找到常見的本機連接埠，所以這部 Mac 上正在跑的模型不必手打。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añade cualquier endpoint compatible con OpenAI y dale un anillo: un nombre, un icono, un color, un presupuesto mensual en dólares o tokens y una comprobación en vivo que indica si de verdad está respondiendo. La clave se guarda en el llavero. Un escaneo encuentra los puertos locales habituales, así que no tienes que escribir a mano un modelo que se ejecuta en este Mac."
+          }
         }
       }
     },
@@ -57579,6 +59103,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Amp CLI 有了圓環，讀取它已經有的登入。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un anillo para la CLI de Amp, leído a partir de la sesión que ya tiene iniciada."
           }
         }
       }
@@ -57615,6 +59145,12 @@
             "state": "translated",
             "value": "한국어 and Oʻzbekcha"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한국어 y Oʻzbekcha"
+          }
         }
       }
     },
@@ -57649,6 +59185,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "韓文是 App 裡翻譯最完整的語言，Mac 和 Windows 上都是。烏茲別克文以拉丁字母加入。你正在讀的更新說明，曾是幾種語言最後缺的部分，現在也進了文案目錄。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El coreano es el idioma más completo de la app, en Mac y en Windows. Se suma el uzbeko en alfabeto latino. Las novedades que estás leyendo eran lo último que faltaba en varios idiomas, y ahora también están en el catálogo."
           }
         }
       }
@@ -57685,6 +59227,12 @@
             "state": "translated",
             "value": "圓環知道自己是哪個帳號"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anillos que saben de quién es la cuenta"
+          }
         }
       }
     },
@@ -57719,6 +59267,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Claude 圓環按背後的帳號命名，而不再按找到它的資料夾。桌面 App 託管的工作階段畫在擁有它的帳號上，每一段 Codex 對話都單獨命名、單獨計數。你可以重新命名任何帳號，新名字會立刻用在所有地方。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un anillo de Claude lleva el nombre de la cuenta que hay detrás, no el de la carpeta donde se encontró; una sesión alojada en la app de escritorio se cuenta en la cuenta a la que pertenece, y cada conversación de Codex tiene su propio nombre y se cuenta por separado. Puedes cambiar el nombre de cualquier cuenta, y el nuevo nombre se usa en todas partes a la vez."
           }
         }
       }
@@ -57755,6 +59309,12 @@
             "state": "translated",
             "value": "更安靜"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más discreto"
+          }
         }
       }
     },
@@ -57789,6 +59349,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "開啟 Codenotch 不再通報很久以前就已經用盡的額度：上次留下的讀數不會再被當成剛剛發生的事。點按瀏海讓它保持展開，只在這次使用期間有效，而不是永遠，全螢幕收合也不會在你不知道的時候被關掉。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al abrir Codenotch ya no se avisa de un límite que se alcanzó hace mucho: una lectura guardada de la última vez ya no se confunde con algo que acaba de pasar. Hacer clic en el notch para mantenerlo abierto dura lo que dura la sesión, no para siempre, así que el plegado en pantalla completa nunca se desactiva sin que lo sepas."
           }
         }
       }
@@ -57825,6 +59391,12 @@
             "state": "translated",
             "value": "選單列顯示得更多"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La barra de menús muestra más"
+          }
         }
       }
     },
@@ -57859,6 +59431,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "每週用量排在 5 小時視窗旁邊，開關就在選單列裡。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El uso semanal junto al periodo de 5 horas, con su propio interruptor accesible desde la misma barra de menús."
           }
         }
       }
@@ -57895,6 +59473,12 @@
             "state": "translated",
             "value": "更輕的 Windows 瀏海"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un notch más claro en Windows"
+          }
         }
       }
     },
@@ -57929,6 +59513,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "多了一行主題——跟隨系統、淺色或深色——瀏海、設定視窗和拖動時的疊層都跟著它。Português (Brasil) 加入了 Windows 移植，拖動握把時它會留在螢幕上。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una fila Tema (Sistema, Claro u Oscuro) que siguen el notch, la ventana de ajustes y la capa de arrastre. Português (Brasil) llega a la versión de Windows, y el tirador para mover se mantiene en pantalla mientras la arrastras."
           }
         }
       }
@@ -63169,6 +64759,12 @@
             "state": "translated",
             "value": "看看每個專案花掉了多少額度，工作時的數字也會跟著走。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mira cuánto de tu cuota gastó cada proyecto, con cifras que se mantienen al día mientras trabajas."
+          }
         }
       }
     },
@@ -63191,6 +64787,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "每個專案的費用"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Costo por proyecto"
           }
         }
       }
@@ -63215,6 +64817,12 @@
             "state": "translated",
             "value": "新增的「費用」會讀取 Claude Code 和 Codex 已經留下的紀錄，按日、週、月顯示每個專案花掉了每個登入額度的多少，價格按你的方案來算。Codenotch 開始執行之前的用量記為「其他」，不會拿去猜。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una nueva sección Costos lee las transcripciones que Claude Code y Codex ya guardan, y muestra cuánto gastó cada proyecto de la cuota de cada cuenta, por día, semana y mes, con precios según tu plan. El uso anterior a que Codenotch estuviera en marcha se muestra como otros, nunca se adivina."
+          }
         }
       }
     },
@@ -63237,6 +64845,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "數字會跟著走"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cifras al día"
           }
         }
       }
@@ -63261,6 +64875,12 @@
             "state": "translated",
             "value": "工作階段正在進行時，百分比會當場重讀，而不是用最多半小時前的快取；倒計時跟著時鐘走到秒。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mientras una sesión trabaja, el porcentaje se lee al momento en lugar de una caché de hasta media hora de antigüedad, y la cuenta atrás sigue el reloj al segundo."
+          }
         }
       }
     },
@@ -63283,6 +64903,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "選單列項目和字一樣寬"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un elemento de la barra de menús tan ancho como su contenido"
           }
         }
       }
@@ -63307,6 +64933,12 @@
             "state": "translated",
             "value": "不再給比最長數字更短的內容留空；只有數字增減一個字元時，寬度才會變。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se acabó el espacio vacío reservado para cifras más cortas que su valor más largo; el ancho solo cambia cuando una cifra gana o pierde un carácter."
+          }
         }
       }
     },
@@ -63329,6 +64961,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abacus.AI 點數"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Créditos de Abacus.AI"
           }
         }
       }
@@ -63353,6 +64991,12 @@
             "state": "translated",
             "value": "自訂端點的一個預設會顯示 RouteLLM 帳號每月的點數，以及另外購買的部分。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un preajuste para endpoints personalizados muestra los créditos mensuales de una cuenta de RouteLLM y los que hayas comprado aparte."
+          }
         }
       }
     },
@@ -63375,6 +65019,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "OpenCode 和 Grok 保持登入"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenCode y Grok mantienen la sesión iniciada"
           }
         }
       }
@@ -63399,6 +65049,12 @@
             "state": "translated",
             "value": "OpenCode 的登入改從新版本存放的地方讀取；過期的 Grok 工作階段會續上，而不是一直停在零，直到下次登入。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La sesión de OpenCode se lee desde donde la guardan las versiones recientes, y una sesión caducada de Grok se renueva en lugar de quedarse en cero hasta el próximo inicio de sesión."
+          }
         }
       }
     },
@@ -63421,6 +65077,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "更順的 Português do Brasil"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Português do Brasil pulido"
           }
         }
       }
@@ -63445,6 +65107,12 @@
             "state": "translated",
             "value": "通篇用詞更清楚。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Textos más claros en toda la app."
+          }
         }
       }
     },
@@ -63467,6 +65135,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "按住六個點，可以把瀏海帶到螢幕的任意一邊——新版本也會先在瀏海裡問你。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lleva el notch a cualquier parte de tu pantalla con sus seis puntos, y las nuevas versiones ahora te preguntan primero, en el propio notch."
           }
         }
       }
@@ -63491,6 +65165,12 @@
             "state": "translated",
             "value": "六個點，用來帶走瀏海"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seis puntos para mover el notch"
+          }
         }
       }
     },
@@ -63513,6 +65193,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "指標停在設定按鈕上，旁邊會伸出六個點。按住拖動：瀏海沿著螢幕任意一條邊走，並繞過轉角，放手就停在那裡。它們取代了另一頭單獨的移動握把，以及對應的設定。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasa el cursor sobre el botón de ajustes y aparecen seis puntos a su lado. Mantenlos pulsados y arrastra: el notch te sigue por cualquier borde de la pantalla y alrededor de sus esquinas, y se queda donde lo sueltes. Sustituyen al tirador para mover que estaba en el otro extremo, y a su ajuste."
           }
         }
       }
@@ -63537,6 +65223,12 @@
             "state": "translated",
             "value": "轉角像液體一樣繞過去"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rodea las esquinas como un líquido"
+          }
         }
       }
     },
@@ -63559,6 +65251,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "拖動時——用這六個點，或按住 ⌥——瀏海貼著螢幕邊緣走，繞過每個轉角，而不是從一條邊跳到另一條邊，放手後會平穩停住。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al arrastrarlo (por los puntos o con ⌥), el notch se mantiene pegado al borde de la pantalla y fluye alrededor de cada esquina en lugar de saltar entre bordes, y se asienta con suavidad donde lo sueltas."
           }
         }
       }
@@ -63583,6 +65281,12 @@
             "state": "translated",
             "value": "更新會先在瀏海裡問你"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las actualizaciones preguntan primero, en el notch"
+          }
         }
       }
     },
@@ -63605,6 +65309,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "新版本會出現在瀏海裡，旁邊是「更新」和「稍後」，安裝進度也在那裡。先放著的話，設定按鈕和「一般」上會留一個紅點，隨時還能找到。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El notch te ofrece cada nueva versión con Actualizar y Más tarde, y la instala ahí mismo mostrando el progreso. Si la pospones, un punto rojo en el botón de ajustes y en General la mantiene a mano."
           }
         }
       }
@@ -63629,6 +65339,12 @@
             "state": "translated",
             "value": "會流出來的瀏海"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un notch que fluye"
+          }
         }
       }
     },
@@ -63651,6 +65367,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定弧線和這幾個點像軟糖一樣從瀏海裡湧出來，再縮回去；設定按鈕會變回那道弧；併進這台 Mac 的瀏海時，兩端正好接到螢幕邊緣。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El arco de ajustes y los puntos salen del notch y vuelven a entrar como si fueran gelatina, el botón de ajustes vuelve a convertirse en su arco y, unido al notch de tu Mac, los extremos encajan exactamente con el borde de la pantalla."
           }
         }
       }
@@ -63675,6 +65397,12 @@
             "state": "translated",
             "value": "百分比在這台 Mac 的瀏海旁邊"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El porcentaje junto al notch de tu Mac"
+          }
         }
       }
     },
@@ -63697,6 +65425,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "只開一個圓環並顯示百分比時，數字會放在相機外殼的另一側，大小剛好放得下。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con un solo anillo y su porcentaje activado, la cifra se sitúa al otro lado del alojamiento de la cámara, con el tamaño justo."
           }
         }
       }
@@ -63721,6 +65455,12 @@
             "state": "translated",
             "value": "開啟某個服務不再把 App 卡住"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activar un proveedor ya no bloquea la app"
+          }
         }
       }
     },
@@ -63743,6 +65483,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "尋找服務的命令列工具時，可能在設定重繪的同時把 App 卡死。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar la herramienta de línea de comandos de un proveedor podía bloquear la app mientras Ajustes se redibujaba."
           }
         }
       }
@@ -63767,6 +65513,12 @@
             "state": "translated",
             "value": "在 MacBook 上，瀏海現在就是這台 Mac 自己的——讀數分列在相機外殼兩側，而不是堆在它下面。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En un MacBook, el notch ahora es el de tu propio Mac: las lecturas se sitúan a ambos lados del alojamiento de la cámara en lugar de debajo."
+          }
         }
       }
     },
@@ -63789,6 +65541,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "讀數挪到了瀏海兩側"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las lecturas, ahora junto al notch"
           }
         }
       }
@@ -63813,6 +65571,12 @@
             "state": "translated",
             "value": "有相機外殼的 Mac 上，圓環以前掛在它下面，看起來像真瀏海底下又多了一條。現在它們分列在凹槽兩側，橫條按硬體自己的尺寸來畫：深度，以及貼合實物的圓角，而不是估一個。收合時它就是那個凹槽；伸手去夠時，加寬的是這台 Mac 本來就有的瀏海。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En un Mac con alojamiento de cámara, los anillos colgaban debajo, así que la app parecía un segundo notch bajo el real. Ahora se sitúan a ambos lados del recorte, en una barra dibujada con las medidas exactas del hardware: su profundidad y una esquina ajustada a la real, no estimada. Plegada, coincide exactamente con el recorte, y al acercar el cursor ensancha el notch que el Mac ya tiene."
+          }
         }
       }
     },
@@ -63835,6 +65599,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "收合時會流過去"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un plegado fluido"
           }
         }
       }
@@ -63859,6 +65629,12 @@
             "state": "translated",
             "value": "展開和收合改的是形狀本身，而不是換成另一個形狀；彈簧有足夠的分量，會穩住而不是彈一下就停。伸向螢幕邊緣的那段曲線，會跟著兩邊伸出來的部分一起變長。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al abrir y cerrar, la forma se transforma en lugar de cambiar una por otra, con un muelle con el peso justo para asentarse en vez de dar un salto. La curva hacia el borde de la pantalla crece con los laterales a medida que se extienden."
+          }
         }
       }
     },
@@ -63881,6 +65657,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "每個圓環下面的百分比，現在由你決定"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora eliges si ver el porcentaje bajo cada anillo"
           }
         }
       }
@@ -63905,6 +65687,12 @@
             "state": "translated",
             "value": "外觀裡有這個開關。挨著這台 Mac 自己的瀏海時，橫條的高度正好是凹槽的深度，一個圓環就把它佔滿，所以在那裡顯示數字，得把圓環畫小才能騰出地方——這件事該交給你選，而不是替你定。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apariencia tiene un interruptor para ello. Junto al notch del Mac, la barra tiene exactamente la profundidad del recorte y un anillo la llena, así que mostrar la cifra ahí obliga a dibujar los anillos más pequeños; mejor ofrecértelo que decidir por ti."
+          }
         }
       }
     },
@@ -63927,6 +65715,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "沒點到圓環，不再把瀏海鎖在開啟狀態"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un clic fuera de los anillos ya no deja el notch abierto"
           }
         }
       }
@@ -63951,6 +65745,12 @@
             "state": "translated",
             "value": "以前會把它釘住，螢幕上卻看不出，也撤不掉。「保持展開」在右鍵選單裡，寫著名字，還帶勾選。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antes lo fijaba, sin nada en pantalla que lo indicara ni permitiera deshacerlo. Mantener abierto está en el menú de clic derecho, donde aparece con su nombre y una marca de verificación."
+          }
         }
       }
     },
@@ -63973,6 +65773,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "每週額度可以當主圓環"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El límite semanal puede ser el anillo principal"
           }
         }
       }
@@ -63997,6 +65803,12 @@
             "state": "translated",
             "value": "給按週而不是按工作階段來安排額度的人。工作階段挪到細圓環和卡片上。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para quien se organiza por semanas en lugar de por sesiones. La sesión pasa al anillo fino y a la tarjeta."
+          }
         }
       }
     },
@@ -64019,6 +65831,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Claude 沒用掉的重置，以及更穩的 Desktop 讀數"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renovaciones de Claude sin usar y una lectura de Desktop más estable"
           }
         }
       }
@@ -64043,6 +65861,12 @@
             "state": "translated",
             "value": "你沒花掉的重置會顯示出來，不再丟掉；帶日期的額度重新整理後還在；搜尋 Desktop 快取有了上限，讀數不可用時會先停一陣，而不是反覆重試。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las renovaciones que no gastaste se muestran en lugar de descartarse, las asignaciones con fecha sobreviven a una actualización y la búsqueda en la caché de Desktop está acotada, de modo que una lectura inservible espera en lugar de reintentarse."
+          }
         }
       }
     },
@@ -64065,6 +65889,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Türkçe 和 Bahasa Indonesia"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Türkçe y Bahasa Indonesia"
           }
         }
       }
@@ -64089,6 +65919,12 @@
             "state": "translated",
             "value": "又多了兩種語言，都是完整的。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dos idiomas más, ambos completos."
+          }
         }
       }
     },
@@ -64111,6 +65947,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "整段用量都用顏色漸變"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un degradado de color en todo el rango"
           }
         }
       }
@@ -64135,6 +65977,12 @@
             "state": "translated",
             "value": "可以選擇讓圓環從空到滿連續變色，而不是在閾值處跳成一階一階。"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activa, si quieres, un anillo que cambia de color de forma continua de vacío a lleno, en lugar de saltar en los umbrales."
+          }
         }
       }
     },
@@ -64158,6 +66006,12 @@
             "state": "translated",
             "value": "Qianwen 的每月 Token Plan，以及兩個不算數的數字"
           }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El Token Plan mensual de Qianwen y dos números que no son números"
+          }
         }
       }
     },
@@ -64180,6 +66034,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "週欄位漏掉的月度方案現在能正確讀到；MiniMax 的計數溢位或回傳非有限值時，當作沒有讀數，而不是零。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El plan mensual que los campos semanales no recogen se lee correctamente, y un recuento de MiniMax que se desborda o llega como valor no finito se trata como ausencia de lectura en lugar de como cero."
           }
         }
       }
@@ -66074,6 +67934,402 @@
           "stringUnit": {
             "state": "translated",
             "value": "Oculto en el notch · Cargado en %@"
+          }
+        }
+      }
+    },
+    "Show what is left instead of what is used, a Dock style, oMLX, and Claude and Codex on your own servers.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muestra lo que queda en lugar de lo usado, un estilo Dock, oMLX, y Claude y Codex en tus propios servidores."
+          }
+        }
+      }
+    },
+    "The rings and figures count down what is left. Rings can shut when a window is spent, and order themselves by what remains.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los anillos y las cifras descuentan lo que queda. Los anillos pueden cerrarse cuando se agota un periodo y ordenarse según lo restante."
+          }
+        }
+      }
+    },
+    "Remote hosts and Muse": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hosts remotos y Muse"
+          }
+        }
+      }
+    },
+    "Claude and Codex accounts on servers you reach over SSH, and Muse, each with a ring of its own.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuentas de Claude y Codex en servidores a los que accedes por SSH, y Muse, cada uno con su propio anillo."
+          }
+        }
+      }
+    },
+    "A Dock style": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un estilo Dock"
+          }
+        }
+      }
+    },
+    "The notch floats just clear of the screen's edge as a slab of glass.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El notch flota justo separado del borde de la pantalla como una lámina de vidrio."
+          }
+        }
+      }
+    },
+    "oMLX": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "oMLX"
+          }
+        }
+      }
+    },
+    "The models oMLX has loaded, what they are doing, their speed, how full the context is, and a daily token count.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los modelos que oMLX tiene cargados, qué están haciendo, su velocidad, cuánto contexto ocupan y un recuento diario de tokens."
+          }
+        }
+      }
+    },
+    "Breathing working indicator": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indicador de actividad que respira"
+          }
+        }
+      }
+    },
+    "Optional: a disc in the provider's colour breathes while a session works, in place of the spinning arc.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opcional: un disco del color del proveedor respira mientras una sesión trabaja, en lugar del arco giratorio."
+          }
+        }
+      }
+    },
+    "Enterprise spend forecast": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previsión de gasto de Enterprise"
+          }
+        }
+      }
+    },
+    "The spend card says whether the monthly limit lasts until it resets.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La tarjeta de gasto indica si el límite mensual durará hasta que se renueve."
+          }
+        }
+      }
+    },
+    "More": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más"
+          }
+        }
+      }
+    },
+    "OpenCode activity on Custom Endpoints, Grok Bot's weekly usage, DeepSeek off-peak all day on Chinese public holidays, gentler Claude retries when rate limited, notches back on external displays after sleep, and Claude sessions nobody has open left out.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actividad de OpenCode en Endpoints personalizados, uso semanal de Grok Bot, DeepSeek fuera de horas pico todo el día en los festivos chinos, reintentos más suaves de Claude al alcanzar el límite de solicitudes, los notch vuelven a las pantallas externas tras el reposo y se excluyen las sesiones de Claude que nadie tiene abiertas."
+          }
+        }
+      }
+    },
+    "Qoder's credits, more than one Command Code account, and DeepSeek's balance from the wallet that has one.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Créditos de Qoder, más de una cuenta de Command Code y el saldo de DeepSeek desde el monedero que tiene fondos."
+          }
+        }
+      }
+    },
+    "Qoder": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qoder"
+          }
+        }
+      }
+    },
+    "A ring for your Qoder credits, international or China mainland. Sign in once inside Codenotch; nothing is copied from your browser.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un anillo para tus créditos de Qoder, internacional o de China continental. Inicia sesión una vez dentro de Codenotch; no se copia nada de tu navegador."
+          }
+        }
+      }
+    },
+    "More than one Command Code account": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más de una cuenta de Command Code"
+          }
+        }
+      }
+    },
+    "Each ~/.commandcode-name folder signed in with Command Code is its own ring, the way Claude and Codex profiles already are.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada carpeta ~/.commandcode-name con sesión iniciada en Command Code tiene su propio anillo, como ya ocurre con los perfiles de Claude y Codex."
+          }
+        }
+      }
+    },
+    "DeepSeek's balance from the funded wallet": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saldo de DeepSeek desde el monedero con fondos"
+          }
+        }
+      }
+    },
+    "With more than one currency listed, the balance comes from the wallet that holds money rather than the first one named.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuando aparece más de una moneda, el saldo se toma del monedero que tiene dinero en lugar del primero de la lista."
+          }
+        }
+      }
+    },
+    "Українська, up to date": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Українська, al día"
+          }
+        }
+      }
+    },
+    "Every string this version shows.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos los textos que muestra esta versión."
+          }
+        }
+      }
+    },
+    "Custom endpoints speak Anthropic and Gemini, llama.cpp shows its speed, and Antigravity reads without the IDE open.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los endpoints personalizados hablan Anthropic y Gemini, llama.cpp muestra su velocidad y Antigravity se lee sin el IDE abierto."
+          }
+        }
+      }
+    },
+    "Anthropic and Gemini custom endpoints": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Endpoints personalizados de Anthropic y Gemini"
+          }
+        }
+      }
+    },
+    "A custom endpoint can now be an Anthropic or a Gemini API as well as an OpenAI-compatible one, with its models found for you.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un endpoint personalizado ahora puede ser una API de Anthropic o de Gemini, además de una compatible con OpenAI, y sus modelos se detectan por ti."
+          }
+        }
+      }
+    },
+    "llama.cpp, with its own mark and its speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "llama.cpp, con su propio logotipo y su velocidad"
+          }
+        }
+      }
+    },
+    "A llama.cpp endpoint wears the official icon, and shows its generation speed and how many requests are running and waiting.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un endpoint de llama.cpp lleva el icono oficial y muestra su velocidad de generación y cuántas solicitudes se están ejecutando y cuántas esperan."
+          }
+        }
+      }
+    },
+    "Antigravity without the IDE running": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antigravity sin el IDE abierto"
+          }
+        }
+      }
+    },
+    "With the IDE closed, Codenotch starts Antigravity's own language server to read your quota rather than showing nothing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con el IDE cerrado, Codenotch inicia el propio servidor de lenguaje de Antigravity para leer tu cuota en lugar de no mostrar nada."
+          }
+        }
+      }
+    },
+    "OpenCode, whichever version": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenCode, sea cual sea la versión"
+          }
+        }
+      }
+    },
+    "Usage and activity are read from both the 1.x and the 2.x database, so neither reads as nothing spent.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El uso y la actividad se leen tanto de la base de datos 1.x como de la 2.x, así que ninguna aparece como si no hubiera gasto."
+          }
+        }
+      }
+    },
+    "Endpoints over Tailscale": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Endpoints a través de Tailscale"
+          }
+        }
+      }
+    },
+    "A plain http endpoint at a 100.64.x.x address — a machine on your tailnet — is now reachable.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora se puede acceder a un endpoint http simple en una dirección 100.64.x.x, es decir, una máquina de tu tailnet."
+          }
+        }
+      }
+    },
+    "简体中文 and 繁體中文, filled in": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "简体中文 y 繁體中文, completos"
+          }
+        }
+      }
+    },
+    "The strings that still showed in English are translated.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se tradujeron los textos que aún aparecían en inglés."
           }
         }
       }
