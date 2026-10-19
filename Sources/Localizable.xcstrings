@@ -53441,7 +53441,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aún no hay endpoints personalizados. Haz clic en 'Añadir endpoint' o elige una plantilla rápida para empezar."
+            "value": "Aún no hay endpoints propios. Haz clic en 'Añadir endpoint' o elige una plantilla rápida para empezar."
           }
         }
       }
@@ -54077,7 +54077,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nuevo endpoint personalizado"
+            "value": "Nuevo endpoint propio"
           }
         }
       }
@@ -54660,7 +54660,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Endpoints personalizados"
+            "value": "Endpoints propios"
           }
         }
       }
@@ -54766,7 +54766,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Endpoint personalizado"
+            "value": "Endpoint propio"
           }
         }
       }
@@ -64995,7 +64995,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un preajuste para endpoints personalizados muestra los créditos mensuales de una cuenta de RouteLLM y los que hayas comprado aparte."
+            "value": "Un preajuste para endpoints propios muestra los créditos mensuales de una cuenta de RouteLLM y los que hayas comprado aparte."
           }
         }
       }
@@ -68087,7 +68087,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Actividad de OpenCode en Endpoints personalizados, uso semanal de Grok Bot, DeepSeek fuera de horas pico todo el día en los festivos chinos, reintentos más suaves de Claude al alcanzar el límite de solicitudes, los notch vuelven a las pantallas externas tras el reposo y se excluyen las sesiones de Claude que nadie tiene abiertas."
+            "value": "Actividad de OpenCode en Endpoints propios, uso semanal de Grok Bot, DeepSeek fuera de horas pico todo el día en los festivos chinos, reintentos más suaves de Claude al alcanzar el límite de solicitudes, los notch vuelven a las pantallas externas tras el reposo y se excluyen las sesiones de Claude que nadie tiene abiertas."
           }
         }
       }
@@ -68197,7 +68197,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Los endpoints personalizados hablan Anthropic y Gemini, llama.cpp muestra su velocidad y Antigravity se lee sin el IDE abierto."
+            "value": "Los endpoints propios hablan Anthropic y Gemini, llama.cpp muestra su velocidad y Antigravity se lee sin el IDE abierto."
           }
         }
       }
@@ -68208,7 +68208,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Endpoints personalizados de Anthropic y Gemini"
+            "value": "Endpoints propios de Anthropic y Gemini"
           }
         }
       }
@@ -68219,7 +68219,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un endpoint personalizado ahora puede ser una API de Anthropic o de Gemini, además de una compatible con OpenAI, y sus modelos se detectan por ti."
+            "value": "Un endpoint propio ahora puede ser una API de Anthropic o de Gemini, además de una compatible con OpenAI, y sus modelos se detectan por ti."
           }
         }
       }
