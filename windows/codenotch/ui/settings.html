@@ -206,6 +206,7 @@
               <option value="ko">&#54620;&#44397;&#50612;</option>
               <option value="ru">Русский</option>
               <option value="uk">Українська</option>
+              <option value="es">Español</option>
             </select>
           </div>
           <div class="item cap">Sets the language used by Codenotch. “Follow system” uses the language Windows itself is set to.</div>
@@ -1009,7 +1010,123 @@ const UK_STATIC = {
   'English':'English',
   'Русский':'Русский'
 };
-const STATIC_TEXT = { 'pt-BR': PT_BR_STATIC, ru: RU_STATIC, zh: ZH_STATIC, 'zh-Hant': ZH_HANT_STATIC, ja: JA_STATIC, ko: KO_STATIC, uk: UK_STATIC };
+const ES_STATIC = {
+  'Colour transition':'Transición de color',
+  'Hard step':'Salto brusco',
+  'Colour ramp':'Degradado',
+  'Ample, watch and critical each stay one flat colour, jumping between them at the limits below.':'Holgado, aviso y crítico mantienen cada uno un color fijo y saltan de uno a otro en los límites de abajo.',
+  'The colour blends continuously from ample to critical across the full range, turning yellow at the watch limit below.':'El color pasa de forma continua de holgado a crítico a lo largo de todo el rango y se vuelve amarillo en el límite de aviso de abajo.',
+  'Usage Limits':'Límites de uso',
+  'Watch limit':'Límite de aviso',
+  'Critical limit':'Límite crítico',
+  'Reset to defaults':'Restaurar ajustes',
+  'With the colour ramp on, the ring only turns red at 100%, so the critical limit applies under Hard step.':'Con el degradado activado, el anillo solo se pone rojo al 100%, así que el límite crítico se aplica en Salto brusco.',
+  'Theme':'Tema',
+  'System':'Sistema',
+  'Light':'Claro',
+  'Dark':'Oscuro',
+  'The notch and this window follow the Windows app colour.':'El notch y esta ventana siguen el color de las apps de Windows.',
+  'A light notch and card, whatever Windows is set to.':'Notch y tarjeta claros, sea cual sea el ajuste de Windows.',
+  'The dark notch, whatever Windows is set to.':'El notch oscuro, sea cual sea el ajuste de Windows.',
+  'Updates':'Actualizaciones',
+  'Check for updates':'Buscar actualizaciones',
+  'Update':'Actualizar',
+  'Download installer':'Descargar instalador',
+  'Checking…':'Comprobando…',
+  'Installing…':'Instalando…',
+  'Up to date':'Actualizado',
+  'Could not check for updates':'No se pudieron buscar actualizaciones',
+  'Could not install the update':'No se pudo instalar la actualización',
+  'Codenotch checks for new Windows releases shortly after it starts. Signed updates install here; otherwise download and run the official installer from GitHub.':'Codenotch busca nuevas versiones para Windows poco después de abrirse. Las actualizaciones firmadas se instalan aquí; si no, descarga y ejecuta el instalador oficial desde GitHub.',
+  'Settings sections':'Secciones de ajustes',
+  'Accounts':'Cuentas',
+  'Appearance':'Apariencia',
+  'General':'General',
+  'Quit Codenotch':'Salir de Codenotch',
+  'Connected':'Conectado',
+  'Not connected':'No conectado',
+  'These have no ring to place. Switch one on and it joins the end of the list above.':'Estos no tienen anillo que colocar. Activa uno y se añadirá al final de la lista de arriba.',
+  'One provider always stays ticked, so the pill is never empty.':'Siempre queda al menos un proveedor marcado, para que la cápsula nunca esté vacía.',
+  'At least one provider stays on the notch':'Al menos un proveedor queda en el notch',
+  'Notch reads':'El notch muestra',
+  'Automatic':'Automático',
+  '5-Hour Limit':'Límite de 5 horas',
+  'Weekly Limit':'Límite semanal',
+  'Gemini Models':'Modelos Gemini',
+  'Claude and GPT models':'Modelos Claude y GPT',
+  'Let Claude Code notify Codenotch':'Dejar que Claude Code avise a Codenotch',
+  'Turning this on adds a few lines to your Claude Code settings file so that Claude Code sends Codenotch a short message when a session starts, when it is working, when it is waiting for your answer, and when it finishes. That is what makes the ring spin and the amber ring pulse.':'Al activarlo se añaden unas líneas al archivo de ajustes de Claude Code para que envíe a Codenotch un mensaje breve cuando una sesión empieza, cuando está trabajando, cuando espera tu respuesta y cuando termina. Eso es lo que hace girar el anillo y latir el anillo ámbar.',
+  'Notch':'Notch',
+  'Show':'Mostrar',
+  'Always show':'Mostrar siempre',
+  'Hide':'Ocultar',
+  'Size':'Tamaño',
+  'Small':'Pequeño',
+  'Medium':'Mediano',
+  'Large':'Grande',
+  'Takes the least room on the edge. Readable, but not from across the desk.':'Ocupa lo mínimo en el borde. Se lee bien, pero no desde el otro lado de la mesa.',
+  'The size the notch was drawn at.':'El tamaño con el que se diseñó el notch.',
+  'Easier to read at a glance, and harder to ignore.':'Más fácil de leer de un vistazo, y más difícil de ignorar.',
+  'Weekly ring':'Anillo semanal',
+  'Dashed weekly ring':'Anillo semanal discontinuo',
+  'Off':'Desactivado',
+  'Inside':'Dentro',
+  'Outside':'Fuera',
+  'One ring per provider, showing the headline limit. The weekly allowance stays in the hover card.':'Un anillo por proveedor, con el límite principal. La asignación semanal queda en la tarjeta.',
+  'A thinner ring for the weekly limit, drawn inside the main one. It shares the gap with the working indicator.':'Un anillo más fino para el límite semanal, dibujado dentro del principal. Comparte el hueco con el indicador de actividad.',
+  'A thinner ring for the weekly limit, drawn around the main one, in the margin between the ring and the notch edge.':'Un anillo más fino para el límite semanal, dibujado alrededor del principal, en el margen entre el anillo y el borde del notch.',
+  'Show on hover':'Al pasar el cursor',
+  'A small pill at the screen edge that opens when you reach it.':'Una pequeña cápsula en el borde de la pantalla que se abre cuando llegas a ella.',
+  'Fold for full-screen apps':'Plegar en pantalla completa',
+  'The notch folds away while a full-screen app is frontmost, and returns when you leave it. Off keeps it in place over full-screen apps.':'El notch se pliega mientras una app en pantalla completa está al frente y vuelve cuando sales de ella. Desactivado, se queda en su sitio sobre las apps en pantalla completa.',
+  'Adaptive pill':'Cápsula adaptable',
+  'While the notch is folded, its pill follows what is behind it: light over a dark background, black over a light one, so it stays easy to find. To tell, Codenotch reads a thin strip of the screen beside the pill twice a second and keeps only its average brightness.':'Con el notch plegado, su cápsula se adapta a lo que tiene detrás: clara sobre un fondo oscuro y negra sobre uno claro, para que siga siendo fácil de encontrar. Para saberlo, Codenotch lee dos veces por segundo una franja estrecha de la pantalla junto a la cápsula y solo guarda su brillo medio.',
+  'The notch stays open with every reading visible.':'El notch permanece abierto con todas las lecturas a la vista.',
+  'Edge':'Borde',
+  'Left':'Izquierda',
+  'Right':'Derecha',
+  'Top':'Arriba',
+  'Bottom':'Abajo',
+  'Screen':'Pantalla',
+  'Main':'Principal',
+  'Stands upright on the left-hand edge, with the card opening to its right.':'En vertical en el borde izquierdo, con la tarjeta abriéndose a su derecha.',
+  'Stands upright on the right-hand edge, the side it was drawn for.':'En vertical en el borde derecho, el lado para el que se diseñó.',
+  'Lies flat along the top edge, with the card opening below it.':'En horizontal a lo largo del borde superior, con la tarjeta abriéndose debajo.',
+  'Lies flat along the bottom edge, with the card opening above it.':'En horizontal a lo largo del borde inferior, con la tarjeta abriéndose encima.',
+  'Which screen the notch lives on.':'En qué pantalla está el notch.',
+  'this screen cannot be remembered by name':'esta pantalla no se puede recordar por su nombre',
+  'The black pill against the right-hand edge of the screen, with one ring per tool. Turn it off and the pill disappears; Codenotch keeps counting your usage either way.':'La cápsula negra junto al borde derecho de la pantalla, con un anillo por herramienta. Si lo desactivas, la cápsula desaparece; Codenotch sigue contando tu uso de todos modos.',
+  'Recentre':'Centrar',
+  'Hold the dots beside the settings button, or hold Alt, and drag the notch round the screen\'s edges. Each edge remembers where you left it. Recentre puts it back in the middle of the edge it is on, or on the main screen\'s right-hand edge if the screen it was on has been unplugged.':'Mantén pulsados los puntos junto al botón de ajustes, o mantén pulsada Alt, y arrastra el notch por los bordes de la pantalla. Cada borde recuerda dónde lo dejaste. Centrar lo devuelve al centro de su borde, o al borde derecho de la pantalla principal si la pantalla en la que estaba se desconectó.',
+  'The notch is back in the middle':'El notch volvió al centro',
+  'App':'App',
+  'App icon':'Icono de la app',
+  'Neither':'Ninguno',
+  'The small icon down by the clock. Right-clicking it opens this window, refreshes the readings, or quits Codenotch.':'El icono pequeño junto al reloj. Con clic derecho abre esta ventana, actualiza las lecturas o sale de Codenotch.',
+  'Held on: the notch is hidden, so this icon is the only way left to reach Codenotch. Switch the notch back on first if you want to hide it.':'Se mantiene activado: el notch está oculto, así que este icono es la única forma de llegar a Codenotch. Vuelve a activar el notch si quieres ocultarlo.',
+  'The taskbar icon has been kept on. With the notch hidden it is the only way left to open this window or to quit Codenotch, so Codenotch will not let both of them be switched off at the same time.':'El icono de la barra de tareas se mantuvo activado. Con el notch oculto, es la única forma de abrir esta ventana o salir de Codenotch, así que Codenotch no deja desactivar ambos a la vez.',
+  'Language':'Idioma',
+  'Follow system':'Según el sistema',
+  'Sets the language used by Codenotch. “Follow system” uses the language Windows itself is set to.':'Define el idioma de Codenotch. “Según el sistema” usa el idioma configurado en Windows.',
+  'Open Codenotch at login':'Abrir Codenotch al iniciar sesión',
+  'Codenotch opens by itself every time you sign in to this computer, and waits quietly in the background until a coding session starts. Turn it off and you have to open Codenotch yourself.':'Codenotch se abre solo cada vez que inicias sesión en este equipo y espera en segundo plano hasta que empieza una sesión de programación. Si lo desactivas, tendrás que abrir Codenotch tú mismo.',
+  'Version':'Versión',
+  'Data folder':'Carpeta de datos',
+  'Open folder':'Abrir carpeta',
+  'Everything Codenotch remembers lives in one folder: your settings, its log file, and the "glyphs" folder where you can drop your own icons. Opens in File Explorer.':'Todo lo que Codenotch recuerda está en una carpeta: tus ajustes, su archivo de registro y la carpeta "glyphs", donde puedes poner tus propios iconos. Se abre en el Explorador de archivos.',
+  'App designed and developed by':'App diseñada y desarrollada por',
+  'Saved':'Guardado',
+  'System tray':'Bandeja del sistema',
+  'Close':'Cerrar',
+  'No icon in the system tray. Open Codenotch again from the Start menu to bring these settings back.':'Sin icono en la bandeja del sistema. Vuelve a abrir Codenotch desde el menú Inicio para recuperar estos ajustes.',
+  'Model data':'Datos del modelo',
+  'English':'English',
+  'Русский':'Русский',
+  // Not in the other tables yet: the remaining-mode row came with 1.23.0.
+  'Show remaining instead of used':'Mostrar restante en vez de usado',
+  'The figure under each ring reads what is left — 87% instead of 13% used, the same number the card prints beside it. The rings themselves still fill by what is spent.':'La cifra bajo cada anillo muestra lo que queda: 87% en lugar de 13% usado, el mismo número que la tarjeta muestra al lado. Los anillos se siguen llenando según lo gastado.'
+};
+const STATIC_TEXT = { 'pt-BR': PT_BR_STATIC, ru: RU_STATIC, zh: ZH_STATIC, 'zh-Hant': ZH_HANT_STATIC, ja: JA_STATIC, ko: KO_STATIC, uk: UK_STATIC, es: ES_STATIC };
 const RESET_COPY = {
   'pt-BR':['Notificações de reset','Mostrar um cartão quando o Claude, Codex, Cursor ou outro provedor ativo renovar uma janela após pelo menos 10% de uso. O cartão também aparece com a notch oculta.','Som de notificação','Prévia do cartão de reset','Ver prévia','Notificações'],
   ru:['Уведомления о сбросе','Показывать карточку, когда Claude, Codex, Cursor или другой активный провайдер обновляет окно, если использовано не менее 10%. Карточка видна и при скрытой панели.','Звук уведомления','Предпросмотр карточки','Показать','Уведомления'],
@@ -1017,6 +1134,7 @@ const RESET_COPY = {
   'zh-Hant':['重設通知','當 Claude、Codex、Cursor 或其他啟用中的服務窗口在使用至少 10% 後更新時顯示卡片。隱藏凹口列時也會顯示。','通知音效','預覽重設卡片','預覽卡片','通知'],
   ja:['リセット通知','Claude、Codex、Cursor などアクティブなプロバイダーの枠を 10% 以上使った後に更新されたらカードを表示します。ノッチを非表示にしていても表示されます。','通知音','リセットカードをプレビュー','プレビュー','通知'],
   ko:['한도 초기화 알림','Claude, Codex, Cursor 등 활성 공급자의 한도를 10% 이상 사용한 뒤 갱신되면 카드를 표시합니다. 노치를 숨겨도 표시됩니다.','알림 소리','초기화 카드 미리 보기','미리 보기','알림'],
+  es:['Notificaciones de renovación','Muestra una tarjeta cuando Claude, Codex, Cursor u otro proveedor activo renueva un periodo tras al menos un 10% de uso. La tarjeta aparece aunque el notch esté oculto.','Sonido de notificación','Vista previa de la tarjeta','Ver tarjeta','Notificaciones'],
   uk:['Сповіщення про скидання','Показувати картку, коли Claude, Codex, Cursor чи інший активний провайдер оновлює вікно, якщо використано щонайменше 10%. Картка зʼявляється і за прихованої панелі.','Звук сповіщення','Попередній перегляд картки','Переглянути','Сповіщення'],
 };
 const RESET_KEYS = ['Reset notifications', 'Show a card when Claude, Codex, Cursor or another active provider renews a window after at least 10% use. The card also appears while the notch is hidden.', 'Notification sound', 'Preview the reset card', 'Preview card', 'Notifications'];
@@ -1031,6 +1149,7 @@ const STATUS_TEXT = {
   'zh-Hant':{ ok:'', stale:'上次讀數已過期', needsAuth:'未登入', absent:'未安裝', none:'暫無報告', error:'無法連線' },
   ja:{ ok:'', stale:'最後の読み取りが古いです', needsAuth:'サインインしていません', absent:'インストールされていません', none:'報告するものがありません', error:'到達できません' },
   ko:{ ok:'', stale:'마지막 측정값이 오래되었습니다', needsAuth:'로그인되지 않음', absent:'설치되지 않음', none:'보고할 내용 없음', error:'연결할 수 없음' },
+  es:{ ok:'', stale:'última lectura desactualizada', needsAuth:'sin sesión iniciada', absent:'no instalado', none:'nada que mostrar', error:'inaccesible' },
   uk:{ ok:'', stale:'останній показник застарів', needsAuth:'не виконано вхід', absent:'не встановлено', none:'немає даних', error:'недоступний' }
 };
 let uiLang = 'en';
@@ -1689,7 +1808,7 @@ document.getElementById('btn-recentre').addEventListener('click', () => {
 /* ---- Appearance: language ------------------------------------------------ */
 // Must list every <option> in the picker above: a value missing here is
 // discarded on save and read back as 'auto', so the language is unreachable.
-const LANGS = ['auto', 'en', 'pt-BR', 'zh', 'zh-Hant', 'ja', 'ko', 'ru', 'uk'];
+const LANGS = ['auto', 'en', 'pt-BR', 'zh', 'zh-Hant', 'ja', 'ko', 'ru', 'uk', 'es'];
 document.getElementById('lang').addEventListener('change', e => {
   const previous = e.target.dataset.previous || 'auto';
   const v = LANGS.indexOf(e.target.value) >= 0 ? e.target.value : 'auto';
