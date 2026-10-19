@@ -28,16 +28,16 @@ test('Spanish card keeps numbers, plan names and unknown vendor messages', () =>
   assert.equal(ui.updated(ui.ago(20)), 'Actualizado hace 20 min');
 });
 
-// "Renovar", never "reiniciar": the quota renews, the app does not restart (#295). The card drops the
-// tray's "Se" so "Límite de 5 horas" and its renewal time share one line in 246px.
+// "Renovar", never "reiniciar": the quota renews, the app does not restart (#295). Worded as the tray
+// and the Mac word it, so the three surfaces never disagree about the same reading.
 test('Spanish card says a quota renews', () => {
   const {textCopy, ui} = card('es');
   assert.equal(textCopy('Resetting…'), 'Renovando…');
   assert.equal(ui.resetting, 'Renovando…');
-  assert.equal(ui.resetsIn(51), 'Renueva en 51 min');
-  assert.equal(ui.resetsAt('14:30'), 'Renueva a las 14:30');
-  assert.equal(ui.resetsOn('jue', '14:30'), 'Renueva el jue 14:30');
-  assert.equal(ui.resetsDate('28 sept'), 'Renueva el 28 sept');
+  assert.equal(ui.resetsIn(51), 'Se renueva en 51 min');
+  assert.equal(ui.resetsAt('14:30'), 'Se renueva a las 14:30');
+  assert.equal(ui.resetsOn('jue', '14:30'), 'Se renueva el jue 14:30');
+  assert.equal(ui.resetsDate('28 sept'), 'Se renueva el 28 sept');
   assert.equal(ui.ago(120), 'hace 2 h');
   for (const text of [ui.resetting, ui.resetsIn(5), ui.resetsAt('9:00'), textCopy('Resets')]) {
     assert.doesNotMatch(text, /reinici|restablec/i);

@@ -1163,10 +1163,8 @@ const UI={
       resetsAt:t=>`Скидання о ${t}`,resetsOn:(d,t)=>`Скидання: ${d} ${t}`,resetsDate:d=>`Скидання: ${d}`,
       ago:m=>m<60?`${m} хв тому`:`${Math.round(m/60)} год тому`,
       usedLeft:(used,left)=>`Використано ${used}% · лишилось ${left}%`,leftUsed:(left,used)=>`лишилось ${left}% · Використано ${used}%`,andMore:n=>`і ще ${n}`,updated:a=>`Оновлено ${a}`},
-  // "Renueva", not the tray's "Se renueva": beside "Límite de 5 horas" the longer form takes a second
-  // line in the 246px card. Every form drops it, so two rows of the same card never word it apart.
-  es:{locale:'es',title:n=>'Uso de '+n,resetting:'Renovando…',resetsIn:m=>`Renueva en ${m} min`,
-      resetsAt:t=>`Renueva a las ${t}`,resetsOn:(d,t)=>`Renueva el ${d} ${t}`,resetsDate:d=>`Renueva el ${d}`,
+  es:{locale:'es',title:n=>'Uso de '+n,resetting:'Renovando…',resetsIn:m=>`Se renueva en ${m} min`,
+      resetsAt:t=>`Se renueva a las ${t}`,resetsOn:(d,t)=>`Se renueva el ${d} ${t}`,resetsDate:d=>`Se renueva el ${d}`,
       ago:m=>m<60?`hace ${m} min`:`hace ${Math.round(m/60)} h`,
       usedLeft:(used,left)=>`${used}% usado · ${left}% restante`,leftUsed:(left,used)=>`${left}% restante · ${used}% usado`,andMore:n=>`y ${n} más`,updated:a=>`Actualizado ${a}`},
   ru:{locale:'ru-RU',title:n=>'Использование '+n,resetting:'Сброс…',resetsIn:m=>`Сброс через ${m} мин`,
