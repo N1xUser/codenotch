@@ -480,7 +480,7 @@ mod tests {
         assert_eq!(restored.theme, "light");
     }
 
-    /// The Mac stores the same code, so a config written by either side names Spanish as "es".
+    /// "es", the code the Mac's picker stores too, so both ports name Spanish the same way.
     #[test]
     fn spanish_is_kept_as_its_language_code() {
         let cfg: Config = serde_json::from_str("{\"lang\":\"es\"}").expect("a Spanish config parses");
