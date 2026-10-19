@@ -190,7 +190,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 + [GLMProvider(), MiniMaxProvider(web: miniMaxWeb), GrokLocalProvider(), GrokBotProvider(), DevinLocalProvider(), OpenCodeProvider()]
                 + commandCodeProfiles.map { CommandCodeProvider(profile: $0) }
                 + [GitHubCopilotProvider(), KimiProvider(), KiroProvider(), AmpProvider(),
-                   ApifyProvider(), KiloProvider(),
+                   ApifyProvider(), KiloProvider(), HiggsfieldProvider(),
                    MuseLocalProvider(),
                    OllamaLocalProvider(endpoint: URL(string: preferences.ollamaEndpoint)!),
                    LMStudioLocalProvider(endpoint: URL(string: preferences.lmstudioEndpoint)!),
