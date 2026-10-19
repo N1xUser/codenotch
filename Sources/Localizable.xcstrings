@@ -5670,7 +5670,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Solicitudes de hoy · sin límite publicado"
+            "value": "Solicitudes hoy · sin límite publicado"
           }
         }
       }
@@ -26201,7 +26201,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El selector Hora de renovación de Apariencia puede mostrar \"Se renueva en 3h 20m\" en lugar de una fecha y una hora."
+            "value": "El selector Renovación de Apariencia puede mostrar \"Se renueva en 3h 20m\" en lugar de una fecha y una hora."
           }
         }
       }
@@ -50432,7 +50432,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Los proveedores nuevos permanecen desactivados hasta que los activas, el botón de recentrar da una respuesta más clara, se ignora el paso del cursor mientras arrastras con Opción, el sonido de finalización de Codex conserva su ajuste, y los anillos y la tarjeta de Windows coinciden con los del Mac."
+            "value": "Los proveedores nuevos permanecen desactivados hasta que los activas, el botón Centrar da una respuesta más clara, se ignora el paso del cursor mientras arrastras con Opción, el sonido de finalización de Codex conserva su ajuste, y los anillos y la tarjeta de Windows coinciden con los del Mac."
           }
         }
       }
@@ -52030,7 +52030,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Recentrar mueve el notch al instante; el plegado automático a pantalla completa tiene en cuenta el alojamiento de la cámara; y una espera por límite de frecuencia ya no cuesta una actualización extra entera."
+            "value": "Centrar mueve el notch al instante; el plegado automático a pantalla completa tiene en cuenta el alojamiento de la cámara; y una espera por límite de frecuencia ya no cuesta una actualización extra entera."
           }
         }
       }
@@ -64734,7 +64734,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Plantilla guardada. Edítala y haz clic en Importar JSON personalizado para cargarla."
+            "value": "Plantilla guardada. Edítala y haz clic en Importar JSON para cargarla."
           }
         }
       }
