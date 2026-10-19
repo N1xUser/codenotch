@@ -196,4 +196,18 @@ final class AppLanguageTests: XCTestCase {
         XCTAssertEqual(L10n.t("Always show"), "Her zaman")
         XCTAssertEqual(L10n.t("Settings…"), "Ayarlar…")
     }
+
+    func testSpanishIsOfferedAndMapsToEs() {
+        XCTAssertTrue(AppLanguage.allCases.contains(.spanish))
+        XCTAssertEqual(AppLanguage.spanish.title, "Español")
+        XCTAssertEqual(AppLanguage.spanish.locale?.identifier, "es")
+    }
+
+    func testApplySpanishStoresTheOverrideAndServesSpanishCopy() {
+        L10n.apply(.spanish)
+        L10n.testLocale = nil
+        XCTAssertEqual(L10n.locale.identifier, "es")
+        XCTAssertEqual(L10n.t("Always show"), "Mostrar siempre")
+        XCTAssertEqual(L10n.t("Settings…"), "Ajustes…")
+    }
 }
