@@ -24075,7 +24075,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Su límite (%@) se agotó — se renueva a las %@"
+            "value": "Su límite (%@) se agotó — se renueva: %@"
           }
         }
       }
@@ -42111,7 +42111,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se renueva a las"
+            "value": "Se renueva:"
           }
         }
       }

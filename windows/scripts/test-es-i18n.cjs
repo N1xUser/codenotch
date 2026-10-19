@@ -35,7 +35,8 @@ test('Spanish card says a quota renews', () => {
   assert.equal(textCopy('Resetting…'), 'Renovando…');
   assert.equal(ui.resetting, 'Renovando…');
   assert.equal(ui.resetsIn(51), 'Se renueva en 51 min');
-  assert.equal(ui.resetsAt('14:30'), 'Se renueva a las 14:30');
+  // A colon, not "a las": one o'clock would need "a la 1:30".
+  assert.equal(ui.resetsAt('1:30'), 'Se renueva: 1:30');
   assert.equal(ui.resetsOn('jue', '14:30'), 'Se renueva el jue 14:30');
   assert.equal(ui.resetsDate('28 sept'), 'Se renueva el 28 sept');
   assert.equal(ui.ago(120), 'hace 2 h');
