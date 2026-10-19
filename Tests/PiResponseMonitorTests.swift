@@ -112,6 +112,49 @@ final class PiResponseMonitorTests: XCTestCase {
         XCTAssertEqual(finished.map(\.isBusy), [false])
     }
 
+    /// Pi quit after a prompt and before any reply: the file ends on the
+    /// user's message, and nothing will ever close the turn.
+    @MainActor
+    func testTurnIsDroppedWhenNoPiRunsInItsDirectory() throws {
+        try append(#"{"type":"session","id":"s","cwd":"/work/app"}"# + "\n"
+            + modelChange(provider: "openai-codex", model: "gpt-5.6-sol") + "\n" + user() + "\n")
+        var live: Set<String> = ["/work/app"]
+        var published: [String: Int] = [:]
+        let monitor = PiResponseMonitor(directory: directory, startedAt: .distantPast,
+                                        livePiDirectories: { live },
+                                        onResponse: { _ in },
+                                        onActivity: { published[$0] = $1.count })
+
+        monitor.consume([session.path])
+        XCTAssertEqual(published["codex"], 1)
+
+        monitor.sweep()
+        XCTAssertEqual(published["codex"], 1, "a Pi still runs in that directory")
+
+        live = ["/work/other"]
+        monitor.sweep()
+        XCTAssertEqual(published["codex"], 0)
+    }
+
+    @MainActor
+    func testTurnWithoutAKnownDirectoryLastsWhileAnyPiRuns() throws {
+        try append(modelChange(provider: "openai-codex", model: "gpt-5.6-sol") + "\n" + user() + "\n")
+        var live: Set<String> = ["/work/other"]
+        var published: [String: Int] = [:]
+        let monitor = PiResponseMonitor(directory: directory, startedAt: .distantPast,
+                                        livePiDirectories: { live },
+                                        onResponse: { _ in },
+                                        onActivity: { published[$0] = $1.count })
+
+        monitor.consume([session.path])
+        monitor.sweep()
+        XCTAssertEqual(published["codex"], 1)
+
+        live = []
+        monitor.sweep()
+        XCTAssertEqual(published["codex"], 0)
+    }
+
     func testBuiltInModelFamiliesMapToTheirCards() {
         let mappings = [
             ("radius", "claude-opus-5", "claude"),
