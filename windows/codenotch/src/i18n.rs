@@ -66,6 +66,10 @@ fn language_from_windows_locale(name: &str) -> Option<&'static str> {
     if name.starts_with("uk") {
         return Some("uk");
     }
+    // Every region shares the one table: es-ES, es-MX, es-419, and es_AR.UTF-8 off Windows.
+    if name.starts_with("es") {
+        return Some("es");
+    }
     None
 }
 
@@ -156,6 +160,22 @@ pub fn tr(lang: &str, key: &str) -> &'static str {
         ("pt-BR", "refresh_now") => "Atualizar agora",
         ("pt-BR", "open_host") => "Abrir o %@",
         ("pt-BR", "keep_open") => "Manter aberto",
+        ("es", "open_data") => "Abrir carpeta de datos (registros / iconos)",
+        ("es", "install") => "Instalar hooks de Claude Code",
+        ("es", "uninstall") => "Desinstalar hooks",
+        ("es", "language") => "Idioma",
+        ("es", "lang_auto") => "Según el sistema",
+        ("es", "reset_pos") => "Restablecer posición de la barra",
+        ("es", "quit") => "Salir",
+        ("es", "hooks_missing") => "Hooks no instalados: clic derecho en el icono de la bandeja → Instalar hooks de Claude Code (la app de escritorio usa un respaldo automático)",
+        ("es", "autostart") => "Iniciar con Windows",
+        ("es", "refresh_all") => "Actualizar todo",
+        ("es", "waiting") => "Esperando la primera lectura…",
+        ("es", "quit_app") => "Salir de Codenotch",
+        ("es", "settings") => "Ajustes…",
+        ("es", "refresh_now") => "Actualizar ahora",
+        ("es", "open_host") => "Abrir %@",
+        ("es", "keep_open") => "Mantener abierto",
         ("zh", "install") => "安装 Claude Code 钩子",
         ("zh-Hant", "install") => "安裝 Claude Code 鉤子",
         ("zh", "uninstall") => "卸载钩子",
@@ -434,6 +454,42 @@ mod tests {
         ] {
             assert_eq!(tr("ko", key), expected);
         }
+    }
+
+    const SPANISH_KEYS: &[(&str, &str)] = &[
+        ("open_data", "Abrir carpeta de datos (registros / iconos)"),
+        ("install", "Instalar hooks de Claude Code"),
+        ("uninstall", "Desinstalar hooks"),
+        ("language", "Idioma"),
+        ("lang_auto", "Según el sistema"),
+        ("reset_pos", "Restablecer posición de la barra"),
+        ("quit", "Salir"),
+        ("hooks_missing", "Hooks no instalados: clic derecho en el icono de la bandeja → Instalar hooks de Claude Code (la app de escritorio usa un respaldo automático)"),
+        ("autostart", "Iniciar con Windows"),
+        ("refresh_all", "Actualizar todo"),
+        ("waiting", "Esperando la primera lectura…"),
+        ("quit_app", "Salir de Codenotch"),
+        ("settings", "Ajustes…"),
+        ("refresh_now", "Actualizar ahora"),
+        ("open_host", "Abrir %@"),
+        ("keep_open", "Mantener abierto"),
+    ];
+
+    #[test]
+    fn spanish_translates_every_known_key() {
+        for (key, value) in SPANISH_KEYS {
+            assert_eq!(tr("es", key), *value, "missing Spanish translation for {key}");
+            assert_ne!(tr("es", key), "?", "unknown Spanish key {key}");
+        }
+    }
+
+    #[test]
+    fn spanish_locales_resolve_whatever_the_region() {
+        use super::language_from_windows_locale;
+        assert_eq!(language_from_windows_locale("es-AR"), Some("es"));
+        assert_eq!(language_from_windows_locale("es-ES"), Some("es"));
+        assert_eq!(language_from_windows_locale("es-419"), Some("es"));
+        assert_eq!(language_from_windows_locale("es"), Some("es"));
     }
 
     #[test]

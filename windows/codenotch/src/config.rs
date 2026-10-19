@@ -27,7 +27,7 @@ pub struct TraySlot {
 pub struct Config {
     #[serde(default = "default_port")]
     pub port: u16,
-    /// "auto" | "zh" | "zh-Hant" | "en" | "ja" | "ko" | "pt-BR" | "ru" | "uk"
+    /// "auto" | "zh" | "zh-Hant" | "en" | "ja" | "ko" | "pt-BR" | "ru" | "uk" | "es"
     #[serde(default = "default_lang")]
     pub lang: String,
     #[serde(default)]
@@ -478,6 +478,13 @@ mod tests {
         assert!(!restored.reset_notification_sound);
         assert!(!restored.notch_visible);
         assert_eq!(restored.theme, "light");
+    }
+
+    /// The Mac stores the same code, so a config written by either side names Spanish as "es".
+    #[test]
+    fn spanish_is_kept_as_its_language_code() {
+        let cfg: Config = serde_json::from_str("{\"lang\":\"es\"}").expect("a Spanish config parses");
+        assert_eq!(cfg.lang, "es");
     }
 
     /// What PowerShell 5 writes for `Set-Content -Encoding UTF8`: the same JSON behind a BOM. It used

@@ -46,6 +46,7 @@ pub fn used_left(w: &LimitWindow, lang: &str) -> String {
     let used = if w.derived { format!("~{used}") } else { used };
     match lang {
         "pt-BR" => format!("{used}% usado · {left}% restante"),
+        "es" => format!("{used}% usado · {left}% restante"),
         "ru" => format!("Использовано {used}% · осталось {left}%"),
         "zh" => format!("已用 {used}% · 剩余 {left}%"),
         "zh-Hant" => format!("已用 {used}% · 剩餘 {left}%"),
@@ -62,6 +63,7 @@ pub fn reset_text(resets_at: u64, now: u64, lang: &str) -> String {
     if resets_at <= now {
         return match lang {
             "pt-BR" => "Renovando…",
+            "es" => "Renovando…",
             "ru" => "Сброс…",
             "zh" => "正在重置…",
             "zh-Hant" => "正在重置…",
@@ -78,6 +80,7 @@ pub fn reset_text(resets_at: u64, now: u64, lang: &str) -> String {
         let m = minutes.max(1);
         return match lang {
             "pt-BR" => format!("Renova em {m} min"),
+            "es" => format!("Se renueva en {m} min"),
             "ru" => format!("Сброс через {m} мин"),
             "zh" => format!("{m} 分钟后重置"),
             "zh-Hant" => format!("{m} 分鐘後重置"),
@@ -91,6 +94,7 @@ pub fn reset_text(resets_at: u64, now: u64, lang: &str) -> String {
         let (h, m) = (hours, minutes % 60);
         return match lang {
             "pt-BR" => format!("Renova em {h}h {m}m"),
+            "es" => format!("Se renueva en {h}h {m}m"),
             "ru" => format!("Сброс через {h} ч {m} мин"),
             "zh" => format!("{h} 小时 {m} 分钟后重置"),
             "zh-Hant" => format!("{h} 小時 {m} 分鐘後重置"),
@@ -104,6 +108,7 @@ pub fn reset_text(resets_at: u64, now: u64, lang: &str) -> String {
         let (d, h) = (days, hours % 24);
         return match lang {
             "pt-BR" => if d == 1 { format!("Renova em {d} dia {h}h") } else { format!("Renova em {d} dias {h}h") },
+            "es" => if d == 1 { format!("Se renueva en {d} día {h}h") } else { format!("Se renueva en {d} días {h}h") },
             "ru" => format!("Сброс через {d} дн. {h} ч"),
             "zh" => format!("{d} 天 {h} 小时后重置"),
             "zh-Hant" => format!("{d} 天 {h} 小時後重置"),
@@ -117,6 +122,7 @@ pub fn reset_text(resets_at: u64, now: u64, lang: &str) -> String {
     let when = system_datetime(resets_at);
     match lang {
         "pt-BR" => format!("Renova {when}"),
+        "es" => format!("Se renueva el {when}"),
         "ru" => format!("Сброс: {when}"),
         "zh" => format!("{when} 重置"),
         "zh-Hant" => format!("{when} 重置"),
@@ -133,6 +139,7 @@ pub fn ago(since: u64, now: u64, lang: &str) -> String {
     let span = if minutes < 60 {
         match lang {
             "pt-BR" => format!("{minutes} min"),
+            "es" => format!("{minutes} min"),
             "ru" => format!("{minutes} мин"),
             "zh" => format!("{minutes} 分钟"),
             "zh-Hant" => format!("{minutes} 分鐘"),
@@ -145,6 +152,7 @@ pub fn ago(since: u64, now: u64, lang: &str) -> String {
         let h = (minutes as f64 / 60.0).round() as u64;
         match lang {
             "pt-BR" => format!("{h} h"),
+            "es" => format!("{h} h"),
             "ru" => format!("{h} ч"),
             "zh" => format!("{h} 小时"),
             "zh-Hant" => format!("{h} 小時"),
@@ -156,6 +164,7 @@ pub fn ago(since: u64, now: u64, lang: &str) -> String {
     };
     match lang {
         "pt-BR" => format!("há {span}"),
+        "es" => format!("hace {span}"),
         "ru" => format!("{span} назад"),
         "zh" => format!("{span}前"),
         "zh-Hant" => format!("{span}前"),
@@ -182,6 +191,18 @@ pub fn label(name: &str, lang: &str) -> String {
         ("pt-BR", "Premium requests") => "Solicitações premium",
         ("pt-BR", "Chat requests") => "Solicitações de chat",
         ("pt-BR", "Completions") => "Conclusões de código",
+        ("es", "Current session") => "Sesión actual",
+        ("es", "Weekly (all models)") => "Semanal (todos los modelos)",
+        ("es", "Weekly (Opus)") => "Semanal (Opus)",
+        ("es", "Weekly (model-scoped)") => "Semanal (por modelo)",
+        ("es", "Weekly limit" | "Weekly Limit") => "Límite semanal",
+        ("es", "Monthly limit" | "Monthly Limit") => "Límite mensual",
+        ("es", "5-hour Limit" | "5-Hour Limit") => "Límite de 5 horas",
+        ("es", "Included usage") => "Uso incluido",
+        ("es", "API usage") => "Uso de API",
+        ("es", "Premium requests") => "Solicitudes premium",
+        ("es", "Chat requests") => "Solicitudes de chat",
+        ("es", "Completions") => "Autocompletados",
         ("ru", "Current session") => "Текущий сеанс",
         ("ru", "Weekly (all models)") => "Недельный (все модели)",
         ("ru", "Weekly (Opus)") => "Недельный (Opus)",
@@ -400,6 +421,23 @@ mod tests {
         assert_eq!(ago(0, 20 * MIN, "pt-BR"), "há 20 min");
     }
 
+    /// "Renovar", not "reiniciar": the quota renews, the app does not restart (#295 had it that way
+    /// in Portuguese). One day is singular, like the Mac's "Se renueva en %lld día %lldh".
+    #[test]
+    fn spanish_readings_renew_rather_than_restart() {
+        let w = window("Current session", 0.61, Some(60 * MIN));
+        assert_eq!(window_line(&w, MIN, "es"), "Sesión actual: 61% usado · 39% restante · Se renueva en 59 min");
+        assert_eq!(reset_text(MIN, MIN, "es"), "Renovando…");
+        assert_eq!(reset_text(136 * MIN, MIN, "es"), "Se renueva en 2h 15m");
+        assert_eq!(reset_text((1440 + 60 + 1) * MIN, MIN, "es"), "Se renueva en 1 día 1h");
+        assert_eq!(reset_text((3 * 1440 + 4 * 60 + 1) * MIN, MIN, "es"), "Se renueva en 3 días 4h");
+        assert_eq!(ago(MIN, 21 * MIN, "es"), "hace 20 min");
+        assert_eq!(ago(MIN, 121 * MIN, "es"), "hace 2 h");
+        assert_eq!(used_left(&window("", 0.006, None), "es"), "0.6% usado · 99.4% restante");
+        assert_eq!(label("5-hour Limit", "es"), "Límite de 5 horas");
+        assert_eq!(label("A future limit", "es"), "A future limit");
+    }
+
     #[test]
     fn a_reset_is_minutes_then_hours_then_days() {
         assert_eq!(reset_text(59 * MIN, 0, "en"), "Resets in 59 min");
@@ -476,6 +514,9 @@ mod tests {
             let korean = label(name, "ko");
             assert_ne!(korean, name, "{name:?} lost its Korean here");
             assert!(page.contains(&format!("'{name}':'{korean}'")), "Korean card and tray disagree on {name:?}");
+            let spanish = label(name, "es");
+            assert_ne!(spanish, name, "{name:?} lost its Spanish here");
+            assert!(page.contains(&format!("'{name}':'{spanish}'")), "Spanish card and tray disagree on {name:?}");
         }
     }
 }

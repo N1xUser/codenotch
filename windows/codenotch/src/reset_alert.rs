@@ -273,6 +273,7 @@ fn play_notification_sound() {}
 fn word_renewed(lang: &str) -> &'static str {
     match lang {
         "pt-BR" => "renovado",
+        "es" => "se renovó",
         "ru" => "обновлён",
         "zh" => "已更新",
         "zh-Hant" => "已更新",
@@ -286,6 +287,7 @@ fn word_renewed(lang: &str) -> &'static str {
 fn word_quota_available(lang: &str) -> &'static str {
     match lang {
         "pt-BR" => "Cota disponível",
+        "es" => "Cuota disponible",
         "ru" => "Лимит снова доступен",
         "zh" => "额度已恢复",
         "zh-Hant" => "額度已恢復",
@@ -299,6 +301,7 @@ fn word_quota_available(lang: &str) -> &'static str {
 fn word_dismiss(lang: &str) -> &'static str {
     match lang {
         "pt-BR" => "Fechar",
+        "es" => "Cerrar",
         "ru" => "Закрыть",
         "zh" => "关闭",
         "zh-Hant" => "關閉",
@@ -360,4 +363,19 @@ pub fn preview_reset_alert(app: AppHandle) -> Result<(), String> {
         true,
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The word follows both the provider ("Claude") and the window ("Sesión actual"), so it cannot
+    /// agree in gender with either: "se renovó" reads right after a noun of any gender, where
+    /// "renovado" would not after "Sesión actual".
+    #[test]
+    fn spanish_renewal_reads_after_any_noun() {
+        assert_eq!(word_renewed("es"), "se renovó");
+        assert_eq!(word_quota_available("es"), "Cuota disponible");
+        assert_eq!(word_dismiss("es"), "Cerrar");
+    }
 }
