@@ -51513,7 +51513,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Claude Code y Antigravity recrean sus inicios de sesión guardados de una forma que macOS no deja que sobreviva a un «Permitir siempre», así que el cuadro de diálogo de la contraseña volvía una y otra vez. Las actualizaciones en segundo plano ya no lo muestran nunca; Permitir acceso, en Ajustes, es el único lugar donde aún puede aparecer."
+            "value": "Claude Code y Antigravity recrean sus inicios de sesión guardados de una forma que macOS no deja que sobreviva a un \"Permitir siempre\", así que el cuadro de diálogo de la contraseña volvía una y otra vez. Las actualizaciones en segundo plano ya no lo muestran nunca; Permitir acceso, en Ajustes, es el único lugar donde aún puede aparecer."
           }
         }
       }
@@ -53441,7 +53441,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aún no hay endpoints personalizados. Haz clic en «Añadir endpoint» o elige una plantilla rápida para empezar."
+            "value": "Aún no hay endpoints personalizados. Haz clic en 'Añadir endpoint' o elige una plantilla rápida para empezar."
           }
         }
       }
