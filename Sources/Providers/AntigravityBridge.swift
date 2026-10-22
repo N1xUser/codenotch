@@ -77,6 +77,45 @@ enum AntigravityBridge {
         return URL(fileURLWithPath: String(fields[1])).lastPathComponent == "agy"
     }
 
+    /// ACP runs as `agy_acp_server.par` or `localharness_external`.
+    static func isACP(_ line: Substring) -> Bool {
+        line.contains("agy_acp_server") || line.contains("localharness_external")
+    }
+
+    /// Whether an Antigravity ACP server process is currently running.
+    static func isACPRunning(processTable: String? = nil) -> Bool {
+        let table = processTable ?? run("/bin/ps", ["-Ao", "pid,command"])
+        return table.split(separator: "\n").contains(where: isACP)
+    }
+
+    /// IDE runs as language_server with --csrf_token or Antigravity.app.
+    static func isIDE(_ line: Substring) -> Bool {
+        (line.contains("language_server") && line.contains("--csrf_token")) ||
+        line.contains("Antigravity.app")
+    }
+
+    /// Whether an Antigravity IDE process is currently running.
+    static func isIDERunning(processTable: String? = nil) -> Bool {
+        let table = processTable ?? run("/bin/ps", ["-Ao", "pid,command"])
+        return table.split(separator: "\n").contains(where: isIDE)
+    }
+
+    /// Whether an Antigravity CLI process is currently running.
+    static func isCLIRunning(processTable: String? = nil) -> Bool {
+        let table = processTable ?? run("/bin/ps", ["-Ao", "pid,command"])
+        return table.split(separator: "\n").contains(where: isCLI)
+    }
+
+    /// Whether a specific Antigravity flavor process is currently running.
+    static func isRunning(flavor: AntigravityFlavor, processTable: String? = nil) -> Bool {
+        let table = processTable ?? run("/bin/ps", ["-Ao", "pid,command"])
+        switch flavor {
+        case .ide: return isIDERunning(processTable: table)
+        case .cli: return isCLIRunning(processTable: table)
+        case .acp: return isACPRunning(processTable: table)
+        }
+    }
+
     private static func endpoint(
         for line: Substring, token: String?, ports listeningPorts: ((Int) -> [Int])?
     ) -> Endpoint? {
@@ -253,6 +292,10 @@ enum AntigravityBridge {
             process = nil
             endpoint = nil
         }
+
+        func resetForTesting() {
+            stop()
+        }
     }
 
     /// A server Codenotch owns, or nil until one is needed.
@@ -314,7 +357,7 @@ enum AntigravityBridge {
 
     // MARK: - Plumbing
 
-    private static func run(_ path: String, _ arguments: [String]) -> String {
+    static func run(_ path: String, _ arguments: [String]) -> String {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: path)
         process.arguments = arguments

@@ -1878,3 +1878,129 @@ private final class GoogleStub: URLProtocol {
 
     override func stopLoading() {}
 }
+
+
+final class AntigravityFlavorSelectionTests: XCTestCase {
+    func testRunningProcessBeatsNonRunningEvenWithOlderActivity() {
+        let ide = FlavorCandidate(
+            flavor: .ide,
+            credentials: nil,
+            isRunning: true,
+            lastActivity: Date(timeIntervalSince1970: 1000),
+            canProvideQuota: true,
+            isActive: true
+        )
+        let acp = FlavorCandidate(
+            flavor: .acp,
+            credentials: nil,
+            isRunning: false,
+            lastActivity: Date(timeIntervalSince1970: 2000),
+            canProvideQuota: true,
+            isActive: true
+        )
+
+        let ranked = AntigravityFlavor.rankCandidates([acp, ide])
+        XCTAssertEqual(ranked.first?.flavor, .ide, "A live running process must strictly beat a non-running one")
+    }
+
+    func testMultipleRunningTieBreaksByMostRecentActivity() {
+        let ide = FlavorCandidate(
+            flavor: .ide,
+            credentials: nil,
+            isRunning: true,
+            lastActivity: Date(timeIntervalSince1970: 1000),
+            canProvideQuota: true,
+            isActive: true
+        )
+        let acp = FlavorCandidate(
+            flavor: .acp,
+            credentials: nil,
+            isRunning: true,
+            lastActivity: Date(timeIntervalSince1970: 2000),
+            canProvideQuota: true,
+            isActive: true
+        )
+
+        let ranked = AntigravityFlavor.rankCandidates([ide, acp])
+        XCTAssertEqual(ranked.first?.flavor, .acp, "When multiple are running, newest activity wins")
+    }
+
+    func testMultipleRunningTieBreaksByPrecedenceWhenActivityIsMissingOrTied() {
+        let cli = FlavorCandidate(
+            flavor: .cli,
+            credentials: nil,
+            isRunning: true,
+            lastActivity: nil,
+            canProvideQuota: true,
+            isActive: true
+        )
+        let acp = FlavorCandidate(
+            flavor: .acp,
+            credentials: nil,
+            isRunning: true,
+            lastActivity: nil,
+            canProvideQuota: true,
+            isActive: true
+        )
+        let ide = FlavorCandidate(
+            flavor: .ide,
+            credentials: nil,
+            isRunning: true,
+            lastActivity: nil,
+            canProvideQuota: true,
+            isActive: true
+        )
+
+        let ranked = AntigravityFlavor.rankCandidates([cli, acp, ide])
+        XCTAssertEqual(ranked.map(\.flavor), [.ide, .acp, .cli], "Tie-breaker precedence must be IDE > ACP > CLI")
+    }
+
+    func testNoRunningProcessesTieBreaksByMostRecentActivity() {
+        let ide = FlavorCandidate(
+            flavor: .ide,
+            credentials: nil,
+            isRunning: false,
+            lastActivity: Date(timeIntervalSince1970: 1000),
+            canProvideQuota: true,
+            isActive: true
+        )
+        let cli = FlavorCandidate(
+            flavor: .cli,
+            credentials: nil,
+            isRunning: false,
+            lastActivity: Date(timeIntervalSince1970: 3000),
+            canProvideQuota: true,
+            isActive: true
+        )
+        let acp = FlavorCandidate(
+            flavor: .acp,
+            credentials: nil,
+            isRunning: false,
+            lastActivity: Date(timeIntervalSince1970: 2000),
+            canProvideQuota: true,
+            isActive: true
+        )
+
+        let ranked = AntigravityFlavor.rankCandidates([ide, cli, acp])
+        XCTAssertEqual(ranked.map(\.flavor), [.cli, .acp, .ide])
+    }
+
+    func testRunningFlavorsDetection() {
+        let table = """
+        100 /sbin/launchd
+        200 /Applications/Antigravity.app/Contents/Resources/bin/language_server --csrf_token 123
+        300 /usr/local/bin/agy
+        400 /Users/test/external_agents/antigravity-acp/agy_acp_server.par
+        """
+        let running = AntigravityFlavor.runningFlavors(processTable: table)
+        XCTAssertTrue(running.contains(.ide))
+        XCTAssertTrue(running.contains(.cli))
+        XCTAssertTrue(running.contains(.acp))
+    }
+
+    func testFlavorDisplayNames() {
+        XCTAssertEqual(AntigravityFlavor.ide.displayName, "Antigravity IDE")
+        XCTAssertEqual(AntigravityFlavor.cli.displayName, "Antigravity CLI")
+        XCTAssertEqual(AntigravityFlavor.acp.displayName, "Antigravity ACP")
+    }
+}
