@@ -225,6 +225,12 @@ pub fn present() -> bool {
     data_dirs().iter().any(|d| d.join("auth.json").is_file() || d.join("opencode.db").is_file())
 }
 
+/// The session database, when OpenCode has one: the same file the sign-in is read from.
+/// The activity engine watches it for live sessions (read-only, never written).
+pub fn db_path() -> Option<PathBuf> {
+    data_dirs().into_iter().map(|d| d.join("opencode.db")).find(|p| p.is_file())
+}
+
 // ---------------- The usage endpoint ----------------
 
 enum FetchErr {
