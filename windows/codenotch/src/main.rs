@@ -25,6 +25,7 @@ mod antigravity;
 mod glm;
 mod opencode;
 mod commandcode;
+mod qoder;
 mod agy_cli;
 mod glyphs;
 mod trayicon;
@@ -73,6 +74,8 @@ pub struct AppState {
     /// OpenCode Go plan snapshot, read with OpenCode's own sign-in (auth.json or opencode.db).
     pub opencode: Mutex<usage::UsageSnapshot>,
     pub commandcode: Mutex<usage::UsageSnapshot>,
+    /// Qoder plan quota snapshot, read through the official Agent SDK sidecar (qodercli sign-in).
+    pub qoder: Mutex<usage::UsageSnapshot>,
     /// Provider glyph cache, collected at launch and again on a tray refresh
     pub glyphs: Mutex<std::collections::HashMap<String, glyphs::Glyph>>,
     /// Working state of the non-Claude providers (Cursor reports it; Codex and Antigravity are inferred from recent writes)
@@ -604,6 +607,7 @@ pub(crate) fn refresh_provider(app: &AppHandle, provider: &str) -> bool {
         "deepseek" => deepseek_harness::request_refresh(),
         "opencode" => opencode::request_refresh(),
         "commandcode" => commandcode::request_refresh(),
+        "qoder" => qoder::request_refresh(),
         _ => return false,
     }
     true
@@ -646,6 +650,11 @@ fn get_opencode(state: tauri::State<AppState>) -> usage::UsageSnapshot {
 #[tauri::command]
 fn get_commandcode(state: tauri::State<AppState>) -> usage::UsageSnapshot {
     state.commandcode.lock().unwrap().clone()
+}
+
+#[tauri::command]
+fn get_qoder(state: tauri::State<AppState>) -> usage::UsageSnapshot {
+    state.qoder.lock().unwrap().clone()
 }
 
 #[tauri::command]
@@ -716,6 +725,8 @@ pub(crate) fn provider_page(provider: &str) -> Option<(&'static str, &'static st
         "opencode" => ("https://opencode.ai", "opencode.ai"),
         "commandcode" => ("https://commandcode.ai", "commandcode.ai"),
         "deepseek" => ("https://platform.deepseek.com/usage", "platform.deepseek.com"),
+        // The account page the SDK README documents (usage/plan and token minting live here)
+        "qoder" => ("https://qoder.com/account/integrations", "qoder.com"),
         _ => return None,
     })
 }
@@ -1280,6 +1291,8 @@ fn ring_window<'a>(
         "commandcode" => by_id("monthly"),
         // The Harness publishes no limit: the headline is today's derived budget ring.
         "deepseek" => by_id("today"),
+        // getUsageInfo meters one plan window; the addon/org buckets are card-only rows.
+        "qoder" => by_id("quota"),
         _ => antigravity_lane(windows, antigravity_limit, antigravity_model),
     }
 }
@@ -1340,6 +1353,7 @@ pub(crate) fn snapshot_of(app: &AppHandle, id: &str) -> usage::UsageSnapshot {
         "deepseek" => st.deepseek.lock().unwrap().clone(),
         "opencode" => st.opencode.lock().unwrap().clone(),
         "commandcode" => st.commandcode.lock().unwrap().clone(),
+        "qoder" => st.qoder.lock().unwrap().clone(),
         _ => st.usage.lock().unwrap().clone(),
     }
 }
@@ -1788,12 +1802,13 @@ pub fn provider_label(id: &str) -> &'static str {
         "opencode" => "OpenCode",
         "commandcode" => "Command Code",
         "deepseek" => "DeepSeek Harness",
+        "qoder" => "Qoder",
         _ => "Claude",
     }
 }
 
 /// Every provider the tray menu can offer, in the order the notch shows them.
-pub const TRAY_PROVIDER_IDS: [&str; 10] = ["claude", "codex", "glm", "opencode", "commandcode", "cursor", "grok", "copilot", "gemini", "deepseek"];
+pub const TRAY_PROVIDER_IDS: [&str; 11] = ["claude", "codex", "glm", "opencode", "commandcode", "cursor", "grok", "copilot", "gemini", "deepseek", "qoder"];
 
 /// Keeps the tray menu current. macOS rebuilds its menu as it opens; Tauri has no such hook, so it
 /// is rebuilt whenever a reading changes, and once a minute besides — otherwise "Resets in 12 min"
@@ -1987,6 +2002,7 @@ fn main() {
             deepseek: Mutex::new(deepseek_harness::load_persisted()),
             opencode: Mutex::new(opencode::load_persisted()),
             commandcode: Mutex::new(commandcode::load_persisted()),
+            qoder: Mutex::new(qoder::load_persisted()),
             glyphs: Mutex::new(Default::default()),
             activity: Mutex::new(Vec::new()),
         })
@@ -2014,6 +2030,7 @@ fn main() {
             get_deepseek,
             get_opencode,
             get_commandcode,
+            get_qoder,
             get_glyphs,
             get_activity,
             open_data_dir,
@@ -2107,6 +2124,7 @@ fn main() {
     deepseek_harness::start(handle.clone());
             opencode::start(handle.clone());
             commandcode::start(handle.clone());
+            qoder::start(handle.clone());
             activity::start(handle.clone());
             reset_watch::start(handle.clone());
             // Collecting glyphs may read icon resources out of a few executables; do it off the main thread and push when done
@@ -2446,6 +2464,14 @@ mod tests {
     #[test]
     fn claude_means_the_session_even_when_the_week_is_fuller() {
         assert_eq!(pick("claude", &[win("session", 0.10), win("weekly_all", 0.60)]), Some("session"));
+    }
+
+    /// getUsageInfo's plan bucket is the headline; an add-on row never replaces a missing quota
+    #[test]
+    fn qoder_means_the_plan_window() {
+        assert_eq!(pick("qoder", &[win("quota", 0.4), win("addon", 0.9)]), Some("quota"));
+        assert_eq!(pick("qoder", &[win("addon", 0.9)]), None);
+        assert_eq!(pick("qoder", &[]), None);
     }
 
     #[test]

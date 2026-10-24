@@ -113,6 +113,9 @@ pub struct Config {
     /// The same one-shot migration for the GitHub Copilot ring.
     #[serde(default)]
     pub copilot_notch_fixed: bool,
+    /// The same one-shot migration for the Qoder ring.
+    #[serde(default)]
+    pub qoder_notch_fixed: bool,
     /// false = the pill is kept off the screen edge entirely; the tray icon is then the only way in
     #[serde(default = "yes")]
     pub notch_visible: bool,
@@ -316,6 +319,7 @@ impl Default for Config {
             opencode_notch_fixed: true,
             commandcode_notch_fixed: true,
             copilot_notch_fixed: true,
+            qoder_notch_fixed: true,
             notch_visible: true,
             notch_on_hover: true,
             tray_visible: true,
@@ -389,6 +393,8 @@ pub fn load() -> Config {
     migrate_commandcode_notch(&mut cfg, &raw);
     // And for GitHub Copilot.
     migrate_copilot_notch(&mut cfg, &raw);
+    // And for Qoder.
+    migrate_qoder_notch(&mut cfg, &raw);
 
     // Both hidden would leave the app unreachable: no pill, no tray icon, no way to open settings.
     if !cfg.notch_visible && !cfg.tray_visible {
@@ -466,6 +472,21 @@ fn migrate_copilot_notch(cfg: &mut Config, raw: &Option<String>) {
         cfg.notch_slots.push(TraySlot { provider: "copilot".into() });
     }
     cfg.copilot_notch_fixed = true;
+}
+
+fn migrate_qoder_notch(cfg: &mut Config, raw: &Option<String>) {
+    let predates = raw
+        .as_deref()
+        .and_then(|t| serde_json::from_str::<serde_json::Value>(t).ok())
+        .map(|v| v.get("qoder_notch_fixed").is_none())
+        .unwrap_or(false);
+    if !predates {
+        return;
+    }
+    if !cfg.notch_slots.is_empty() && !cfg.notch_slots.iter().any(|s| s.provider == "qoder") {
+        cfg.notch_slots.push(TraySlot { provider: "qoder".into() });
+    }
+    cfg.qoder_notch_fixed = true;
 }
 
 pub fn save(cfg: &Config) {

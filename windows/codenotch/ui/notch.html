@@ -427,6 +427,7 @@ let deepseekSnap={status:'absent',windows:[],fetched_at:0,note:''};
 // OpenCode Go plan, read with OpenCode's own sign-in; absent until OpenCode is installed
 let opencodeSnap={status:'absent',windows:[],fetched_at:0,note:''};
 let commandcodeSnap={status:'absent',windows:[],fetched_at:0,note:''};
+let qoderSnap={status:'absent',windows:[],fetched_at:0,note:''};
 let agSnap={status:'absent',windows:[],fetched_at:0,note:''};
 let glyphs={}; // id → {kind:'mark'|'appicon', url}
 let activity=[]; // working state of the non-Claude providers: {provider,state:'busy'|'waiting',name,detail,since}
@@ -503,6 +504,7 @@ const TEXT={
     'Sign in to Cursor to see usage.':'사용량을 확인하려면 Cursor에 로그인하십시오.',
     'Sign in to Codex to see usage.':'사용량을 확인하려면 Codex에 로그인하십시오.',
     'Sign in to Antigravity to see usage.':'사용량을 확인하려면 Antigravity에 로그인하십시오.',
+    'Sign in to qodercli to see usage.':'사용량을 확인하려면 qodercli에 로그인하십시오.',
     'needs your input':'응답을 기다리는 중',
     'Working in':'작업 위치:',
     'Sign in':'로그인',
@@ -573,6 +575,7 @@ const TEXT={
     'Sign in to Cursor to see usage.':'Entre no Cursor para ver o uso.',
     'Sign in to Codex to see usage.':'Entre no Codex para ver o uso.',
     'Sign in to Antigravity to see usage.':'Entre no Antigravity para ver o uso.',
+    'Sign in to qodercli to see usage.':'Entre no qodercli para ver o uso.',
     'Run grok login to see usage.':'Execute grok login para ver o uso.',
     'Run gh auth login to see usage.':'Execute gh auth login para ver o uso.',
     'Premium requests':'Solicitações premium',
@@ -632,6 +635,7 @@ const TEXT={
     'Sign in to Cursor to see usage.':'Увійдіть у Cursor, щоб бачити використання.',
     'Sign in to Codex to see usage.':'Увійдіть у Codex, щоб бачити використання.',
     'Sign in to Antigravity to see usage.':'Увійдіть в Antigravity, щоб бачити використання.',
+    'Sign in to qodercli to see usage.':'Увійдіть у qodercli, щоб бачити використання.',
     'Run grok login to see usage.':'Запустіть grok login, щоб бачити використання.',
     'Run gh auth login to see usage.':'Запустіть gh auth login, щоб бачити використання.',
     'Premium requests':'Преміум-запити',
@@ -689,6 +693,7 @@ const TEXT={
     'Sign in to Cursor to see usage.':'Войдите в Cursor, чтобы увидеть использование.',
     'Sign in to Codex to see usage.':'Войдите в Codex, чтобы увидеть использование.',
     'Sign in to Antigravity to see usage.':'Войдите в Antigravity, чтобы увидеть использование.',
+    'Sign in to qodercli to see usage.':'Войдите в qodercli, чтобы увидеть использование.',
     'Run grok login to see usage.':'Выполните grok login, чтобы увидеть использование.',
     'Run gh auth login to see usage.':'Выполните gh auth login, чтобы увидеть использование.',
     'Premium requests':'Премиум-запросы',
@@ -732,6 +737,7 @@ const TEXT={
     'Sign in to Cursor to see usage.':'请登录 Cursor 以查看用量。',
     'Sign in to Codex to see usage.':'请登录 Codex 以查看用量。',
     'Sign in to Antigravity to see usage.':'请登录 Antigravity 以查看用量。',
+    'Sign in to qodercli to see usage.':'请登录 qodercli 以查看用量。',
     'Run grok login to see usage.':'请运行 grok login 以查看用量。',
     'Run gh auth login to see usage.':'请运行 gh auth login 以查看用量。',
     'Premium requests':'高级请求',
@@ -791,6 +797,7 @@ const TEXT={
     'Sign in to Cursor to see usage.':'請登入 Cursor 以查看用量。',
     'Sign in to Codex to see usage.':'請登入 Codex 以查看用量。',
     'Sign in to Antigravity to see usage.':'請登入 Antigravity 以查看用量。',
+    'Sign in to qodercli to see usage.':'請登入 qodercli 以查看用量。',
     'Run grok login to see usage.':'請執行 grok login 以查看用量。',
     'Run gh auth login to see usage.':'請執行 gh auth login 以查看用量。',
     'Premium requests':'進階請求',
@@ -1158,6 +1165,7 @@ function providers(){
   if(grokSnap.status!=='absent') list.push({id:'grok',base:'grok',name:'Grok',glyph:'Gk',snap:grokSnap});
   if(copilotSnap.status!=='absent') list.push({id:'copilot',base:'copilot',name:'GitHub Copilot',glyph:'Cp',snap:copilotSnap});
   if(agSnap.status!=='absent') list.push({id:'gemini',base:'gemini',name:'Antigravity',glyph:'Ag',snap:agSnap});
+  if(qoderSnap.status!=='absent') list.push({id:'qoder',base:'qoder',name:'Qoder',glyph:'Q',snap:qoderSnap});
   if(Array.isArray(notchSlots)&&notchSlots.length){
     const picked=list.filter(p=>!!slotFor(p.base));
     // Never leave the notch with nothing in it: an empty result means the choice no longer matches
@@ -1194,6 +1202,7 @@ function headlineOf(snap,id){
   if(id==='deepseek') return byId('today');
   if(id==='opencode') return byId('rolling');
   if(id==='commandcode') return byId('monthly');
+  if(id==='qoder') return byId('quota');
   const fam=ws.filter(w=>laneFamily(w)===agPrefs.model), lanes=fam.length?fam:ws;
   if(agPrefs.limit!=='automatic'){ const w=tightestOf(lanes.filter(w=>laneIs(w,agPrefs.limit))); if(w) return w; }
   return tightestOf(lanes.filter(w=>w.used<1))||tightestOf(lanes)||lanes[0];
@@ -1214,6 +1223,7 @@ function weeklyOf(snap,id){
   if(id==='deepseek') return null;
   if(id==='opencode') return byId('weekly');
   if(id==='commandcode') return byId('weekly');
+  if(id==='qoder') return null; // one plan window renewing at expiresAt; nothing weekly
   const fam=ws.filter(w=>laneFamily(w)===agPrefs.model), lanes=fam.length?fam:ws;
   return tightestOf(lanes.filter(w=>laneIs(w,'weekly')));
 }
@@ -1385,7 +1395,7 @@ function renderCard(){
   let html=`<div class="c-head">${headIcon}<span class="c-title">${esc(ui().title(p.name))}</span></div>`;
   if(staleOf(snap)&&snap.fetched_at) html+=`<div class="c-sub">${ui().updated(ago(snap.fetched_at))}</div>`;
   if(snap.status==='needsAuth'){
-    const who={claude:'Sign in to Claude Code to see usage.',cursor:'Sign in to Cursor to see usage.',codex:'Sign in to Codex to see usage.',grok:'Run grok login to see usage.',copilot:'Run gh auth login to see usage.',opencode:'Run opencode auth login to see usage.',commandcode:'Sign in with the Command Code app to read your usage.',gemini:'Sign in to Antigravity to see usage.'}[p.base]||'';
+    const who={claude:'Sign in to Claude Code to see usage.',cursor:'Sign in to Cursor to see usage.',codex:'Sign in to Codex to see usage.',grok:'Run grok login to see usage.',copilot:'Run gh auth login to see usage.',opencode:'Run opencode auth login to see usage.',commandcode:'Sign in with the Command Code app to read your usage.',gemini:'Sign in to Antigravity to see usage.',qoder:'Sign in to qodercli to see usage.'}[p.base]||'';
     html+=`<div class="c-note">${textCopy(who)}<br>${esc(textCopy(snap.note||''))}</div>`;
   }else if(!snap.windows.length){
     html+=`<div class="c-note">${esc(textCopy(snap.note||'Waiting for first reading…'))}</div>`;
@@ -2184,6 +2194,8 @@ listen('opencode',e=>{opencodeSnap=e.payload||opencodeSnap;settle('opencode');re
 invoke('get_opencode').then(u=>{opencodeSnap=u||opencodeSnap;renderRing();}).catch(()=>{});
 listen('commandcode',e=>{commandcodeSnap=e.payload||commandcodeSnap;settle('commandcode');renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
 invoke('get_commandcode').then(u=>{commandcodeSnap=u||commandcodeSnap;renderRing();}).catch(()=>{});
+listen('qoder',e=>{qoderSnap=e.payload||qoderSnap;settle('qoder');renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
+invoke('get_qoder').then(u=>{qoderSnap=u||qoderSnap;renderRing();}).catch(()=>{});
 invoke('get_notch_slots').then(v=>{if(Array.isArray(v)){notchSlots=v;renderRing();}}).catch(()=>{});
 listen('notch_slots',e=>{
   notchSlots=Array.isArray(e.payload)?e.payload:null;
