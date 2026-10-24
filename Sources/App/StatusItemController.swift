@@ -545,6 +545,17 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         // would leave every menu after this one saying "Refreshing…".
         refreshWait += 1
         isRefreshing = false
+        // The menu is handed back to the button, so the next plain click is
+        // the action again and not a second menu. Asynchronously: AppKit is
+        // still unwinding this menu's tracking, and taking it off the item
+        // from inside the callback that announces it closed is asking for
+        // trouble. With `.menu` there is nothing to hand back — the menu
+        // lives on the item and must stay there.
+        guard !clickAction.opensMenuOnItsOwn else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let self, !self.clickAction.opensMenuOnItsOwn else { return }
+            self.item?.menu = nil
+        }
     }
 
     /// The Refresh all row draws its own highlight — AppKit draws none for a
@@ -572,20 +583,6 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         timer.tolerance = 1
         RunLoop.main.add(timer, forMode: .common)
         menuClock = timer
-    }
-
-    func menuDidClose(_ menu: NSMenu) {
-        // The menu is handed back to the button, so the next plain click is
-        // the action again and not a second menu. Asynchronously: AppKit is
-        // still unwinding this menu's tracking, and taking it off the item
-        // from inside the callback that announces it closed is asking for
-        // trouble. With `.menu` there is nothing to hand back — the menu
-        // lives on the item and must stay there.
-        guard !clickAction.opensMenuOnItsOwn else { return }
-        DispatchQueue.main.async { [weak self] in
-            guard let self, !self.clickAction.opensMenuOnItsOwn else { return }
-            self.item?.menu = nil
-        }
     }
 
     /// Exposed for tests: what the menu says without needing a status item.
