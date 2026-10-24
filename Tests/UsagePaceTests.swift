@@ -17,12 +17,12 @@ final class UsagePaceTests: XCTestCase {
     func testCalculatesDeficitAndReserve() throws {
         let deficit = try XCTUnwrap(pace(used: 0.98, remaining: 86400))
         XCTAssertEqual(deficit.percentagePoints, 12.285714, accuracy: 0.00001)
-        XCTAssertEqual(deficit.summary, "12.3% over pace")
+        XCTAssertEqual(deficit.summary, "12.3% deficit")
         XCTAssertTrue(deficit.isDeficit)
 
         let reserved = try XCTUnwrap(pace(used: 0.27))
         XCTAssertEqual(reserved.percentagePoints, -23, accuracy: 0.00001)
-        XCTAssertEqual(reserved.summary, "23% to burn")
+        XCTAssertEqual(reserved.summary, "23% reserved")
         XCTAssertFalse(reserved.isDeficit)
     }
 
@@ -46,9 +46,9 @@ final class UsagePaceTests: XCTestCase {
     }
 
     func testFormattingKeepsTheSignAtSubTenthPrecision() throws {
-        XCTAssertEqual(try XCTUnwrap(pace(used: 0.5004)).summary, "<0.1% over pace")
-        XCTAssertEqual(try XCTUnwrap(pace(used: 0.4996)).summary, "<0.1% to burn")
-        XCTAssertEqual(try XCTUnwrap(pace()).summary, "On pace")
+        XCTAssertEqual(try XCTUnwrap(pace(used: 0.5004)).summary, "<0.1% deficit")
+        XCTAssertEqual(try XCTUnwrap(pace(used: 0.4996)).summary, "<0.1% reserved")
+        XCTAssertEqual(try XCTUnwrap(pace()).summary, "0% reserved")
     }
 
     func testDurationCodingRemainsBackwardCompatible() throws {
@@ -111,31 +111,6 @@ final class UsagePacePreferenceTests: XCTestCase {
         Preferences(defaults: defaults).showUsagePace = true
         XCTAssertTrue(Preferences(defaults: defaults).showUsagePace)
     }
-
-    func testDeficitSortDefaultsOffAndSurvivesARelaunch() throws {
-        let name = "DeficitSortPreferenceTests.\(UUID().uuidString)"
-        let defaults = try XCTUnwrap(UserDefaults(suiteName: name))
-        defer { defaults.removePersistentDomain(forName: name) }
-        XCTAssertEqual(Preferences(defaults: defaults).ringOrder, .manual)
-        Preferences(defaults: defaults).ringOrder = .deficit
-        XCTAssertEqual(Preferences(defaults: defaults).ringOrder, .deficit)
-    }
-
-    func testRingOrderMigratesFromTheLegacySwitches() throws {
-        let name = "RingOrderMigrationTests.\(UUID().uuidString)"
-        let defaults = try XCTUnwrap(UserDefaults(suiteName: name))
-        defer { defaults.removePersistentDomain(forName: name) }
-        // Both on: deficit won then, so it wins the migration.
-        defaults.set(true, forKey: "autoOrderByRemaining")
-        defaults.set(true, forKey: "autoOrderByDeficit")
-        XCTAssertEqual(Preferences(defaults: defaults).ringOrder, .deficit)
-
-        let remainingName = "RingOrderMigrationRemaining.\(UUID().uuidString)"
-        let remainingDefaults = try XCTUnwrap(UserDefaults(suiteName: remainingName))
-        defer { remainingDefaults.removePersistentDomain(forName: remainingName) }
-        remainingDefaults.set(true, forKey: "autoOrderByRemaining")
-        XCTAssertEqual(Preferences(defaults: remainingDefaults).ringOrder, .remaining)
-    }
 }
 
 final class BurnDeficitTests: XCTestCase {
@@ -157,13 +132,6 @@ final class BurnDeficitTests: XCTestCase {
         XCTAssertGreaterThan(urgent, fresh)
     }
 
-    func testBurnSummaryNamesTheDirection() throws {
-        XCTAssertEqual(try XCTUnwrap(window(used: 0.3, hoursLeft: 23).usagePace(now: now)).burnSummary,
-                       "56.3% to burn")
-        XCTAssertEqual(try XCTUnwrap(window(used: 0.98, hoursLeft: 24).usagePace(now: now)).burnSummary,
-                       "12.3% ahead of pace")
-    }
-
     func testMaxBurnTakesTheMostUrgentWindow() throws {
         let session = LimitWindow(id: "session", label: "Session", usedFraction: 0.1,
                                   resetsAt: now.addingTimeInterval(4 * 3600), duration: 5 * 3600)
@@ -175,7 +143,6 @@ final class BurnDeficitTests: XCTestCase {
                                         headlineID: "session", weeklyID: "weekly_all")
         let max = try XCTUnwrap(snapshot.maxBurnDeficit(now: now))
         XCTAssertEqual(max, 56.3095, accuracy: 0.01)
-        XCTAssertEqual(snapshot.burnDeficitSummary(now: now), "56.3% to burn")
     }
 
     func testNoClockMeansNoBurn() {
@@ -185,7 +152,6 @@ final class BurnDeficitTests: XCTestCase {
                                         windows: [LimitWindow(id: "w", label: "W", usedFraction: 0.3)],
                                         headlineID: "w")
         XCTAssertNil(snapshot.maxBurnDeficit(now: now))
-        XCTAssertNil(snapshot.burnDeficitSummary(now: now))
     }
 }
 

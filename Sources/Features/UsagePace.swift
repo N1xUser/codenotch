@@ -3,17 +3,16 @@ import Foundation
 struct UsagePace {
     /// Used quota minus elapsed time, expressed in percentage points.
     ///
-    /// Positive means over pace (burning too fast, will run out early).
-    /// Negative means behind pace (quota left beyond time left — the
-    /// use-it-or-lose-it case). `burnPoints` flips the sign so the waste
-    /// risk reads positive: "57% to burn" is a 57-point burn deficit.
+    /// Positive is a deficit (burning too fast, runs out early); negative is
+    /// held in reserve. `burnPoints` flips the sign, so the reserve that is
+    /// about to expire unused reads positive for the burn-deficit sort.
     let percentagePoints: Double
 
     var isDeficit: Bool { percentagePoints > 0 }
 
     /// The waste risk, in points: remaining quota minus remaining time.
     /// Positive is urgent (much left, little time), negative means ahead
-    /// of burn (over pace). Nil pace has no burn figure.
+    /// of burn (in deficit). Nil pace has no burn figure.
     var burnPoints: Double { -percentagePoints }
 
     var isBurnUrgent: Bool { burnPoints > 0 }
@@ -21,34 +20,13 @@ struct UsagePace {
     var summary: String {
         let magnitude = abs(percentagePoints)
         let rounded = (magnitude * 10).rounded() / 10
-        // Exactly on pace: no direction to name.
-        if magnitude == 0 { return L10n.t("On pace") }
         let value = rounded == 0 && magnitude > 0
             ? "<0.1"
             : String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"), rounded)
                 .replacingOccurrences(of: ".0", with: "")
-        // "Over pace" (too fast, runs out early) vs "to burn" (too slow,
-        // expires unused) — the two directions of the same number. "Deficit"
-        // and "reserved" hid which was which: a 56% reserve with 23h left
-        // sounded saved, when it is the one about to be wasted.
         return isDeficit
-            ? L10n.t("\(value)% over pace")
-            : L10n.t("\(value)% to burn")
-    }
-
-    /// The burn-deficit line for a ring: the most urgent window's figure,
-    /// e.g. "57% to burn". Nil when no window has a clock.
-    var burnSummary: String {
-        let magnitude = abs(burnPoints)
-        let rounded = (magnitude * 10).rounded() / 10
-        if magnitude == 0 { return L10n.t("On pace") }
-        let value = rounded == 0 && magnitude > 0
-            ? "<0.1"
-            : String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"), rounded)
-                .replacingOccurrences(of: ".0", with: "")
-        return isBurnUrgent
-            ? L10n.t("\(value)% to burn")
-            : L10n.t("\(value)% ahead of pace")
+            ? L10n.t("\(value)% deficit")
+            : L10n.t("\(value)% reserved")
     }
 }
 
@@ -102,15 +80,6 @@ extension ProviderSnapshot {
     /// carries a clock — nothing timed, nothing to burn down.
     func maxBurnDeficit(now: Date) -> Double? {
         windows.compactMap { $0.burnDeficitPoints(now: now) }.max()
-    }
-
-    /// The ring's burn line, e.g. "57% to burn": the most urgent window's
-    /// figure, so the number beside the ring and the order of the rings
-    /// never disagree. Nil when no window has a clock.
-    func burnDeficitSummary(now: Date) -> String? {
-        let paces = windows.compactMap { $0.usagePace(now: now) }
-        guard let urgent = paces.max(by: { $0.burnPoints < $1.burnPoints }) else { return nil }
-        return urgent.burnSummary
     }
 }
 

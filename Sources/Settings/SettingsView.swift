@@ -865,7 +865,7 @@ struct SettingsView: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 Toggle(L10n.t("Show usage pace"), isOn: $preferences.showUsagePace)
-                Text(L10n.t("Compares each timed allowance with the time left until reset: over pace when burning too fast, to burn when quota will expire unused. The to-burn figure is the burn deficit the notch can sort by."))
+                Text(L10n.t("Compares each timed allowance with the time left until reset, showing quota in deficit or held in reserve."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
