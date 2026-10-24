@@ -538,6 +538,13 @@ fn opencode_activity(ctx: &mut Ctx) -> Vec<Activity> {
             return Vec::new();
         }
     }
+    // "Working" is a two-minute window, not something the file says: a session that stops without
+    // marking itself idle (a crash, a killed terminal) writes nothing more, so the mtime gate would
+    // keep serving it as working forever. Once the last update ages out, ask again.
+    let now = now_ms();
+    if ctx.opencode.last.iter().any(|a| now.saturating_sub(a.since) >= OPENCODE_ACTIVE_WINDOW_MS) {
+        ctx.opencode.checked_once = false;
+    }
     ctx.opencode.refresh(|conn| {
         let mut stmt = conn
             .prepare(
@@ -735,6 +742,32 @@ mod tests {
         assert_eq!(a.state, "busy");
         assert_eq!(a.name, "Fix bug");
         assert!(a.detail.contains("openrouter/deepseek") && a.detail.contains("$0.42"), "{}", a.detail);
+    }
+
+    #[test]
+    fn an_opencode_session_that_stops_writing_ages_out_without_a_file_change() {
+        let now = now_ms() as i64;
+        let p = temp_db(
+            "ages",
+            &format!(
+                "{}
+                 INSERT INTO session_v2 VALUES ('a','Crashed','x',0.0,{},NULL,NULL);",
+                session_table(),
+                now - 60_000
+            ),
+        );
+        let mut ctx = Ctx::new();
+        ctx.opencode = DbCache::new(p.clone());
+        assert_eq!(opencode_activity(&mut ctx).len(), 1, "a minute old: still working");
+        // The same file, untouched, read after the row has aged past the window.
+        for a in ctx.opencode.last.iter_mut() {
+            a.since = a.since.saturating_sub(OPENCODE_ACTIVE_WINDOW_MS);
+        }
+        let conn = rusqlite::Connection::open(&p).unwrap();
+        conn.execute("UPDATE session_v2 SET time_updated = ?1", [now - 600_000]).unwrap();
+        drop(conn);
+        ctx.opencode.sig = ctx.opencode.signature();
+        assert!(opencode_activity(&mut ctx).is_empty(), "no write since, so no longer working");
     }
 
     #[test]
