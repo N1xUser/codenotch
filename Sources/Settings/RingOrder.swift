@@ -31,7 +31,7 @@ enum RingOrder: String, CaseIterable, Identifiable {
         case .manual:
             return L10n.t("The notch draws rings in the order below. Drag one by its handle to move it.")
         case .remaining:
-            return L10n.t("Most remaining first, by the window that leads each ring. A high number that cannot be spent yet sinks below usable accounts but stays above empty ones.")
+            return L10n.t("Most remaining first, by the window that leads each ring; the menu bar sorts its readings by what is left of the five-hour window it prints. A high number that cannot be spent yet sinks below usable accounts but stays above empty ones.")
         case .deficit:
             return L10n.t("Quota expiring soonest first: remaining quota minus remaining time. 70% left with 23h of a week left (about 56 to burn) outranks 100% with 6 days left (about 14 to burn).")
         }

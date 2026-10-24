@@ -88,6 +88,16 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             updateButton()
         }
     }
+    /// Sorts the face by what is left of the five-hour window it prints,
+    /// most first, as the notch sorts its rings. The menu keeps the manual
+    /// order: it is the full list, and a list that rearranges itself under
+    /// the pointer is harder to use than one that does not.
+    var autoOrders: Bool = false {
+        didSet {
+            guard autoOrders != oldValue else { return }
+            updateButton()
+        }
+    }
     /// How much of each reading the face prints, from Settings. Presentation
     /// only, like everything beside it: the same readings, shorter or longer.
     var reading: MenuBarReading = .automatic {
@@ -252,7 +262,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
                                           showingWeeklyLimit: showsWeeklyLimit,
                                           showingRemaining: showsRemaining,
                                           hidingDepleted: hidesDepleted,
-                                          reading: reading)
+                                          reading: reading,
+                                          autoOrdering: autoOrders)
         scheduleCountdown(at: next.nextChange)
         guard next != summary else { return }
         summary = next
