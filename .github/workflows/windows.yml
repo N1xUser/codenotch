@@ -58,6 +58,9 @@ jobs:
       - name: Test Qoder usage parsing
         run: node test-qoder-usage.cjs
 
+      - name: Test Linux notch hover and contour
+        run: node --test scripts/test-linux-notch.cjs
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
