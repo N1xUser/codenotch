@@ -88,6 +88,15 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             updateButton()
         }
     }
+    /// What a plain click does, from Settings. `.menu` is the path the item
+    /// has always taken — AppKit's own menu tracking, with nothing of ours
+    /// between the click and the menu — so the default is untouched code.
+    var clickAction: MenuBarClickAction = .menu {
+        didSet {
+            guard clickAction != oldValue else { return }
+            applyClickAction()
+        }
+    }
     /// Sorts the face by what is left of the five-hour window it prints,
     /// most first, as the notch sorts its rings. The menu keeps the manual
     /// order: it is the full list, and a list that rearranges itself under
@@ -140,6 +149,10 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     /// run down between readings. One-shot and re-armed on every update: a
     /// minute's precision is all the bar shows.
     private var countdownTimer: Timer?
+    /// Built once and kept, because `clickAction` may take it off the item
+    /// and put it back. Its contents are rebuilt on every open regardless —
+    /// see `menuWillOpen`.
+    private let menu = NSMenu()
     /// The notch's decorated cells, read when the menu opens. A local runtime's
     /// own snapshot only lists its models; what each one is doing, how fast it
     /// answered and what it cost today are put on the cells by the view model,
@@ -154,6 +167,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     var isShowing: Bool { item != nil }
 
+    /// How the clicks are routed at this moment. Internal so the routing can
+    /// be checked without a click: with `.menu` the menu sits on the item and
+    /// the button has nothing of ours on it, and with the others it is the
+    /// other way round — the menu goes back on only while it is down.
+    var menuIsOnTheItem: Bool { item?.menu != nil }
+    var buttonTakesTheClicks: Bool { item?.button?.action != nil }
+
     func show() {
         guard item == nil else { return }
 
@@ -165,11 +185,10 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         item.button?.wantsLayer = true
         item.button?.postsFrameChangedNotifications = true
 
-        let menu = NSMenu()
         menu.delegate = self
-        item.menu = menu
-
         self.item = item
+        applyClickAction()
+
         guard let button = item.button else { return }
         observe(NSView.frameDidChangeNotification, on: .default, object: button) { controller in
             controller.pulse.relayout()
@@ -376,6 +395,20 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         rebuild(menu: menu, now: Date())
     }
 
+    func menuDidClose(_ menu: NSMenu) {
+        // The menu is handed back to the button, so the next plain click is
+        // the action again and not a second menu. Asynchronously: AppKit is
+        // still unwinding this menu's tracking, and taking it off the item
+        // from inside the callback that announces it closed is asking for
+        // trouble. With `.menu` there is nothing to hand back — the menu
+        // lives on the item and must stay there.
+        guard !clickAction.opensMenuOnItsOwn else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let self, !self.clickAction.opensMenuOnItsOwn else { return }
+            self.item?.menu = nil
+        }
+    }
+
     /// Exposed for tests: what the menu says without needing a status item.
     func rebuild(menu: NSMenu, now: Date) {
         menu.removeAllItems()
@@ -452,6 +485,62 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         if let appDelegate = NSApp.delegate as? AppDelegate {
             appDelegate.openConnectPhone()
         }
+    }
+
+    /// Either hand the clicks to AppKit, or take them.
+    ///
+    /// `.menu` restores the original arrangement exactly: the menu is on the
+    /// item, the button has no target, and nothing of ours runs between the
+    /// click and the menu opening.
+    private func applyClickAction() {
+        guard let item, let button = item.button else { return }
+        if clickAction.opensMenuOnItsOwn {
+            button.target = nil
+            button.action = nil
+            button.setAccessibilityCustomActions(nil)
+            item.menu = menu
+            return
+        }
+        item.menu = nil
+        button.target = self
+        button.action = #selector(clicked)
+        // VoiceOver's press is the button's action now, and its "show menu"
+        // is not a ⌃-click this sees. With the app out of the Dock the menu
+        // is the only way to Settings and Quit, so it is named outright.
+        button.setAccessibilityCustomActions([
+            NSAccessibilityCustomAction(name: L10n.t("Show menu")) { [weak self] in
+                self?.popUpMenu()
+                return true
+            },
+        ])
+        // A status item button sends on the left button alone; the menu has
+        // to stay reachable, and the right button is where a menu belongs.
+        button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+    }
+
+    /// Only ever called while `clickAction` is not `.menu`.
+    @objc private func clicked() {
+        // ⌃-click is the other way macOS asks for a contextual menu, and the
+        // way VoiceOver asks for one. Both must find it.
+        let event = NSApp.currentEvent
+        let wantsMenu = event?.type == .rightMouseUp
+            || event?.modifierFlags.contains(.control) == true
+        guard !wantsMenu else { return popUpMenu() }
+        switch clickAction {
+        case .menu:     popUpMenu()
+        case .refresh:  refreshAll()
+        case .activity: openActivity()
+        }
+    }
+
+    /// Put the menu back and let AppKit open it, rather than popping it up
+    /// ourselves: this is the path that highlights the item while the menu is
+    /// down and tracks it the way every other status item does. `menuDidClose`
+    /// takes it off again.
+    private func popUpMenu() {
+        guard let item, let button = item.button else { return }
+        item.menu = menu
+        button.performClick(nil)
     }
 
     @objc private func openSettings() { onOpenSettings() }
