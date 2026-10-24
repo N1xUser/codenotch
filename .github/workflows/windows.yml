@@ -52,6 +52,12 @@ jobs:
       - name: Test notch percentage text
         run: node scripts/test-notch-pct.cjs
 
+      - name: Test usage pace deficit
+        run: node --test test-deficit.cjs
+
+      - name: Test Qoder usage parsing
+        run: node test-qoder-usage.cjs
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
