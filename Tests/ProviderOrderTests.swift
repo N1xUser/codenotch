@@ -276,6 +276,9 @@ final class ProviderOrderTests: XCTestCase {
     func testDeficitTiesKeepManualOrder() {
         XCTAssertEqual(deficitOrdered([timedCell("a", used: 0.5, hoursLeft: 48),
                                        timedCell("b", used: 0.5, hoursLeft: 48)]),
+                       ["a", "b"])
+    }
+
     // MARK: - Auto-order for the menu bar
 
     /// A five-hour window and a week, with whichever the caller says leading
