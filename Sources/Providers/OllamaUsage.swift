@@ -179,9 +179,14 @@ enum OllamaUsage {
             }
         }
 
-        // Top-level or activity-level models if present.
-        windows.append(contentsOf: models(from: root, prefix: "root"))
-        windows.append(contentsOf: models(from: activity, prefix: "activity"))
+        // Top-level or activity-level models if present. The cloud summary can
+        // name the same model in more than one of these places, so a model
+        // already listed by the totals is not listed again.
+        for source in [models(from: root, prefix: "root"), models(from: activity, prefix: "activity")] {
+            for model in source where !windows.contains(where: { $0.id.hasSuffix(".\(model.label)") }) {
+                windows.append(model)
+            }
+        }
 
         // Bucket-level models aggregated by name if present.
         if let buckets = root["buckets"] as? [[String: Any]] {

@@ -225,4 +225,20 @@ final class OllamaUsageTests: XCTestCase {
             }
         }
     }
+
+    /// The cloud summary can carry the same model in its totals and at the
+    /// top level; the tooltip lists it once.
+    func testAModelNamedTwiceInTheSummaryIsListedOnce() throws {
+        let json = """
+        {
+          "range": "7d",
+          "totals": { "request_count": 12, "models": [{ "name": "gpt-oss:120b", "request_count": 12 }] },
+          "models": [{ "name": "gpt-oss:120b", "request_count": 12 }],
+          "activity": { "models": [{ "name": "gpt-oss:120b", "request_count": 12 }] }
+        }
+        """
+        let result = try OllamaUsage.parse(json)
+        XCTAssertEqual(result.windows.filter { $0.label == "gpt-oss:120b" }.count, 1)
+    }
+
 }
