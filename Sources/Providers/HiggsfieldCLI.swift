@@ -34,11 +34,20 @@ struct HiggsfieldCLI: Sendable {
             home.appendingPathComponent(".nvm/current/bin/higgsfield")
         ] + systemPaths.map { URL(fileURLWithPath: $0) }
 
-        if let found = candidates.first(where: { isRunnable($0.path, fileManager: fileManager) }) {
+        if let found = candidates.first(where: { isHiggsfield($0, fileManager: fileManager) }) {
             return found
         }
 
         return searchPATH(environment: environment, fileManager: fileManager)
+    }
+
+    /// `hf` is also the name of Hugging Face's CLI, so a binary by that name
+    /// counts only when it resolves into Higgsfield's own package. A
+    /// `higgsfield` binary is unambiguous.
+    static func isHiggsfield(_ url: URL, fileManager: FileManager = .default) -> Bool {
+        guard isRunnable(url.path, fileManager: fileManager) else { return false }
+        if url.lastPathComponent == "higgsfield" { return true }
+        return url.resolvingSymlinksInPath().path.lowercased().contains("higgsfield")
     }
 
     private static func isRunnable(_ path: String, fileManager: FileManager) -> Bool {
@@ -56,9 +65,9 @@ struct HiggsfieldCLI: Sendable {
         for dir in path.split(separator: ":").map(String.init) {
             guard dir.hasPrefix("/") else { continue }
             for name in ["hf", "higgsfield"] {
-                let candidate = (dir as NSString).appendingPathComponent(name)
-                if isRunnable(candidate, fileManager: fileManager) {
-                    return URL(fileURLWithPath: candidate)
+                let candidate = URL(fileURLWithPath: (dir as NSString).appendingPathComponent(name))
+                if isHiggsfield(candidate, fileManager: fileManager) {
+                    return candidate
                 }
             }
         }

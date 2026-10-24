@@ -59,9 +59,13 @@ enum HiggsfieldCredentials {
         hasCheckedCache = false
     }
 
+    /// Higgsfield's own names only. `HF_TOKEN` is Hugging Face's: read here,
+    /// a Hugging Face secret would be sent to Higgsfield's gateway.
+    static let environmentKeys = ["HIGGSFIELD_API_KEY", "HIGGSFIELD_TOKEN"]
+
     static func isPresent(_ sources: HiggsfieldCredentialSources = HiggsfieldCredentialSources()) -> Bool {
         if sources.settingsPresent() { return true }
-        for key in ["HIGGSFIELD_API_KEY", "HIGGSFIELD_TOKEN", "HF_TOKEN", "HF_CREDENTIALS"] {
+        for key in environmentKeys {
             if let val = sources.environment[key]?.trimmingCharacters(in: .whitespacesAndNewlines), !val.isEmpty {
                 return true
             }
@@ -85,7 +89,7 @@ enum HiggsfieldCredentials {
             return Credential(token: token, source: .settings)
         }
         // 2. Environment variables
-        for key in ["HIGGSFIELD_API_KEY", "HIGGSFIELD_TOKEN", "HF_TOKEN", "HF_CREDENTIALS"] {
+        for key in environmentKeys {
             if let val = sources.environment[key]?.trimmingCharacters(in: .whitespacesAndNewlines), !val.isEmpty {
                 return Credential(token: val, source: .environment)
             }

@@ -61,4 +61,30 @@ final class HiggsfieldCredentialsTests: XCTestCase {
             }
         }
     }
+
+    /// `HF_TOKEN` belongs to Hugging Face; it must never be sent to Higgsfield.
+    func testHuggingFacesTokenIsNotHiggsfields() {
+        var sources = HiggsfieldCredentialSources()
+        sources.environment = ["HF_TOKEN": "hf_hugging_face_secret", "HF_CREDENTIALS": "x"]
+        sources.credentialsURL = URL(fileURLWithPath: "/nonexistent/credentials.json")
+        sources.settingsToken = { nil }
+        sources.settingsPresent = { false }
+        sources.locateBinary = { nil }
+        XCTAssertFalse(HiggsfieldCredentials.isPresent(sources))
+        XCTAssertThrowsError(try HiggsfieldCredentials.load(sources))
+    }
+
+    /// A plain `hf` on the PATH is Hugging Face's unless it resolves into
+    /// Higgsfield's package.
+    func testAnHfBinaryOutsideHiggsfieldsPackageIsNotHiggsfields() throws {
+        let dir = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("hf-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let hf = dir.appendingPathComponent("hf")
+        try "#!/bin/sh\n".write(to: hf, atomically: true, encoding: .utf8)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: hf.path)
+        XCTAssertFalse(HiggsfieldCLI.isHiggsfield(hf))
+        XCTAssertNil(HiggsfieldCLI.locateBinary(environment: ["PATH": dir.path, "HOME": "/nonexistent"]))
+    }
+
 }
