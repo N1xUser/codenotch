@@ -44036,83 +44036,6 @@
         }
       }
     },
-    "Past two, each shows its share alone and the countdowns move to the tooltip. Past four, the rest are in the menu.": {
-      "extractionState": "manual",
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Если выбрано больше двух, каждый показывает только долю, а обратный отсчёт уходит во всплывающую подсказку. Если больше четырёх, остальные — в меню."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Au-delà de deux, chacun n'affiche que sa part et les comptes à rebours passent dans l'infobulle. Au-delà de quatre, les autres sont dans le menu."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3つ以上では使用率だけを表示し、残り時間はツールチップに移ります。5つ以上では、残りはメニューに表示されます。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Com mais de dois, cada um mostra apenas seu percentual, e as contagens regressivas aparecem na dica. Com mais de quatro, os restantes ficam no menu."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "超过两个时，每个只显示用量比例，倒计时移到提示中。超过四个时，其余的在菜单里。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "超過兩個時，每個只顯示用量比例，倒數計時移到提示中。超過四個時，其餘的在選單裡。"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ab drei zeigt jeder nur seinen Anteil, die Countdowns wandern in den Tooltip. Ab fünf stehen die übrigen im Menü."
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Якщо вибрано більше двох, кожен показує лише частку, а зворотний відлік переходить у підказку. Якщо більше чотирьох, решта — в меню."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3개 이상이면 사용 비율만 표시하고 남은 시간은 툴팁으로 옮깁니다. 5개 이상이면 나머지는 메뉴에 표시합니다."
-          }
-        },
-        "uz": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ikkitadan ortsa, har biri faqat oʻz ulushini koʻrsatadi va sanoqlar maslahat oynasiga oʻtadi. Toʻrttadan ortsa, qolganlari menyuda boʻladi."
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jika lebih dari dua, masing-masing hanya menampilkan persentasenya dan hitung mundur berpindah ke tooltip. Jika lebih dari empat, sisanya ditampilkan di dalam menu."
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "İkiden fazlaysa her biri yalnızca kendi payını gösterir ve geri sayımlar ipucuna taşınır. Dörtten fazlaysa geri kalanlar menüdedir."
-          }
-        }
-      }
-    },
     "Fixes a crash on Chinese Macs, and a Deny on the keychain question now means no.": {
       "extractionState": "manual",
       "localizations": {
@@ -60859,6 +60782,545 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bilah hanya menampilkan batas. Aktivitas tetap terlihat di notch, menu, dan tooltip."
+          }
+        }
+      }
+    },
+    "Each reading shows": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Her okuma neyi göstersin"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede Anzeige zeigt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque relevé affiche"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "各表示の内容"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "각 표시 내용"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每条读数显示"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每筆讀數顯示"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada leitura mostra"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Каждое показание содержит"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кожне показання містить"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Har bir ko'rsatkich nimani ko'rsatadi"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setiap bacaan menampilkan"
+          }
+        }
+      }
+    },
+    "Share only": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yalnızca yüzde"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur den Anteil"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Part seule"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "割合のみ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비율만"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅占比"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅佔比"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apenas a fração"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Только долю"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Лише частку"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faqat ulush"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hanya porsi"
+          }
+        }
+      }
+    },
+    "Share and countdown": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yüzde ve geri sayım"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anteil und Countdown"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Part et compte à rebours"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "割合とカウントダウン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비율과 남은 시간"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "占比和倒计时"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "佔比和倒數"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fração e contagem regressiva"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Долю и обратный отсчёт"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Частку й зворотний відлік"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ulush va teskari sanoq"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Porsi dan hitung mundur"
+          }
+        }
+      }
+    },
+    "Two readings carry their countdowns. Past two the bar keeps the shares alone and the countdowns move to the tooltip.": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İki okuma geri sayımını taşır. İkiden sonra çubukta yalnızca yüzdeler kalır, geri sayımlar ipucu balonuna taşınır."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwei Anzeigen behalten ihren Countdown. Ab der dritten bleiben nur die Anteile in der Leiste, die Countdowns wandern in den Tooltip."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deux relevés gardent leur compte à rebours. Au-delà de deux, la barre ne garde que les parts et les comptes à rebours passent dans l'infobulle."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 件までカウントダウンも表示します。3 件目からはバーに割合だけが残り、カウントダウンはツールチップに移ります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两条读数带倒计时。超过两条时菜单栏只保留占比，倒计时移到提示中。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "兩筆讀數帶倒數。超過兩筆時選單列只保留佔比，倒數移到提示中。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 개까지는 남은 시간도 함께 보여 줍니다. 그 이상이면 막대에는 비율만 남고 남은 시간은 툴팁으로 옮겨집니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duas leituras levam sua contagem regressiva. Acima de duas, a barra fica só com as frações e as contagens vão para a dica."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Два показания сохраняют обратный отсчёт. Свыше двух в строке остаются только доли, а отсчёты уходят во всплывающую подсказку."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Два показання зберігають зворотний відлік. Понад два в рядку лишаються тільки частки, а відліки переходять у спливну підказку."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ikkita ko'rsatkich teskari sanog'i bilan chiqadi. Ikkitadan ortig'ida panelda faqat ulushlar qoladi, teskari sanoqlar maslahat oynasiga o'tadi."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dua bacaan membawa hitung mundurnya. Lebih dari dua, bilah hanya menyimpan porsinya dan hitung mundur pindah ke tooltip."
+          }
+        }
+      }
+    },
+    "Every reading is a mark and a percentage. The narrowest the bar gets, and the countdowns are still a hover away.": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Her okuma bir simge ve bir yüzdeden ibaret. Çubuğun en dar hâli; geri sayımlar yine bir imleç uzaklığında."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede Anzeige ist ein Zeichen und ein Prozentwert. So schmal wird die Leiste; die Countdowns sind weiterhin eine Mausbewegung entfernt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque relevé est une marque et un pourcentage. La barre au plus étroit, et les comptes à rebours restent à un survol."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "各表示はマークとパーセントだけになります。バーが最も狭くなる設定で、カウントダウンはポインタを重ねれば読めます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每条读数只有标记和百分比。菜单栏最窄的状态，倒计时仍然悬停即可看到。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每筆讀數只有標記和百分比。選單列最窄的狀態，倒數仍然停留即可看到。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "각 표시는 마크와 백분율뿐입니다. 막대가 가장 좁아지며, 남은 시간은 포인터를 올리면 그대로 볼 수 있습니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada leitura é uma marca e uma porcentagem. A barra no seu mais estreito, e as contagens continuam a um passar do cursor."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Каждое показание — это значок и процент. Самая узкая строка; обратные отсчёты по-прежнему доступны при наведении."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кожне показання — це значок і відсоток. Найвужчий вигляд рядка; зворотні відліки й далі доступні при наведенні."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Har bir ko'rsatkich belgi va foizdan iborat. Panelning eng tor ko'rinishi, teskari sanoqlar esa kursorni olib borsangiz ko'rinadi."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setiap bacaan berupa tanda dan persentase. Bilah dalam keadaan tersempit, dan hitung mundur tetap sejauh satu arahan kursor."
+          }
+        }
+      }
+    },
+    "Every reading carries its countdown. Past two this is a wide item, and macOS hides one that does not fit on the bar rather than squeezing it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Her okuma geri sayımını da taşır. İkiden sonra öğe genişler; macOS çubuğa sığmayan öğeyi sıkıştırmak yerine gizler."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede Anzeige trägt ihren Countdown. Ab der dritten wird das Objekt breit, und macOS blendet ein Objekt, das nicht in die Leiste passt, lieber aus, als es zu stauchen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque relevé porte son compte à rebours. Au-delà de deux, l'élément devient large, et macOS masque un élément qui ne tient pas dans la barre plutôt que de le comprimer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "各表示がカウントダウンも持ちます。3 件目からは項目が広くなり、macOS はバーに収まらない項目を詰めずに非表示にします。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每条读数都带倒计时。超过两条后项目会很宽，而 macOS 对放不下的菜单栏项目会直接隐藏而不是压缩。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每筆讀數都帶倒數。超過兩筆後項目會很寬，而 macOS 對放不下的選單列項目會直接隱藏而不是壓縮。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "각 표시가 남은 시간까지 함께 갑니다. 두 개를 넘으면 항목이 넓어지고, macOS는 막대에 들어가지 않는 항목을 줄이지 않고 숨깁니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada leitura leva sua contagem regressiva. Acima de duas o item fica largo, e o macOS esconde um item que não cabe na barra em vez de espremê-lo."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Каждое показание идёт со своим обратным отсчётом. Свыше двух элемент становится широким, а macOS скрывает не помещающийся в строке элемент, а не сжимает его."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кожне показання йде зі своїм зворотним відліком. Понад два елемент стає широким, а macOS приховує той, що не вміщається в рядку, замість стискати його."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Har bir ko'rsatkich teskari sanog'i bilan chiqadi. Ikkitadan ortig'ida element kengayadi, macOS esa panelga sig'magan elementni siqish o'rniga yashiradi."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setiap bacaan membawa hitung mundurnya. Lebih dari dua, itemnya menjadi lebar, dan macOS menyembunyikan item yang tidak muat di bilah alih-alih memampatkannya."
+          }
+        }
+      }
+    },
+    "Past four, the rest are in the menu: macOS hides a menu bar item that does not fit rather than squeezing it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dörtten sonrası menüde kalır: macOS menü çubuğuna sığmayan bir öğeyi sıkıştırmak yerine gizler."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ab dem fünften stehen die übrigen nur im Menü: macOS blendet ein Objekt, das nicht in die Menüleiste passt, lieber aus, als es zu stauchen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Au-delà de quatre, les autres restent dans le menu : macOS masque un élément qui ne tient pas dans la barre des menus plutôt que de le comprimer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 件目からはメニューの中だけになります。macOS はメニューバーに収まらない項目を詰めずに非表示にするためです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "超过四条后其余只出现在菜单里：macOS 对放不下的菜单栏项目会直接隐藏而不是压缩。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "超過四筆後其餘只出現在選單裡：macOS 對放不下的選單列項目會直接隱藏而不是壓縮。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "네 개를 넘으면 나머지는 메뉴에만 있습니다. macOS는 메뉴 막대에 들어가지 않는 항목을 줄이지 않고 숨깁니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acima de quatro, os demais ficam no menu: o macOS esconde um item que não cabe na barra de menus em vez de espremê-lo."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Свыше четырёх остальные остаются в меню: macOS скрывает не помещающийся в строке меню элемент, а не сжимает его."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Понад чотири решта лишаються в меню: macOS приховує елемент, що не вміщається в рядку меню, замість стискати його."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To'rttadan ortig'i faqat menyuda qoladi: macOS menyu paneliga sig'magan elementni siqish o'rniga yashiradi."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lebih dari empat, sisanya ada di menu: macOS menyembunyikan item yang tidak muat di bilah menu alih-alih memampatkannya."
           }
         }
       }

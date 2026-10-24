@@ -1253,6 +1253,19 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
+            // Above the provider rows, because it decides what each of them
+            // costs in width — and width is what anyone ticking a fourth
+            // provider is actually spending.
+            Picker(L10n.t("Each reading shows"), selection: $preferences.menuBarReading) {
+                ForEach(MenuBarReading.allCases) { Text($0.title).tag($0) }
+            }
+            .pickerStyle(.segmented)
+
+            Text(preferences.menuBarReading.explanation)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
             // The notch's own question, asked again here because the answers
             // are not the same ones: the bar has no ring for an arc to turn
             // inside, and movement a few pixels from the clock is read
@@ -1292,11 +1305,13 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            // Said only once it applies: past two the item keeps each share
-            // and drops the countdowns, and past four it stops, because macOS
-            // hides a status item that does not fit rather than squeezing it.
-            if menuBarChoices.filter({ preferences.isInMenuBar($0.id) }).count > StatusItemSummary.fullEntryLimit {
-                Text(L10n.t("Past two, each shows its share alone and the countdowns move to the tooltip. Past four, the rest are in the menu."))
+            // The one ceiling the picker above cannot move, said only once it
+            // is reached. What the four on show print is that picker's
+            // business; a fifth reading has nowhere to go but the menu,
+            // because macOS hides a status item that does not fit rather than
+            // squeezing it.
+            if menuBarChoices.filter({ preferences.isInMenuBar($0.id) }).count > StatusItemSummary.entryLimit {
+                Text(L10n.t("Past four, the rest are in the menu: macOS hides a menu bar item that does not fit rather than squeezing it."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

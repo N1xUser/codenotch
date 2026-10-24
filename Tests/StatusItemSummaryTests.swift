@@ -59,12 +59,13 @@ final class StatusItemSummaryTests: XCTestCase {
                          format: ResetTimeFormat = .automatic,
                          weekly: Bool = false,
                          remaining: Bool = false,
-                         hideDepleted: Bool = false) -> StatusItemSummary {
+                         hideDepleted: Bool = false,
+                         reading: MenuBarReading = .automatic) -> StatusItemSummary {
         StatusItemSummary.make(
             from: snapshots,
             showing: limits ?? MenuBarLimits(isOn: true, chosen: Set(snapshots.map(\.id))),
             now: now, format: format, showingWeeklyLimit: weekly,
-            showingRemaining: remaining, hidingDepleted: hideDepleted)
+            showingRemaining: remaining, hidingDepleted: hideDepleted, reading: reading)
     }
 
     private func on(_ chosen: Set<String>?) -> MenuBarLimits {
@@ -660,6 +661,78 @@ final class StatusItemSummaryTests: XCTestCase {
         XCTAssertEqual(result.entries.map(\.id), ["claude", "codex", "glm", "kimi"])
         XCTAssertTrue(result.isCompact)
         XCTAssertFalse(summary(Array(many.prefix(2))).isCompact)
+    }
+
+    // MARK: - How much of each reading is printed
+
+    /// The rule the item has always followed, which is now one answer of
+    /// three rather than the only one there is.
+    func testAutomaticIsTheDefaultAndStillCountsToTwo() {
+        XCTAssertEqual(Preferences(defaults: scratchDefaults()).menuBarReading, .automatic)
+        for count in 1...4 {
+            XCTAssertEqual(MenuBarReading.automatic.isCompact(entryCount: count), count > 2, "\(count)")
+        }
+    }
+
+    /// Share only is the narrow answer: no countdown, however few there are.
+    func testShareOnlyDropsTheCountdownEvenFromASingleReading() {
+        let one = summary([claude(0.72, resetIn: 2 * hour)], reading: .share)
+        XCTAssertTrue(one.isCompact)
+        // Dropped from the face, not from the reading: the tooltip still has
+        // it, and so does the entry the menu and VoiceOver are built from.
+        XCTAssertEqual(try? XCTUnwrap(one.entries.first).countdown, "2h 00m")
+        XCTAssertTrue(try XCTUnwrap(one.entries.first?.detail).contains("2h 00m"))
+    }
+
+    /// Share and countdown is the wide answer: the countdown stays past the
+    /// two the automatic rule would have stopped at.
+    func testShareAndCountdownKeepsTheCountdownPastTwo() {
+        let four = [claude(0.72, resetIn: hour), codex(0.41, resetIn: hour),
+                    other("glm", glyph: .glm, length: 5 * hour), other("kimi", glyph: .kimi, length: 5 * hour)]
+        XCTAssertTrue(summary(four).isCompact, "the automatic rule stops at two")
+        XCTAssertFalse(summary(four, reading: .full).isCompact)
+    }
+
+    /// The ceiling Settings cannot move: a fifth reading only ever lengthens
+    /// the item, so it stays in the menu whatever is chosen here.
+    func testTheFourReadingCeilingHoldsWhicheverAnswerIsChosen() {
+        let five = [claude(0.72, resetIn: hour), codex(0.41, resetIn: hour),
+                    other("glm", glyph: .glm, length: 5 * hour), other("kimi", glyph: .kimi, length: 5 * hour),
+                    other("opencode", glyph: .opencode, length: 5 * hour)]
+        for reading in MenuBarReading.allCases {
+            XCTAssertEqual(summary(five, reading: reading).entries.count, 4, "\(reading)")
+        }
+    }
+
+    /// What the answer actually buys, in the only currency the menu bar deals
+    /// in. Two readings: narrow drops both countdowns, wide keeps them, and
+    /// automatic sits where it always did.
+    func testTheAnswerIsWidthAndTheWidthsAreOrdered() {
+        let two = [claude(0.72, resetIn: 2 * hour + 18 * minute), codex(0.41, resetIn: 4 * hour + 5 * minute)]
+        let font = NSFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
+        func width(_ reading: MenuBarReading, _ snapshots: [ProviderSnapshot]) -> CGFloat {
+            StatusItemArtwork(summary: summary(snapshots, reading: reading), font: font, height: 22).size.width
+        }
+        XCTAssertLessThan(width(.share, two), width(.automatic, two))
+        XCTAssertEqual(width(.full, two), width(.automatic, two), "two is where the automatic rule is wide")
+
+        let four = two + [other("glm", glyph: .glm, length: 5 * hour),
+                          other("kimi", glyph: .kimi, length: 5 * hour)]
+        XCTAssertEqual(width(.share, four), width(.automatic, four), "four is where it is narrow")
+        XCTAssertGreaterThan(width(.full, four), width(.automatic, four))
+    }
+
+    /// A change of answer is a change of summary, so the item redraws for it
+    /// rather than deciding nothing has happened.
+    func testChangingTheAnswerIsAChangeTheItemNotices() {
+        let two = [claude(0.72, resetIn: hour), codex(0.41, resetIn: hour)]
+        XCTAssertNotEqual(summary(two, reading: .automatic), summary(two, reading: .share))
+    }
+
+    func testTheChosenReadingSurvivesARestart() {
+        let defaults = scratchDefaults()
+        Preferences(defaults: defaults).menuBarReading = .share
+        XCTAssertEqual(Preferences(defaults: defaults).menuBarReading, .share)
     }
 
     /// The items to the left of this one shift whenever it changes width, so

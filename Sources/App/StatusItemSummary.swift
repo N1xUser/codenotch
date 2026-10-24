@@ -37,16 +37,26 @@ struct StatusItemSummary: Equatable {
     /// When the first countdown on show next reads differently. Nil when
     /// nothing is counting down, so nothing needs to wake up for it.
     let nextChange: Date?
+    /// How much of each reading is printed, from Settings. A `var` with a
+    /// default so the memberwise initialiser keeps working for everything
+    /// that builds a summary without an opinion about it.
+    var reading: MenuBarReading = .automatic
 
     /// Two readings sit side by side comfortably. Past that each keeps its mark
     /// and percentage, and the countdowns stay in the tooltip and the menu.
+    ///
+    /// The rule `MenuBarReading.automatic` follows, and what the other two
+    /// answers overrule.
     static let fullEntryLimit = 2
     /// Past this many the rest are in the menu only. macOS hides a status item
     /// that does not fit rather than squeezing it, and with the app out of the
     /// Dock this item is the only way into it.
+    ///
+    /// Not up to Settings, unlike `fullEntryLimit`: dropping a countdown
+    /// shortens the item, and a fifth reading only ever lengthens it.
     static let entryLimit = 4
 
-    var isCompact: Bool { entries.count > Self.fullEntryLimit }
+    var isCompact: Bool { reading.isCompact(entryCount: entries.count) }
 
     /// Whether the bar has anything to say about this provider: it meters a
     /// five-hour window, or it is Claude or Codex, whose headline limit *is*
@@ -63,7 +73,8 @@ struct StatusItemSummary: Equatable {
     /// them. None at all while the feature is off — or when nothing chosen has
     /// a limit to show — which gives the item its icon back.
     ///
-    /// `showingRemaining` and `hidingDepleted` are the notch's own switches,
+    /// `reading` decides how much of each one is printed; `showingRemaining`
+    /// and `hidingDepleted` are the notch's own switches,
     /// answered here for the same reason the cards in the menu below already
     /// answer the first: one account must not read two ways in one app.
     /// Depleted accounts are dropped before the count, so an empty one never
@@ -73,7 +84,8 @@ struct StatusItemSummary: Equatable {
                      now: Date, format: ResetTimeFormat = .automatic,
                      showingWeeklyLimit: Bool = false,
                      showingRemaining: Bool = false,
-                     hidingDepleted: Bool = false) -> StatusItemSummary {
+                     hidingDepleted: Bool = false,
+                     reading: MenuBarReading = .automatic) -> StatusItemSummary {
         guard limits.isOn else { return StatusItemSummary(entries: [], nextChange: nil) }
         let summarised = snapshots.filter { snapshot in
             canSummarise(snapshot) && limits.isChosen(snapshot.id)
@@ -90,7 +102,7 @@ struct StatusItemSummary: Equatable {
             .compactMap { $0.fiveHourWindow?.resetsAt }
             .compactMap { ResetCopy.nextCountdownChange(to: $0, now: now) }
             .min()
-        return StatusItemSummary(entries: entries, nextChange: nextChange)
+        return StatusItemSummary(entries: entries, nextChange: nextChange, reading: reading)
     }
 
     static func isFiveHourFamily(_ providerID: String) -> Bool {
