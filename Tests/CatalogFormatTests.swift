@@ -149,6 +149,12 @@ final class CatalogFormatTests: XCTestCase {
         XCTAssertTrue(body.contains("weekly"), body)
     }
 
+    func testTheEightyPercentAlertBodyFormatsInSpanish() {
+        let body = L10n.t("\(99)% of its \("weekly") limit used.", locale: Locale(identifier: "es"))
+        XCTAssertTrue(body.contains("99"), body)
+        XCTAssertTrue(body.contains("weekly"), body)
+    }
+
     /// Turkish also names the limit before the number — `%2$@` then `%1$lld`.
     func testTheEightyPercentAlertBodyFormatsInTurkish() {
         let body = L10n.t("\(99)% of its \("weekly") limit used.", locale: Locale(identifier: "tr"))

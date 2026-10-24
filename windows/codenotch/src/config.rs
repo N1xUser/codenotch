@@ -42,7 +42,7 @@ pub struct Config {
     pub taskbar_width: u32,
     #[serde(default = "default_port")]
     pub port: u16,
-    /// "auto" | "zh" | "zh-Hant" | "en" | "ja" | "ko" | "pt-BR" | "ru" | "uk"
+    /// "auto" | "zh" | "zh-Hant" | "en" | "ja" | "ko" | "pt-BR" | "ru" | "uk" | "es"
     #[serde(default = "default_lang")]
     pub lang: String,
     #[serde(default)]
@@ -549,6 +549,13 @@ mod tests {
         assert!(!restored.reset_notification_sound);
         assert!(!restored.notch_visible);
         assert_eq!(restored.theme, "light");
+    }
+
+    /// "es", the code the Mac's picker stores too, so both ports name Spanish the same way.
+    #[test]
+    fn spanish_is_kept_as_its_language_code() {
+        let cfg: Config = serde_json::from_str("{\"lang\":\"es\"}").expect("a Spanish config parses");
+        assert_eq!(cfg.lang, "es");
     }
 
     /// What PowerShell 5 writes for `Set-Content -Encoding UTF8`: the same JSON behind a BOM. It used

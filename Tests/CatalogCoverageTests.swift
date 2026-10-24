@@ -167,6 +167,27 @@ final class CatalogCoverageTests: XCTestCase {
         }
     }
 
+    func testSpanishCoreCopyIsTranslated() throws {
+        let catalog = try loadCatalog().json
+        let expected = [
+            "just now": "ahora mismo",
+            "Resets in %lld min": "Se renueva en %lld min",
+            "%lld%% Used · %lld%% left": "%lld%% usado · %lld%% restante",
+            "Always show": "Mostrar siempre",
+            "Settings…": "Ajustes…",
+            "Sign in to %@": "Iniciar sesión en %@",
+            "%lld%% of its %@ limit used.": "Se usó el %lld%% de su límite (%@)."
+        ]
+
+        for (key, value) in expected {
+            XCTAssertEqual(
+                catalog.strings[key]?.localizations?["es"]?.stringUnit?.value,
+                value,
+                "missing Spanish translation for \(key)"
+            )
+        }
+    }
+
     /// There is deliberately no "language X covers every key" test.
     ///
     /// The rule at the top of this file is that a missing translation falls

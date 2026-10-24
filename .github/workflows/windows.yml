@@ -51,6 +51,9 @@ jobs:
       - name: Test Korean card localization
         run: node --test scripts/test-ko-i18n.cjs
 
+      - name: Test Spanish card localization
+        run: node --test scripts/test-es-i18n.cjs
+
       - name: Test notch percentage text
         run: node scripts/test-notch-pct.cjs
 

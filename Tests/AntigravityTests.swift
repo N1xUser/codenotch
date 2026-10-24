@@ -484,6 +484,34 @@ final class AntigravityQuotaTests: XCTestCase {
         XCTAssertEqual(providerWindows[3].usedFraction ?? -1, 0, accuracy: 0.0001)
     }
 
+    /// The server names groups and windows in English whatever the app's
+    /// language. They used to reach the card and the menu bar as sent, so a
+    /// Spanish Mac read "Weekly Limit" under "Claude and GPT models".
+    func testTheServersEnglishNamesAreShownInTheAppsLanguage() {
+        let previousLocale = L10n.testLocale
+        L10n.testLocale = Locale(identifier: "es")
+        defer { L10n.testLocale = previousLocale }
+
+        let grouped = Data("""
+        {"groups":[{"displayName":"Claude and GPT models","buckets":[
+          {"bucketId":"3p-5h","displayName":"Five Hour Limit Remaining","remainingFraction":1},
+          {"bucketId":"3p-weekly","displayName":"Weekly Limit","remainingFraction":1}]}]}
+        """.utf8)
+        let groupedWindows = AntigravityProvider.windows(in: grouped)
+        XCTAssertEqual(groupedWindows.map(\.group), ["Modelos Claude y GPT", "Modelos Claude y GPT"])
+        XCTAssertEqual(groupedWindows.map(\.label), ["Límite de 5 horas", "Límite semanal"])
+
+        let now = Date(timeIntervalSince1970: 1788900000)
+        let models = Data("""
+        {"buckets":[
+          {"modelId":"gemini-2.5-pro","remainingFraction":0.9,"resetTime":"2026-09-09T10:39:57Z"},
+          {"modelId":"claude-sonnet-4-6","remainingFraction":0.8,"resetTime":"2026-09-16T10:39:57Z"}]}
+        """.utf8)
+        let modelWindows = AntigravityProvider.windows(in: models, now: now)
+        XCTAssertEqual(modelWindows.map(\.group), ["Modelos Gemini", "Modelos Claude y GPT"])
+        XCTAssertEqual(modelWindows.map(\.label), ["Límite de 5 horas", "Límite semanal"])
+    }
+
     func testDirectCloudCodeIgnoresInvalidFractions() {
         let body = Data("""
         {
