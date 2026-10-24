@@ -14,6 +14,7 @@ The SVG files in this directory come from the npm package `@lobehub/icons-static
 | gemini.svg | icons/antigravity.svg | Antigravity cell |
 | gemini-alt.svg | icons/gemini.svg | alternative: the Gemini spark |
 | opencode.svg | icons/opencode.svg | OpenCode cell |
+| deepseek.svg | icons/deepseek.svg | DeepSeek Harness cell |
 
 MIT License — Copyright (c) LobeHub. See that repository's LICENSE.
 

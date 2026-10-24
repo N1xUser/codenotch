@@ -18,6 +18,7 @@ mod codex;
 mod reset_watch;
 mod reset_alert;
 mod cursor;
+mod deepseek_harness;
 mod grok;
 mod copilot;
 mod antigravity;
@@ -67,6 +68,8 @@ pub struct AppState {
     pub antigravity: Mutex<usage::UsageSnapshot>,
     /// GLM Coding Plan snapshot, read from the existing Z.AI tool credentials.
     pub glm: Mutex<usage::UsageSnapshot>,
+    /// DeepSeek Harness snapshot, derived from ~/.dsh session transcripts.
+    pub deepseek: Mutex<usage::UsageSnapshot>,
     /// OpenCode Go plan snapshot, read with OpenCode's own sign-in (auth.json or opencode.db).
     pub opencode: Mutex<usage::UsageSnapshot>,
     pub commandcode: Mutex<usage::UsageSnapshot>,
@@ -598,6 +601,7 @@ pub(crate) fn refresh_provider(app: &AppHandle, provider: &str) -> bool {
         "copilot" => copilot::request_refresh(),
         "gemini" => antigravity::request_refresh(),
         "glm" => glm::request_refresh(),
+        "deepseek" => deepseek_harness::request_refresh(),
         "opencode" => opencode::request_refresh(),
         "commandcode" => commandcode::request_refresh(),
         _ => return false,
@@ -622,6 +626,11 @@ fn refresh_ring(app: AppHandle, provider: String) -> bool {
 #[tauri::command]
 fn get_antigravity(state: tauri::State<AppState>) -> usage::UsageSnapshot {
     state.antigravity.lock().unwrap().clone()
+}
+
+#[tauri::command]
+fn get_deepseek(state: tauri::State<AppState>) -> usage::UsageSnapshot {
+    state.deepseek.lock().unwrap().clone()
 }
 
 #[tauri::command]
@@ -706,6 +715,7 @@ pub(crate) fn provider_page(provider: &str) -> Option<(&'static str, &'static st
         "glm" => ("https://z.ai/manage-apikey/apikey-list", "z.ai"),
         "opencode" => ("https://opencode.ai", "opencode.ai"),
         "commandcode" => ("https://commandcode.ai", "commandcode.ai"),
+        "deepseek" => ("https://platform.deepseek.com/usage", "platform.deepseek.com"),
         _ => return None,
     })
 }
@@ -1268,6 +1278,8 @@ fn ring_window<'a>(
         // The Mac sets headlineID "rolling", weeklyID "weekly".
         "opencode" => by_id("rolling"),
         "commandcode" => by_id("monthly"),
+        // The Harness publishes no limit: the headline is today's derived budget ring.
+        "deepseek" => by_id("today"),
         _ => antigravity_lane(windows, antigravity_limit, antigravity_model),
     }
 }
@@ -1325,6 +1337,7 @@ pub(crate) fn snapshot_of(app: &AppHandle, id: &str) -> usage::UsageSnapshot {
         "copilot" => st.copilot.lock().unwrap().clone(),
         "gemini" => st.antigravity.lock().unwrap().clone(),
         "glm" => st.glm.lock().unwrap().clone(),
+        "deepseek" => st.deepseek.lock().unwrap().clone(),
         "opencode" => st.opencode.lock().unwrap().clone(),
         "commandcode" => st.commandcode.lock().unwrap().clone(),
         _ => st.usage.lock().unwrap().clone(),
@@ -1774,12 +1787,13 @@ pub fn provider_label(id: &str) -> &'static str {
         "glm" => "z.ai",
         "opencode" => "OpenCode",
         "commandcode" => "Command Code",
+        "deepseek" => "DeepSeek Harness",
         _ => "Claude",
     }
 }
 
 /// Every provider the tray menu can offer, in the order the notch shows them.
-pub const TRAY_PROVIDER_IDS: [&str; 9] = ["claude", "codex", "glm", "opencode", "commandcode", "cursor", "grok", "copilot", "gemini"];
+pub const TRAY_PROVIDER_IDS: [&str; 10] = ["claude", "codex", "glm", "opencode", "commandcode", "cursor", "grok", "copilot", "gemini", "deepseek"];
 
 /// Keeps the tray menu current. macOS rebuilds its menu as it opens; Tauri has no such hook, so it
 /// is rebuilt whenever a reading changes, and once a minute besides — otherwise "Resets in 12 min"
@@ -1970,6 +1984,7 @@ fn main() {
             copilot: Mutex::new(copilot::load_persisted()),
             antigravity: Mutex::new(antigravity::load_persisted()),
             glm: Mutex::new(glm::load_persisted()),
+            deepseek: Mutex::new(deepseek_harness::load_persisted()),
             opencode: Mutex::new(opencode::load_persisted()),
             commandcode: Mutex::new(commandcode::load_persisted()),
             glyphs: Mutex::new(Default::default()),
@@ -1996,6 +2011,7 @@ fn main() {
             get_copilot,
             get_antigravity,
             get_glm,
+            get_deepseek,
             get_opencode,
             get_commandcode,
             get_glyphs,
@@ -2088,6 +2104,7 @@ fn main() {
             copilot::start(handle.clone());
             antigravity::start(handle.clone());
             glm::start(handle.clone());
+    deepseek_harness::start(handle.clone());
             opencode::start(handle.clone());
             commandcode::start(handle.clone());
             activity::start(handle.clone());

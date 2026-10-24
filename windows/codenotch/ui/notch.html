@@ -422,6 +422,8 @@ let grokSnap={status:'absent',windows:[],fetched_at:0,note:''};
 // GitHub Copilot quotas, from the GitHub CLI's own session; absent until gh is installed or a token is set
 let copilotSnap={status:'absent',windows:[],fetched_at:0,note:''};
 let glmSnap={status:'absent',windows:[],fetched_at:0,note:''};
+// DeepSeek Harness: derived from ~/.dsh session transcripts (cost vs a daily budget)
+let deepseekSnap={status:'absent',windows:[],fetched_at:0,note:''};
 // OpenCode Go plan, read with OpenCode's own sign-in; absent until OpenCode is installed
 let opencodeSnap={status:'absent',windows:[],fetched_at:0,note:''};
 let commandcodeSnap={status:'absent',windows:[],fetched_at:0,note:''};
@@ -1149,6 +1151,7 @@ function providers(){
   const list=claudeCells();
   if(codexSnap.status!=='absent') list.push({id:'codex',base:'codex',name:'Codex',glyph:'Cx',snap:codexSnap});
   if(glmSnap.status!=='absent') list.push({id:'glm',base:'glm',name:'z.ai',glyph:'Z.ai',snap:glmSnap});
+  if(deepseekSnap.status!=='absent') list.push({id:'deepseek',base:'deepseek',name:'DeepSeek Harness',glyph:'DS',snap:deepseekSnap});
   if(opencodeSnap.status!=='absent') list.push({id:'opencode',base:'opencode',name:'OpenCode',glyph:'OC',snap:opencodeSnap});
   if(commandcodeSnap.status!=='absent') list.push({id:'commandcode',base:'commandcode',name:'Command Code',glyph:'CC',snap:commandcodeSnap});
   if(cursorSnap.status!=='absent') list.push({id:'cursor',base:'cursor',name:'Cursor',glyph:'Cu',snap:cursorSnap});
@@ -1188,6 +1191,7 @@ function headlineOf(snap,id){
   if(id==='grok') return byId('credits')||ws[0];
   if(id==='copilot') return byId('premium_interactions')||ws[0];
   if(id==='glm') return byId('session');
+  if(id==='deepseek') return byId('today');
   if(id==='opencode') return byId('rolling');
   if(id==='commandcode') return byId('monthly');
   const fam=ws.filter(w=>laneFamily(w)===agPrefs.model), lanes=fam.length?fam:ws;
@@ -1207,6 +1211,7 @@ function weeklyOf(snap,id){
   if(id==='grok') return null; // the credits window is already the weekly one
   if(id==='copilot') return null; // monthly quotas only; nothing weekly to draw
   if(id==='glm') return byId('weekly');
+  if(id==='deepseek') return null;
   if(id==='opencode') return byId('weekly');
   if(id==='commandcode') return byId('weekly');
   const fam=ws.filter(w=>laneFamily(w)===agPrefs.model), lanes=fam.length?fam:ws;
@@ -2173,6 +2178,8 @@ listen('antigravity',e=>{agSnap=e.payload||agSnap;settle('gemini');renderRing();
 invoke('get_antigravity').then(u=>{agSnap=u||agSnap;renderRing();}).catch(()=>{});
 listen('glm',e=>{glmSnap=e.payload||glmSnap;renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
 invoke('get_glm').then(u=>{glmSnap=u||glmSnap;renderRing();}).catch(()=>{});
+listen('deepseek',e=>{deepseekSnap=e.payload||deepseekSnap;renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
+invoke('get_deepseek').then(u=>{deepseekSnap=u||deepseekSnap;renderRing();}).catch(()=>{});
 listen('opencode',e=>{opencodeSnap=e.payload||opencodeSnap;settle('opencode');renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
 invoke('get_opencode').then(u=>{opencodeSnap=u||opencodeSnap;renderRing();}).catch(()=>{});
 listen('commandcode',e=>{commandcodeSnap=e.payload||commandcodeSnap;settle('commandcode');renderRing();if(card.classList.contains('show'))renderCard();}).catch(()=>{});
