@@ -7,7 +7,7 @@ const start='// HEADLINE_PCT_START', end='// HEADLINE_PCT_END';
 assert.equal(html.split(start).length,2);
 assert.equal(html.split(end).length,2);
 const src=html.split(start)[1].split(end)[0];
-const ctx=vm.createContext({showRemaining:false,ui:()=>({usedLeft:(u,l)=>`${u}% Used · ${l}% left`,leftUsed:(l,u)=>`${l}% left · ${u}% Used`})});
+const ctx=vm.createContext({showRemaining:false,showPace:false,ui:()=>({usedLeft:(u,l)=>`${u}% Used · ${l}% left`,leftUsed:(l,u)=>`${l}% left · ${u}% Used`})});
 vm.runInContext(src,ctx);
 // The figure under the ring from either end: 12.5% spent reads 13% used, 87% left.
 assert.equal(ctx.pctText(0.125),'13');
