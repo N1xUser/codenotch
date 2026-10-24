@@ -112,11 +112,12 @@ actor AntigravityProvider: UsageProvider {
             if let windows = await localQuota(), !windows.isEmpty {
                 everBridged = true
                 UserDefaults.standard.set(true, forKey: "AntigravityEverBridged")
-                
+
+                let chosen = selection(for: windows)
                 return ProviderSnapshot(id: id, displayName: displayName, glyph: glyph,
-                                        fidelity: .official, status: .ok, windows: windows,
-                                        headlineID: resolveHeadlineID(for: windows),
-                                        weeklyID: resolveWeeklyID(for: windows))
+                                        fidelity: .official, status: .ok, windows: chosen.windows,
+                                        headlineID: chosen.headlineID,
+                                        weeklyID: chosen.weeklyID)
             }
 
             if localQuotaOverride != nil && everBridged {
@@ -129,20 +130,22 @@ actor AntigravityProvider: UsageProvider {
         if let credentials,
            let windows = try? await quota(token: credentials.accessToken, project: credentials.projectId),
            !windows.isEmpty {
+            let chosen = selection(for: windows)
             return ProviderSnapshot(id: id, displayName: displayName, glyph: glyph,
-                                    fidelity: .official, status: .ok, windows: windows,
-                                    headlineID: resolveHeadlineID(for: windows),
-                                    weeklyID: resolveWeeklyID(for: windows))
+                                    fidelity: .official, status: .ok, windows: chosen.windows,
+                                    headlineID: chosen.headlineID,
+                                    weeklyID: chosen.weeklyID)
         }
 
         // 2. Fallback to OMP SQLite store if offline or direct call fails
         if profile.slug == nil {
             let ompWindows = Self.ompUsageWindows(forEmail: credentials?.email)
             if !ompWindows.isEmpty {
+                let chosen = selection(for: ompWindows)
                 return ProviderSnapshot(id: id, displayName: displayName, glyph: glyph,
-                                        fidelity: .official, status: .ok, windows: ompWindows,
-                                        headlineID: resolveHeadlineID(for: ompWindows),
-                                        weeklyID: resolveWeeklyID(for: ompWindows))
+                                        fidelity: .official, status: .ok, windows: chosen.windows,
+                                        headlineID: chosen.headlineID,
+                                        weeklyID: chosen.weeklyID)
             }
         }
 
@@ -176,8 +179,14 @@ actor AntigravityProvider: UsageProvider {
     nonisolated func resolveHeadlineID(for windows: [LimitWindow]) -> String {
         let preferredLimit = Preferences.storedAntigravityHeadlineLimit()
         let preferredModel = Preferences.storedAntigravityHeadlineModel()
-        let modelCandidates = windows.filter { $0.id.hasPrefix(preferredModel.rawValue) }
-        let candidates = modelCandidates.isEmpty ? windows : modelCandidates
+        // Only the chosen family. It used to fall back to every window when
+        // this came up empty, which reported a different allowance under the
+        // name of the one that was asked for — the reader chose Gemini, the
+        // account had no Gemini group, and the ring showed the third-party
+        // group's number as if it were the answer. A family that reported
+        // nothing is an absent reading, not another family's reading.
+        let candidates = windows.filter { $0.id.hasPrefix(preferredModel.rawValue) }
+        guard !candidates.isEmpty else { return Self.unavailableWindowID }
 
         if preferredLimit != .automatic {
             let limitCandidates = candidates.filter { matches($0, cadence: preferredLimit) }
@@ -218,14 +227,48 @@ actor AntigravityProvider: UsageProvider {
 
     nonisolated func resolveWeeklyID(for windows: [LimitWindow]) -> String? {
         let preferredModel = Preferences.storedAntigravityHeadlineModel()
-        let modelCandidates = windows.filter { $0.id.hasPrefix(preferredModel.rawValue) }
-        let candidates = modelCandidates.isEmpty ? windows : modelCandidates
+        // The chosen family only, for the same reason as the headline: the
+        // weekly allowance of one family is not the weekly allowance of
+        // another. No weekly window in the family means no second ring.
+        let candidates = windows.filter { $0.id.hasPrefix(preferredModel.rawValue) }
         let weekly = candidates.filter { window in
             window.duration == 7 * 86400 ||
                 window.id.lowercased().hasSuffix("-weekly") ||
                 window.label.lowercased().contains("weekly")
         }
         return weekly.max(by: constrainedBefore)?.id
+    }
+
+    /// The id of the window that stands in for a family which reported nothing.
+    ///
+    /// Deliberately outside every family's id namespace, so that adding it to
+    /// the windows does not make that family look present.
+    static let unavailableWindowID = "quota-group-unavailable"
+
+    /// The reading shown for a family that reported nothing.
+    ///
+    /// The reader asked for that family, so the cell says the family is not
+    /// reporting rather than going quiet or, worse, showing another family's
+    /// number. The other families stay in the list, so the account's other
+    /// allowances remain visible.
+    nonisolated static func unavailableWindow(for model: AntigravityHeadlineModel) -> LimitWindow {
+        LimitWindow(id: unavailableWindowID,
+                    group: model.explanation,
+                    label: L10n.t("No reading"),
+                    usedFraction: nil)
+    }
+
+    /// The windows to show, and which of them is the reading.
+    ///
+    /// A family that reported nothing gets an explicit reading of its own, so
+    /// that its absence is shown rather than covered by another family.
+    private nonisolated func selection(
+        for windows: [LimitWindow]
+    ) -> (windows: [LimitWindow], headlineID: String, weeklyID: String?) {
+        let preferred = Preferences.storedAntigravityHeadlineModel()
+        let reported = windows.contains { $0.id.hasPrefix(preferred.rawValue) }
+        let shown = reported ? windows : windows + [Self.unavailableWindow(for: preferred)]
+        return (shown, resolveHeadlineID(for: shown), resolveWeeklyID(for: shown))
     }
 
     /// Ask Antigravity's language server, if it is running.
