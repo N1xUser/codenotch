@@ -185,7 +185,8 @@ enum PiProcesses {
         guard count > 0 else { return [] }
         return Set(pids.prefix(Int(count) / MemoryLayout<pid_t>.stride)
             .filter(isPi)
-            .compactMap(SessionFocus.currentDirectory(of:)))
+            .compactMap(SessionFocus.currentDirectory(of:))
+            .map { URL(fileURLWithPath: $0).resolvingSymlinksInPath().path })
     }
 
     static func isPi(_ pid: pid_t) -> Bool {
@@ -341,7 +342,11 @@ final class PiSessionTailReader {
               let root = try? JSONSerialization.jsonObject(with: Data(line)) as? [String: Any],
               root["type"] as? String == "session"
         else { return nil }
-        return root["cwd"] as? String
+        guard let cwd = root["cwd"] as? String else { return nil }
+        // The kernel reports a process's directory with its symlinks
+        // resolved (/private/tmp, not /tmp), so the header's has to be too,
+        // or a Pi still running there reads as gone.
+        return URL(fileURLWithPath: cwd).resolvingSymlinksInPath().path
     }
 
     private func fileSize(_ url: URL) -> UInt64? {
