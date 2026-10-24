@@ -29,7 +29,7 @@ final class AntigravityQuotaFamilyTests: XCTestCase {
     /// The resolver reads the stored preference, so a case about the
     /// third-party family has to say so rather than rely on the default.
     private func withPreferredModel(_ model: AntigravityHeadlineModel,
-                                    _ body: () throws -> Void) rethrows {
+                                    _ body: () -> Void) {
         let key = "antigravityHeadlineModel"
         let previous = UserDefaults.standard.string(forKey: key)
         UserDefaults.standard.set(model.rawValue, forKey: key)
@@ -38,16 +38,18 @@ final class AntigravityQuotaFamilyTests: XCTestCase {
                 UserDefaults.standard.removeObject(forKey: key)
             }
         }
-        try body()
+        body()
     }
 
     // MARK: - The chosen family is answered from itself
 
     func testTheChosenFamilyIsAnsweredFromItself() {
-        let provider = AntigravityProvider(session: URLSession.shared)
-        let windows = geminiWindows + thirdPartyWindows
-        XCTAssertEqual(provider.resolveHeadlineID(for: windows), "gemini-5h")
-        XCTAssertEqual(provider.resolveWeeklyID(for: windows), "gemini-weekly")
+        withPreferredModel(.gemini) {
+            let provider = AntigravityProvider(session: URLSession.shared)
+            let windows = geminiWindows + thirdPartyWindows
+            XCTAssertEqual(provider.resolveHeadlineID(for: windows), "gemini-5h")
+            XCTAssertEqual(provider.resolveWeeklyID(for: windows), "gemini-weekly")
+        }
     }
 
     // MARK: - A missing family is not answered with another one
@@ -55,23 +57,25 @@ final class AntigravityQuotaFamilyTests: XCTestCase {
     /// The reading before: a Gemini reader with no Gemini group was shown the
     /// third-party group's number, under the third-party group's name.
     func testAMissingFamilyIsNotAnsweredWithAnotherFamily() {
-        let provider = AntigravityProvider(session: URLSession.shared)
-        let windows = thirdPartyWindows
+        withPreferredModel(.gemini) {
+            let provider = AntigravityProvider(session: URLSession.shared)
+            let windows = thirdPartyWindows
 
-        XCTAssertEqual(
-            provider.resolveHeadlineID(for: windows),
-            AntigravityProvider.unavailableWindowID,
-            "a family that reported nothing must not be answered with another family"
-        )
-        XCTAssertNil(
-            provider.resolveWeeklyID(for: windows),
-            "there is no weekly allowance to draw a second ring from"
-        )
+            XCTAssertEqual(
+                provider.resolveHeadlineID(for: windows),
+                AntigravityProvider.unavailableWindowID,
+                "a family that reported nothing must not be answered with another family"
+            )
+            XCTAssertNil(
+                provider.resolveWeeklyID(for: windows),
+                "there is no weekly allowance to draw a second ring from"
+            )
+        }
     }
 
     /// The other direction: a third-party reader with no third-party group.
     func testAMissingThirdPartyFamilyIsNotAnsweredWithTheGeminiOne() {
-        try withPreferredModel(.thirdParty) {
+        withPreferredModel(.thirdParty) {
             let provider = AntigravityProvider(session: URLSession.shared)
             XCTAssertEqual(
                 provider.resolveHeadlineID(for: geminiWindows),
@@ -104,9 +108,11 @@ final class AntigravityQuotaFamilyTests: XCTestCase {
 
     /// A reading that is present is never displaced by the unavailable one.
     func testAPresentFamilyIsNotAffectedByTheUnavailableReading() {
-        let provider = AntigravityProvider(session: URLSession.shared)
-        let windows = geminiWindows + [AntigravityProvider.unavailableWindow(for: .gemini)]
-        XCTAssertEqual(provider.resolveHeadlineID(for: windows), "gemini-5h")
-        XCTAssertEqual(provider.resolveWeeklyID(for: windows), "gemini-weekly")
+        withPreferredModel(.gemini) {
+            let provider = AntigravityProvider(session: URLSession.shared)
+            let windows = geminiWindows + [AntigravityProvider.unavailableWindow(for: .gemini)]
+            XCTAssertEqual(provider.resolveHeadlineID(for: windows), "gemini-5h")
+            XCTAssertEqual(provider.resolveWeeklyID(for: windows), "gemini-weekly")
+        }
     }
 }
