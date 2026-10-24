@@ -1732,6 +1732,25 @@ fn set_notch_shows_remaining(app: AppHandle, on: bool) -> bool {
     on
 }
 
+#[tauri::command]
+fn get_show_usage_pace(app: AppHandle) -> bool {
+    let st = app.state::<AppState>();
+    let c = st.cfg.lock().unwrap();
+    c.show_usage_pace
+}
+
+#[tauri::command]
+fn set_show_usage_pace(app: AppHandle, on: bool) -> bool {
+    {
+        let st = app.state::<AppState>();
+        let mut c = st.cfg.lock().unwrap();
+        c.show_usage_pace = on;
+        config::save(&c);
+    }
+    let _ = app.emit("show_usage_pace", on);
+    on
+}
+
 /// One attached monitor, as Settings lists it.
 #[derive(serde::Serialize)]
 pub struct MonitorInfo {
@@ -2092,6 +2111,8 @@ fn main() {
             get_full_screen,
             get_notch_shows_remaining,
             set_notch_shows_remaining,
+            get_show_usage_pace,
+            set_show_usage_pace,
             settings_window::get_system_look,
             settings_window::quit_app,
             settings_window::settings_ready,

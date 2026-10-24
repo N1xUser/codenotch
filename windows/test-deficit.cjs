@@ -22,7 +22,7 @@ const dictionaries = ['TEXT', 'PATTERNS', 'UI'].map(name =>
 // Include late dictionary assignments too, so Japanese is tested as the page actually uses it.
 const assignments = [...script.matchAll(/^(?:TEXT|PATTERNS|UI)\.[a-z]+\s*=\s*\{[\s\S]*?\};/gm)];
 const functions = ['smallPct', 'deficitOf', 'usedHalves', 'usedCopy', 'ui', 'setUiLanguage'].map(functionSource);
-const pureSource = ["let uiLang='en', showRemaining=false;", ...dictionaries, ...assignments.map(m => m[0]), ...functions].join('\n');
+const pureSource = ["let uiLang='en', showRemaining=false, showPace=true;", ...dictionaries, ...assignments.map(m => m[0]), ...functions].join('\n');
 const NOW = 1_800_000_000_000;
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
@@ -182,4 +182,13 @@ test('all deficit translations match the Mac Localizable entry', () => {
     assert.equal(template.replace('%@', '12.5').replace('%%', '%'), expected, lang);
     assert.equal(page(lang).ui().deficit('12.5'), expected, lang);
   }
+});
+
+test('the deficit stays off until Show usage pace is on, as on the Mac', () => {
+  const context = vm.createContext({ Date: class extends Date { static now() { return NOW; } },
+    card: null, renderRing() {} });
+  vm.runInContext(pureSource.replace('showPace=true', 'showPace=false'), context);
+  const ahead = windowOf({ used: 0.6 });
+  assert.equal(context.deficitOf(ahead), null);
+  assert.equal(context.usedCopy(ahead), '60% Used · 40% left');
 });

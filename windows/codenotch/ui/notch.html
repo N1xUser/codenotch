@@ -399,6 +399,7 @@ function meteredFraction(f,showRemaining){ return showRemaining?1-f:f; }
 // Used quota ahead of elapsed time, as the Mac's UsagePace; reserves stay hidden.
 function deficitOf(w){
   const now=Date.now();
+  if(!showPace) return null; // the Mac's usage pace setting, off by default there too
   if(w.count!=null || !Number.isFinite(w.used) || w.used<0 || !Number.isFinite(w.duration_ms) || !(w.duration_ms>0) || !Number.isFinite(w.resets_at) || !(w.resets_at>now)) return null;
   const elapsed=1-Math.min((w.resets_at-now)/w.duration_ms,1);
   const points=(Math.min(w.used,1)-elapsed)*100;
@@ -1753,6 +1754,7 @@ const orb=document.getElementById('orb');
 const HANDLE_REACH=28.5; // the Mac's hot zone, half of 57
 let orbAt=null, hovered=null, orbSpins=0;
 let showRemaining=false;
+let showPace=false;
 // The grip (NotchLayout's): a dot, dot centre to dot centre, the orb's disc and the gap from it, and
 // the grip's hot zone. Its middle is the disc, the gap and half its own width out. Smaller than the
 // Mac's 7.15 and 11.66 and 7 further from the orb than its 4.89, which crowded the orb here.
@@ -2182,6 +2184,8 @@ listen('pill_backdrop',e=>{
 invoke('get_ui_flags').then(applyUiFlags).catch(()=>{});
 listen('notch_shows_remaining',e=>{ showRemaining=e.payload===true; renderRing(); }).catch(()=>{});
 invoke('get_notch_shows_remaining').then(v=>{ showRemaining=v===true; renderRing(); }).catch(()=>{});
+listen('show_usage_pace',e=>{ showPace=e.payload===true; if(card.classList.contains('show')) renderCard(); }).catch(()=>{});
+invoke('get_show_usage_pace').then(v=>{ showPace=v===true; }).catch(()=>{});
 
 listen('usage',e=>{usage=e.payload||usage;claudeActionMessage='';settle('claude');renderRing();if(card.classList.contains('show'))renderCard();})
   .catch(e=>notice('listen(usage) failed: '+e));

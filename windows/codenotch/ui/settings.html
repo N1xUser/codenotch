@@ -175,6 +175,8 @@
           <div class="item cap" id="cap-edge" data-dynamic></div>
           <div class="item"><span>Show remaining instead of used</span><button class="switch" id="sw-remaining" role="switch" aria-checked="false" aria-label="Show remaining instead of used"></button></div>
           <div class="item cap">The figure under each ring reads what is left — 87% instead of 13% used, the same number the card prints beside it. The rings themselves still fill by what is spent.</div>
+          <div class="item"><span>Show usage pace</span><button class="switch" id="sw-pace" role="switch" aria-checked="false" aria-label="Show usage pace"></button></div>
+          <div class="item cap">The card adds how far a timed window is ahead of its clock — 12% deficit means 12 points more spent than the time gone would allow.</div>
           <div class="item" id="row-screen" hidden><span>Screen</span>
             <select id="screen" aria-label="Screen"></select>
           </div>
@@ -1251,6 +1253,8 @@ const adaptivePill = remote('get_adaptive_pill', 'set_adaptive_pill', 'Adaptive 
 document.getElementById('sw-adaptive').addEventListener('click', () => adaptivePill.toggle());
 const showRemaining = remote('get_notch_shows_remaining', 'set_notch_shows_remaining', 'Show remaining instead of used', () => drawSwitch(document.getElementById('sw-remaining'), showRemaining));
 document.getElementById('sw-remaining').addEventListener('click', () => showRemaining.toggle());
+const showPace = remote('get_show_usage_pace', 'set_show_usage_pace', 'Show usage pace', () => drawSwitch(document.getElementById('sw-pace'), showPace));
+document.getElementById('sw-pace').addEventListener('click', () => showPace.toggle());
 const weeklyDashed = remote('get_weekly_ring_dashed', 'set_weekly_ring_dashed', 'Dashed weekly ring', () => drawSwitch(document.getElementById('sw-weekly-dashed'), weeklyDashed));
 document.getElementById('sw-weekly-dashed').addEventListener('click', () => weeklyDashed.toggle());
 

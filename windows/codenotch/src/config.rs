@@ -148,6 +148,10 @@ pub struct Config {
     /// rings themselves still sweep by what is spent either way.
     #[serde(default)]
     pub notch_shows_remaining: bool,
+    /// true = the card adds how far a timed window is ahead of its clock ("12% deficit"), as the
+    /// Mac's usage pace setting. Off by default, as on the Mac.
+    #[serde(default)]
+    pub show_usage_pace: bool,
 }
 
 fn default_notch_y() -> f64 {
@@ -328,6 +332,7 @@ impl Default for Config {
             adaptive_pill: false,
             fold_for_full_screen: true,
             notch_shows_remaining: false,
+            show_usage_pace: false,
         }
     }
 }
