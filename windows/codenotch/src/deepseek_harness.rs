@@ -297,6 +297,7 @@ pub fn snapshot_at(now_ms: u64) -> UsageSnapshot {
             if totals.sessions == 1 { "" } else { "s" }
         ),
         backoff_until: 0,
+        ..Default::default()
     }
 }
 
